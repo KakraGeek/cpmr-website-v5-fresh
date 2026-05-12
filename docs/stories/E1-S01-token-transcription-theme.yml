@@ -1,0 +1,47 @@
+id: E1-S01
+epic: E1
+sprint_order: 101
+title: Token transcription to `@theme`
+status: TODO
+architect_gate_required: Yes
+user_story: >
+  As a UI developer, I want tokens in CSS so that Tailwind utilities match DESIGN.md.
+acceptance_criteria:
+  - The @theme block in src/styles/global.css matches DESIGN.md section 20 canonical mapping for colours, type scale, radii, shadows, and z-index layers used in section 1.
+  - No stray invented tokens beyond what DESIGN.md defines for those mappings.
+tasks:
+  - Transcribe DESIGN.md section 20 token definitions into Tailwind v4 @theme in src/styles/global.css.
+  - Cross-check section 1 usage against the mapped tokens so utilities align with the design contract.
+  - Verify build still succeeds after theme changes.
+dependencies:
+  - E0-S05
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/styles/global.css
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - src/pages/**
+    - src/content/**
+    - src/data/**
+    - src/components/**
+    - public/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm implementation follows DESIGN.md (sections 1 and 20).
+  - Confirm implementation follows docs/03_architecture/04_architecture.md.
+  - Confirm static build passes (npm run build).
+  - Confirm no forbidden files were changed.
+  - Confirm token work preserves future CMS compatibility (no editorial copy in styles; governed content remains in src/content/ and src/data/).

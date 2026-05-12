@@ -1,0 +1,46 @@
+id: E1-S02
+epic: E1
+sprint_order: 102
+title: Semantic utility aliases
+status: TODO
+architect_gate_required: No
+user_story: >
+  As a developer, I want bg-surface-* and text-text-* classes aligned to tokens so that DESIGN.md examples resolve via the theme.
+acceptance_criteria:
+  - Utility classes used in DESIGN.md examples resolve via the theme (semantic surface and text utilities mapped to @theme).
+  - Smoke test page or Storybook-like static preview is optional—not required if documented samples exist in comments per story map.
+tasks:
+  - Define semantic Tailwind utility aliases in src/styles/global.css consistent with E1-S01 tokens.
+  - Document minimal inline examples in comments where helpful so reviewers can grep-verify aliases.
+dependencies:
+  - E1-S01
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/styles/global.css
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - src/pages/**
+    - src/content/**
+    - src/data/**
+    - src/components/**
+    - public/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm implementation follows DESIGN.md (examples and section 0 token discipline).
+  - Confirm implementation follows docs/03_architecture/04_architecture.md.
+  - Confirm static build passes (npm run build).
+  - Confirm no forbidden files were changed.
+  - Confirm alias work preserves future CMS compatibility (presentation-only utilities; no content coupling in CSS).
