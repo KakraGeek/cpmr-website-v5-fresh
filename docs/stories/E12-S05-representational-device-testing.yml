@@ -1,0 +1,44 @@
+id: E12-S05
+epic: E12
+sprint_order: 1205
+title: Representational device testing
+status: TODO
+architect_gate_required: No
+user_story: "As QA, we validate mid-tier Android experience."
+acceptance_criteria:
+  - "Short written report captures representative mid-tier Android checks aligned with PRD §27 PF3 (`docs/04_stories/05_story_map.md`)."
+  - "Report is attached or linked from release notes or an agreed `docs/` location; defects are filed or logged."
+tasks:
+  - "Define the representational device profile (mid-tier Android, network conditions as agreed) and core URL list consistent with `E12-S04` pathways."
+  - "Produce a concise test report (pass/fail, notes, screenshots optional) under `docs/`."
+  - "Open or reference tracking entries for failures blocking PF3 acceptance."
+dependencies:
+  - E12-S04
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - docs/**
+  files_forbidden:
+    - src/**
+    - astro.config.mjs
+    - package.json
+    - public/**
+    - scripts/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed (except explicit waivers).
+  - Confirm report references DESIGN.md expectations where UX issues are noted (touch targets, readability).
+  - "Confirm conclusions align with `docs/03_architecture/04_architecture.md` constraints (static hosting honesty)."
+  - "Confirm static build remains green (`npm run build` / `npm run validate`) before merging linked release artefacts."
+  - Confirm documentation-only scope did not alter CMS content surfaces unintentionally.

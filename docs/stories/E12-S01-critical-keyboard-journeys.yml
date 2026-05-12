@@ -1,0 +1,53 @@
+id: E12-S01
+epic: E12
+sprint_order: 1201
+title: Critical keyboard journeys
+status: TODO
+architect_gate_required: No
+user_story: "As a keyboard user, I complete Clinic, DAU, dept landing, search."
+acceptance_criteria:
+  - "Documented manual pass covers Clinic, DAU, department landing, and search (`docs/04_stories/05_story_map.md` epic E12)."
+  - "Blocking defects found during the pass are fixed or tracked with explicit rationale."
+tasks:
+  - "Run a documented manual keyboard-only pass across `/services/clinic/` (or agreed Clinic route), `/services/drug-analysis-unit/` (or agreed DAU route), at least one `/departments/[slug]/` landing, and the search entry surface from utility navigation (`E11-S01`)."
+  - "Record pass steps, findings, and resolutions in `docs/` (short checklist or annex linked from release notes)."
+  - "Remediate keyboard traps, illogical tab order, missing focus visibility, or broken aria interactions that block completion of those journeys."
+dependencies:
+  - E7-S03
+  - E7-S04
+  - E5-S02
+  - E11-S01
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - docs/**
+    - src/components/**
+    - src/layouts/**
+    - src/pages/services/**
+    - src/pages/departments/**
+    - src/pages/search/**
+    - src/data/**
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - src/content/**
+    - public/documents/**
+    - scripts/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed (except explicit waivers).
+  - Confirm implementation follows DESIGN.md (landmarks, focus, interaction baselines).
+  - "Confirm implementation follows `docs/03_architecture/04_architecture.md` (static site; no SSR)."
+  - "Confirm static build passes (`npm run build` / `npm run validate`)."
+  - Confirm future CMS compatibility is preserved (no editorial truth duplicated into components; governed copy stays in `src/content/` / `src/data/`).

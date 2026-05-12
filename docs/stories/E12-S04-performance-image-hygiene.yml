@@ -1,0 +1,45 @@
+id: E12-S04
+epic: E12
+sprint_order: 1204
+title: Performance image hygiene
+status: TODO
+architect_gate_required: No
+user_story: "As a mobile user, pages stay fast."
+acceptance_criteria:
+  - "Below-the-fold imagery uses lazy loading where appropriate (`docs/01_planning/02_prd.md` §27 PF2)."
+  - "Heavy pages use responsive image techniques appropriate to Astro/static hosting (`docs/01_planning/02_prd.md` §27 PF2; story map `perf: images`)."
+tasks:
+  - "Audit above vs below-fold imagery on gallery, department, and other media-heavy templates; apply `loading=\"lazy\"` or Astro image patterns for below-fold content."
+  - "Apply responsive sizing (`sizes`, widths, or Astro `<Image />`) on designated heavy routes without breaking token/layout contracts (`DESIGN.md`)."
+  - "Verify Clinic/DAU and core pathways remain acceptable on representative mid-tier devices per PRD §27 PF3 (supported by `E12-S05`)."
+dependencies:
+  - E1-S01
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/components/**
+    - src/pages/**
+    - src/content/**
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - public/documents/**
+    - scripts/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed (except explicit waivers).
+  - Confirm implementation follows DESIGN.md (image ratios, alt text, layout stability).
+  - "Confirm implementation follows `docs/03_architecture/04_architecture.md` (static-compatible assets; no SSR)."
+  - "Confirm static build passes (`npm run build` / `npm run validate`)."
+  - Confirm future CMS compatibility is preserved (image metadata and references remain in content/frontmatter; no one-off hardcoded asset URLs in components).
