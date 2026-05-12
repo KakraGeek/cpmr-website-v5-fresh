@@ -1,0 +1,55 @@
+id: E3-S02
+epic: E3
+sprint_order: 302
+title: Quick access grid
+status: TODO
+architect_gate_required: No
+user_story: >
+  As a patient, I reach Clinic or DAU in one click from home.
+acceptance_criteria:
+  - Six tiles present for Clinic, DAU, Departments, Publications, Products, and Contact.
+  - Each tile uses a real href.
+  - Tiles are keyboard operable.
+tasks:
+  - Implement src/components/content/QuickAccessCard.astro (or equivalent) and compose the six-tile grid on src/pages/index.astro.
+  - Drive tile labels and hrefs from governed home content so editorial changes stay CMS-compatible.
+dependencies:
+  - E3-S01
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/pages/index.astro
+    - src/components/content/QuickAccessCard.astro
+    - src/components/content/**
+    - src/content/home/**
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/layouts/**
+    - src/components/layout/**
+    - src/data/**
+    - src/pages/departments/**
+    - src/pages/about/**
+    - src/pages/research/**
+    - src/pages/services/**
+    - src/pages/news/**
+    - src/pages/events/**
+    - src/pages/products/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm implementation follows DESIGN.md.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md.
+  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm no forbidden files were changed.
