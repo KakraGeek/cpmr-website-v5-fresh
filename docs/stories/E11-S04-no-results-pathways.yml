@@ -1,0 +1,41 @@
+id: E11-S04
+epic: E11
+sprint_order: 1104
+title: No-results helpful pathways
+status: TODO
+architect_gate_required: No
+user_story: "As a visitor, I am guided when search fails."
+acceptance_criteria:
+  - "Zero-result state suggests pathways to Clinic, DAU, and Departments per `docs/02_design/03_ux_blueprint.md` §21."
+tasks:
+  - "Implement `src/components/search/EmptyState.astro` (or equivalent) with links to Clinic, DAU, and Departments routes consistent with IA (`04_architecture.md` §4.2)."
+  - "Ensure keyboard accessibility and visible focus on suggested links (`DESIGN.md` §15 baseline)."
+dependencies:
+  - E11-S03
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/components/search/EmptyState.astro
+  files_forbidden:
+    - src/content/**
+    - package.json
+    - astro.config.mjs
+    - scripts/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed.
+  - Confirm implementation follows DESIGN.md for empty-state typography, links, and a11y.
+  - Confirm implementation follows architecture route map for suggested destinations.
+  - Confirm static build passes.
+  - Confirm pathway URLs remain compatible with future CMS-driven IA (link targets use stable routes, not brittle assumptions).

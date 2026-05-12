@@ -1,0 +1,46 @@
+id: E11-S05
+epic: E11
+sprint_order: 1105
+title: Search QA acceptance suite
+status: TODO
+architect_gate_required: No
+user_story: "As QA, I verify PRD search MVP path."
+acceptance_criteria:
+  - "Automated tests and/or a documented manual script proves a user can find Clinic, DAU, at least one department, and at least one staff profile via the search MVP (`docs/01_planning/02_prd.md` §33 Search row)."
+tasks:
+  - "Add tests under `tests/**` and/or a checklist under `docs/05_validation/**` that traces PRD §33 Search acceptance (maps to story dependencies `E5-S01`, `E7-S03`, `E7-S04`, `E6-S03`)."
+  - "Execute the suite against a build that includes index generation from `E11-S02`."
+dependencies:
+  - E11-S02
+  - E5-S01
+  - E7-S03
+  - E7-S04
+  - E6-S03
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - tests/**
+    - docs/05_validation/**
+  files_forbidden:
+    - src/content/**
+    - src/components/**
+    - src/pages/**
+    - package.json
+    - astro.config.mjs
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied (PRD §33 Search).
+  - Confirm no forbidden implementation files were changed.
+  - Confirm DESIGN.md and architecture constraints remain satisfied by the tested build.
+  - Confirm static build passes before QA execution.
+  - Confirm forbidden-file validation for this story scope (tests/docs only).

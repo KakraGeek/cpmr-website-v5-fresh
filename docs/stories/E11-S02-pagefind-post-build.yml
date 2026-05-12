@@ -1,0 +1,45 @@
+id: E11-S02
+epic: E11
+sprint_order: 1102
+title: Pagefind integration post-build
+status: TODO
+architect_gate_required: Yes
+user_story: "As a builder, I generate a static index after `astro build`."
+acceptance_criteria:
+  - "Post-build script wires Pagefind (or the ADR-004 chosen static search implementation) into the `npm run build` pipeline."
+  - "`npm run validate` includes index generation when the feature is enabled (per `package.json` scripts)."
+  - "No SSR or runtime database dependency is introduced (`docs/03_architecture/04_architecture.md` §3, §10; PRD §23)."
+tasks:
+  - "Follow ADR-004 in `docs/03_architecture/04_architecture.md` for the selected search tool (Pagefind preferred per story map epic goal)."
+  - "Add or extend `scripts/**` to run the indexer against `dist/` after `astro build`."
+  - "Update `package.json` scripts so build/validate chains stay deterministic per `06_project_context.md`."
+  - Record any ADR or config notes only through the architect gate if implementation choices diverge from documented ADR-004.
+dependencies:
+  - E11-S01
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - package.json
+    - scripts/**
+  files_forbidden:
+    - src/content/**
+    - src/pages/**
+    - src/components/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed (except explicit waivers).
+  - Confirm implementation follows DESIGN.md where UI is touched only via allowed story hand-offs (search shell consumes index).
+  - "Confirm implementation follows architecture and ADR-004; `output: 'static'` unchanged."
+  - "Confirm static build passes and generated index artefacts land under `dist/` as intended."
+  - Confirm forbidden-file validation for unrelated product routes and content collections.
