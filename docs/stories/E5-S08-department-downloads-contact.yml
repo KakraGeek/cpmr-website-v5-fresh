@@ -1,0 +1,51 @@
+id: E5-S08
+epic: E5
+sprint_order: 508
+title: Department downloads and contact
+status: TODO
+architect_gate_required: Yes
+user_story: >
+  As a manufacturer, I want department forms and contact pathways without inappropriate personal data exposure.
+acceptance_criteria:
+  - Downloads relevant to the department are listed using governed download entries from the downloads centre work in E10-S03.
+  - A contact block uses governed institutional contact data; personal phone numbers are not shown unless explicitly allowed by agreed content policy in the PRD or verified content.
+  - Routes match the department subtree contract (e.g. downloads and contact paths under /departments/[slug]/ per architecture §6.2).
+tasks:
+  - Implement src/pages/departments/[slug]/downloads.astro (and contact route if split, per architecture examples).
+  - Filter or associate downloads metadata by owning unit or department IDs consistent with E10-S03’s chosen single downloads root.
+  - Render contact content from department frontmatter or linked governed entries, not ad hoc literals.
+dependencies:
+  - E5-S02
+  - E10-S03
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/pages/departments/[slug]/downloads.astro
+    - src/pages/departments/[slug]/contact.astro
+    - src/components/departments/**
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/pages/resources/downloads/**
+    - src/content/config.ts
+    - src/content.config.ts
+    - public/documents/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm implementation follows DESIGN.md for contact blocks, tables, and link treatments.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md §4.2 downloads root decision and §6 department subtree rules.
+  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm no forbidden files were changed.
+  - Confirm download and contact copy remain governed data suitable for future CMS editorial control.

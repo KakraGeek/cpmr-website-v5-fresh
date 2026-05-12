@@ -1,0 +1,56 @@
+id: E5-S01
+epic: E5
+sprint_order: 501
+title: Departments index
+status: TODO
+architect_gate_required: Yes
+user_story: >
+  As a user, I want to browse verified departments.
+acceptance_criteria:
+  - The /departments/ route lists departments from the governed departments collection.
+  - Departments that are not verified are omitted from the public listing per docs/02_design/03_ux_blueprint.md §10.4.
+  - Collection frontmatter and listing logic preserve future headless CMS and build-time ingestion compatibility (no runtime CMS on the public host for MVP).
+tasks:
+  - Add or extend the departments content collection schema and seed entries under src/content/departments/ per docs/03_architecture/04_architecture.md §5–§6.
+  - Implement src/pages/departments/index.astro to list only departments approved for public display.
+  - Register the collection in src/content.config.ts or src/content/config.ts following the existing E0-S04 entry point.
+dependencies:
+  - E0-S04
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/pages/departments/index.astro
+    - src/content/departments/**
+    - src/content.config.ts
+    - src/content/config.ts
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/pages/index.astro
+    - src/pages/about/**
+    - src/pages/research/**
+    - src/pages/services/**
+    - src/pages/news/**
+    - src/pages/events/**
+    - src/pages/products/**
+    - src/components/layout/**
+    - public/documents/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm implementation follows DESIGN.md for any UI used on the index.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md (static routes, collections, department slug rules).
+  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm no forbidden files were changed.
+  - Confirm governed department copy and flags live in src/content/ (or agreed data layer), not hardcoded per-department components.

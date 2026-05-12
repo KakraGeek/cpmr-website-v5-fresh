@@ -1,0 +1,47 @@
+id: E6-S04
+epic: E6
+sprint_order: 604
+title: Publications library
+status: TODO
+architect_gate_required: Yes
+user_story: >
+  As an academic, I search and filter publications.
+acceptance_criteria:
+  - Listing and detail routes exist when implemented per docs/04_stories/05_story_map.md.
+  - Filters remain static-compatible per docs/01_planning/02_prd.md §12 P2; PDF gating respected.
+  - Publication list patterns align with DESIGN.md for reuse from department routes.
+tasks:
+  - Implement per docs/04_stories/05_story_map.md Epic E6 story E6-S04 after research hub prerequisites are met.
+dependencies:
+  - E0-S04
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/pages/research/publications/**
+    - src/content/publications/**
+    - src/content.config.ts
+    - src/content/config.ts
+    - src/components/content/**
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/pages/departments/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed.
+  - Confirm implementation follows DESIGN.md.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md.
+  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm publication content remains governed under src/content for future CMS compatibility.

@@ -1,0 +1,51 @@
+id: E5-S04
+epic: E5
+sprint_order: 504
+title: Department staff listing
+status: TODO
+architect_gate_required: Yes
+user_story: >
+  As a visitor, I want to meet the department team.
+acceptance_criteria:
+  - The route /departments/[slug]/staff/ lists staff linked to the department.
+  - Basic client-side filters are available where content supports them; interactions remain keyboard operable.
+  - Staff cards meet accessibility expectations (headings, links, images with appropriate alt text per DESIGN.md §15).
+tasks:
+  - Implement the department staff route under src/pages/departments/[slug]/ per the story map (e.g. staff.astro or staff/index.astro) consistent with the project trailing-slash policy.
+  - Query the staff collection from E6-S03 and filter by stable department relationship IDs agreed in frontmatter.
+  - Render honest empty states when no staff entries match the department.
+dependencies:
+  - E5-S02
+  - E6-S03
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/pages/departments/[slug]/staff.astro
+    - src/pages/departments/[slug]/staff/**
+    - src/components/departments/**
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/pages/departments/index.astro
+    - src/content/config.ts
+    - src/content.config.ts
+    - public/documents/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm implementation follows DESIGN.md for cards, focus, and imagery.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md §5 relationship IDs and build-time resolution.
+  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm no forbidden files were changed.
+  - Confirm staff source remains the shared collection (future CMS) with departmentId-style keys consistent across epics.

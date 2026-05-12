@@ -1,0 +1,51 @@
+id: E5-S06
+epic: E5
+sprint_order: 506
+title: Department publications listing
+status: TODO
+architect_gate_required: Yes
+user_story: >
+  As an academic, I want to filter publications by department.
+acceptance_criteria:
+  - The route /departments/[slug]/publications/ lists publications scoped to the department.
+  - List items reuse the publication list item pattern from DESIGN.md.
+  - Filtering respects static output constraints (client-side or build-time partitioning per PRD/architecture; no SSR).
+tasks:
+  - Implement src/pages/departments/[slug]/publications.astro (or equivalent path matching the agreed trailing-slash policy).
+  - Consume the publications collection from E6-S04 and filter by department relationship fields.
+  - Align markup and styling with the PublicationItem (or equivalent) pattern named in DESIGN.md.
+dependencies:
+  - E5-S02
+  - E6-S04
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/pages/departments/[slug]/publications.astro
+    - src/components/departments/**
+    - src/components/content/**
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/pages/research/publications/**
+    - src/content/config.ts
+    - src/content.config.ts
+    - public/documents/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm implementation follows DESIGN.md for publication list items and accessibility.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md static publication routing and PDF gating rules.
+  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm no forbidden files were changed.
+  - Confirm publication metadata remains collection-driven for future CMS compatibility.

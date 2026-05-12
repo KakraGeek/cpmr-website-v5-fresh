@@ -1,0 +1,50 @@
+id: E5-S05
+epic: E5
+sprint_order: 505
+title: Department projects listing
+status: TODO
+architect_gate_required: Yes
+user_story: >
+  As a researcher, I want to see projects associated with a department.
+acceptance_criteria:
+  - The route /departments/[slug]/projects/ lists projects filtered by departmentId (or the project schema’s agreed department foreign key).
+  - Project links resolve to the project detail routes defined in the research epic when those routes exist.
+  - Empty states are shown when no projects match the department.
+tasks:
+  - Implement src/pages/departments/[slug]/projects/ (index and optional [project-slug] child routes per docs/03_architecture/04_architecture.md §6.2 examples).
+  - Filter the projects collection from E6-S02 at build time using stable string IDs in frontmatter.
+  - Reuse or align list/detail presentation with DESIGN.md patterns for research content where applicable.
+dependencies:
+  - E5-S02
+  - E6-S02
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/pages/departments/[slug]/projects/**
+    - src/components/departments/**
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/pages/research/projects/**
+    - src/content/config.ts
+    - src/content.config.ts
+    - public/documents/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm implementation follows DESIGN.md for list layouts and interactive affordances.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md §5–§6 for relationships and URLs.
+  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm no forbidden files were changed.
+  - Confirm project records remain governed content with stable departmentId references for future CMS ingestion.
