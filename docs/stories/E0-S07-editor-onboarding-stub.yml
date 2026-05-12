@@ -2,45 +2,52 @@ id: E0-S07
 epic: E0
 sprint_order: 7
 title: Editor onboarding stub
-status: TODO
-architect_gate_required: No
-user_story: >
-  As an editor, I want a short doc explaining governed files vs components.
+status: DEV_COMPLETE
+architect_gate_required: false
+user_story: 'As an editor, I want a short doc explaining governed files vs components.
+
+  '
 acceptance_criteria:
-  - README.md or a docs/ snippet explains src/content and src/data ownership versus components.
-  - Build and preview commands for editors are referenced per docs/01_planning/02_prd.md §29.
+- README.md or a docs/ snippet explains src/content and src/data ownership versus
+  components.
+- Build and preview commands for editors are referenced per docs/01_planning/02_prd.md
+  §29.
 tasks:
-  - Add or extend README.md with governed-content ownership (src/content, src/data) vs presentation code.
-  - Optionally add docs/E0-editor-onboarding.md if the snippet is not placed in README.md.
-  - Document npm run dev and npm run preview for local review per PRD §29.
+- Add or extend README.md with governed-content ownership (src/content, src/data)
+  vs presentation code.
+- Optionally add docs/E0-editor-onboarding.md if the snippet is not placed in README.md.
+- Document npm run dev and npm run preview for local review per PRD §29.
 dependencies:
-  - E0-S03
+- E0-S03
 context_files:
-  - docs/04_stories/05_story_map.md
-  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
-  - docs/01_planning/01_analysis.md
-  - docs/01_planning/02_prd.md
-  - docs/02_design/03_ux_blueprint.md
-  - docs/02_design/DESIGN.md
-  - docs/03_architecture/04_architecture.md
-  - docs/03_architecture/06_project_context.md
+- docs/04_stories/05_story_map.md
+- docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+- docs/01_planning/01_analysis.md
+- docs/01_planning/02_prd.md
+- docs/02_design/03_ux_blueprint.md
+- docs/02_design/DESIGN.md
+- docs/03_architecture/04_architecture.md
+- docs/03_architecture/06_project_context.md
 execution:
   files_allowed:
-    - README.md
-    - docs/E0-editor-onboarding.md
+  - README.md
+  - docs/E0-editor-onboarding.md
   files_forbidden:
-    - astro.config.mjs
-    - package.json
-    - src/**
-    - docs/02_design/DESIGN.md
-    - public/documents/**
+  - astro.config.mjs
+  - package.json
+  - src/**
+  - docs/02_design/DESIGN.md
+  - public/documents/**
   verification_commands:
-    - npm run build
-    - npm run validate
+  - npm run build
+  - npm run validate
 qa_checklist:
-  - Confirm every acceptance criterion is satisfied.
-  - Confirm no forbidden files were changed.
-  - Confirm editorial guidance does not contradict docs/02_design/DESIGN.md or governance in docs/03_architecture/06_project_context.md.
-  - Confirm guidance reflects docs/03_architecture/04_architecture.md §9 data and content rules.
-  - Confirm static build passes via npm run build.
-  - Confirm forbidden-file validation (only allowed paths touched).
+- Confirm every acceptance criterion is satisfied.
+- Confirm no forbidden files were changed.
+- Confirm editorial guidance does not contradict docs/02_design/DESIGN.md or governance
+  in docs/03_architecture/06_project_context.md.
+- Confirm guidance reflects docs/03_architecture/04_architecture.md §9 data and content
+  rules.
+- Confirm static build passes via npm run build.
+- Confirm forbidden-file validation (only allowed paths touched).
+last_updated: '2026-05-12 18:00:00'

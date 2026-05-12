@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# automation local output
+automation/__pycache__/
+automation/out/
