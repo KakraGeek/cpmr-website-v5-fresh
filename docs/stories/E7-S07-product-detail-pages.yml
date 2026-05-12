@@ -1,21 +1,20 @@
-id: E7-S01
+id: E7-S07
 epic: E7
-sprint_order: 701
-title: Services hub
+sprint_order: 707
+title: Product detail pages
 status: TODO
 architect_gate_required: No
 user_story: >
-  As a visitor, I want to understand available services grouped logically so that I can find the right operational offering.
+  As a user, I want a clear product detail page so that I can review facts, responsible-use guidance, imagery, and how to enquire.
 acceptance_criteria:
-  - The /services/ route exists and renders inside the site shell.
-  - Service entry points are grouped in a logical structure.
-  - Clinic and DAU are promoted first per docs/02_design/03_ux_blueprint.md §15.
+  - Product detail URLs resolve for each product entry in the products collection.
+  - The template shows image with alt text when provided, a responsible-use note, and an enquiry CTA per story map.
 tasks:
-  - Add src/pages/services/index.astro using BaseLayout and breadcrumbs as required by upstream layout stories.
-  - Implement grouped links to service destinations with Clinic and DAU visually prioritized.
-  - Source durable copy and link targets from governed content or data files where institutional truth applies; avoid unapproved nav links.
+  - Implement dynamic product detail under src/pages/products/ using the products collection slugs.
+  - Apply DESIGN.md image and typography tokens; ensure one logical h1 per page.
+  - Surface responsible-use copy and enquiry link from frontmatter or body content only—no invented claims.
 dependencies:
-  - E2-S07
+  - E7-S06
 context_files:
   - docs/04_stories/05_story_map.md
   - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
@@ -27,21 +26,22 @@ context_files:
   - docs/03_architecture/06_project_context.md
 execution:
   files_allowed:
-    - src/pages/services/index.astro
+    - src/pages/products/**
     - src/components/content/**
-    - src/content/services/**
-    - src/data/**
+    - src/content/products/**
   files_forbidden:
     - astro.config.mjs
     - package.json
     - src/layouts/**
-    - src/pages/products/**
+    - src/pages/services/**
     - src/pages/departments/**
     - src/pages/research/**
     - src/pages/news/**
     - src/pages/events/**
     - src/pages/media/**
     - src/components/search/**
+    - src/content.config.ts
+    - src/content/config.ts
   verification_commands:
     - npm run build
     - npm run validate
@@ -51,4 +51,4 @@ qa_checklist:
   - Confirm implementation follows docs/02_design/DESIGN.md.
   - Confirm implementation follows docs/03_architecture/04_architecture.md.
   - Confirm static build passes (npm run build / npm run validate).
-  - Confirm governed institutional strings use src/content/ or src/data/ as appropriate for future CMS compatibility.
+  - Confirm product facts remain sourced from the products collection for future CMS compatibility.

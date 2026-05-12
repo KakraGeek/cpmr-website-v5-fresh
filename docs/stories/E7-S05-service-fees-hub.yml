@@ -1,21 +1,22 @@
-id: E7-S01
+id: E7-S05
 epic: E7
-sprint_order: 701
-title: Services hub
+sprint_order: 705
+title: Service fees hub
 status: TODO
 architect_gate_required: No
 user_story: >
-  As a visitor, I want to understand available services grouped logically so that I can find the right operational offering.
+  As finance staff, I want an authoritative fees hub so that fee tables are dated, explained, and linked back to owning service pages.
 acceptance_criteria:
-  - The /services/ route exists and renders inside the site shell.
-  - Service entry points are grouped in a logical structure.
-  - Clinic and DAU are promoted first per docs/02_design/03_ux_blueprint.md §15.
+  - The /services/fees/ route exists.
+  - The page explains fee dating policy and links to relevant service pages per story map.
+  - Fee tables use accessible table semantics when tables are present.
+  - lastReviewed (or equivalent) metadata is shown when present in content.
 tasks:
-  - Add src/pages/services/index.astro using BaseLayout and breadcrumbs as required by upstream layout stories.
-  - Implement grouped links to service destinations with Clinic and DAU visually prioritized.
-  - Source durable copy and link targets from governed content or data files where institutional truth applies; avoid unapproved nav links.
+  - Add src/pages/services/fees.astro (or index under src/pages/services/fees/) using governed content for fee copy and table data.
+  - Link from the hub to Clinic, DAU, and other service pages only where targets are approved.
+  - Ensure table captions/headers align with DESIGN.md accessibility baseline.
 dependencies:
-  - E2-S07
+  - E7-S01
 context_files:
   - docs/04_stories/05_story_map.md
   - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
@@ -27,15 +28,16 @@ context_files:
   - docs/03_architecture/06_project_context.md
 execution:
   files_allowed:
-    - src/pages/services/index.astro
-    - src/components/content/**
+    - src/pages/services/fees.astro
+    - src/pages/services/fees/index.astro
     - src/content/services/**
-    - src/data/**
+    - src/components/content/**
   files_forbidden:
     - astro.config.mjs
     - package.json
     - src/layouts/**
     - src/pages/products/**
+    - src/pages/services/[slug].astro
     - src/pages/departments/**
     - src/pages/research/**
     - src/pages/news/**
@@ -51,4 +53,4 @@ qa_checklist:
   - Confirm implementation follows docs/02_design/DESIGN.md.
   - Confirm implementation follows docs/03_architecture/04_architecture.md.
   - Confirm static build passes (npm run build / npm run validate).
-  - Confirm governed institutional strings use src/content/ or src/data/ as appropriate for future CMS compatibility.
+  - Confirm fee narrative and tables live in governed content for future CMS compatibility.
