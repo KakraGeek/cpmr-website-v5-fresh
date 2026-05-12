@@ -1,0 +1,58 @@
+id: E4-S05
+epic: E4
+sprint_order: 405
+title: Board and Management tables
+status: TODO
+architect_gate_required: No
+user_story: >
+  As a researcher, I verify governance bodies.
+acceptance_criteria:
+  - Board and Management governance content is presented in accessible tables (or definition lists if tables are not appropriate) with captions per accessibility expectations in docs/02_design/03_ux_blueprint.md §8.2.
+  - Responsive stacking or scrolling behaviour matches DESIGN.md table guidance.
+tasks:
+  - Implement routes under src/pages/about/ for Board and Management content per docs/02_design/03_ux_blueprint.md §8.2 (Board / Management).
+  - Implement or reuse a Table (or equivalent) UI primitive using DESIGN.md tokens only.
+  - Source table rows from governed src/content/pages (or agreed data files) without hard-coding unverified names beyond approved content.
+dependencies:
+  - E4-S01
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/pages/about/board/**
+    - src/pages/about/management/**
+    - src/content/pages/**
+    - src/components/content/**
+    - src/components/ui/Table.astro
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/layouts/**
+    - src/components/layout/**
+    - src/pages/index.astro
+    - src/pages/about/index.astro
+    - src/pages/departments/**
+    - src/pages/research/**
+    - src/pages/services/**
+    - src/pages/news/**
+    - src/pages/events/**
+    - src/pages/products/**
+    - src/content/staff/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm implementation follows DESIGN.md.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md.
+  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm no forbidden files were changed.
+  - Confirm governance table data is governed in src/content/pages (or agreed location) for future CMS compatibility.

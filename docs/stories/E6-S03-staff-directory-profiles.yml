@@ -1,0 +1,58 @@
+id: E6-S03
+epic: E6
+sprint_order: 603
+title: Staff directory and profiles
+status: TODO
+architect_gate_required: No
+user_story: >
+  As a user, I browse people with filters.
+acceptance_criteria:
+  - A global staff directory exists at /research/researchers/ or the agreed alternative path documented in the implementation PR.
+  - Profile detail routes resolve from the staff collection with a single profile template pattern.
+  - Department relationships surface as links when staff entries reference departments per docs/03_architecture/04_architecture.md relationship rules.
+  - Client-side filters for the directory are static-compatible (no SSR) per docs/04_stories/05_story_map.md.
+tasks:
+  - Define or extend the staff content collection schema in src/content.config.ts (or src/content/config.ts) aligned with docs/03_architecture/04_architecture.md §5.
+  - Implement src/pages/research/researchers/ listing and profile detail routes backed by src/content/staff/.
+  - Add minimal filter UI using client-side only behaviour suitable for static output.
+dependencies:
+  - E0-S04
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/pages/research/researchers/**
+    - src/content/staff/**
+    - src/content.config.ts
+    - src/content/config.ts
+    - src/components/content/**
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/layouts/**
+    - src/components/layout/**
+    - src/pages/index.astro
+    - src/pages/about/**
+    - src/pages/departments/**
+    - src/pages/services/**
+    - src/pages/news/**
+    - src/pages/events/**
+    - src/pages/products/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm implementation follows DESIGN.md.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md.
+  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm no forbidden files were changed.
+  - Confirm staff entries remain governed in src/content/staff for future CMS compatibility.

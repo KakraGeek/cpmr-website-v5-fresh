@@ -1,0 +1,57 @@
+id: E4-S02
+epic: E4
+sprint_order: 402
+title: Overview and History
+status: TODO
+architect_gate_required: No
+user_story: >
+  As a citizen, I learn narrative and milestones.
+acceptance_criteria:
+  - Routes exist for /about/overview/ and /about/history/ using template T_GENERIC_CONTENT from DESIGN.md.
+  - History page exposes a milestone timeline when content provides it; timeline is keyboard-focusable per docs/02_design/03_ux_blueprint.md §8.2.
+tasks:
+  - Add Astro routes under src/pages/about/overview/ and src/pages/about/history/ composed with T_GENERIC_CONTENT.
+  - Add or update governed markdown (or equivalent) under src/content/pages for Overview and History per docs/04_stories/05_story_map.md.
+  - Wire timeline markup and focus behaviour when timeline entries exist.
+dependencies:
+  - E4-S01
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/pages/about/overview/**
+    - src/pages/about/history/**
+    - src/content/pages/**
+    - src/components/content/**
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/layouts/**
+    - src/components/layout/**
+    - src/pages/index.astro
+    - src/pages/about/index.astro
+    - src/pages/departments/**
+    - src/pages/research/**
+    - src/pages/services/**
+    - src/pages/news/**
+    - src/pages/events/**
+    - src/pages/products/**
+    - src/content/staff/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm implementation follows DESIGN.md (including T_GENERIC_CONTENT).
+  - Confirm implementation follows docs/03_architecture/04_architecture.md.
+  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm no forbidden files were changed.
+  - Confirm page body copy lives in src/content/pages (or agreed governed location) for future CMS compatibility.
