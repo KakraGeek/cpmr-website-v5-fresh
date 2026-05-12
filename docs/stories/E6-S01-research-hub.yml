@@ -1,0 +1,47 @@
+id: E6-S01
+epic: E6
+sprint_order: 601
+title: Research hub
+status: TODO
+architect_gate_required: No
+user_story: >
+  As a researcher, I start discovery from an institutional overview.
+acceptance_criteria:
+  - The /research/ route provides institutional narrative plus links to themes, projects, publications, and profiles per docs/04_stories/05_story_map.md and docs/02_design/03_ux_blueprint.md §9.
+tasks:
+  - Implement src/pages/research/index.astro using BaseLayout and Breadcrumbs from prior epics.
+  - Source overview copy and hub links from governed src/content so the route stays build-time data-driven and future CMS-compatible.
+dependencies:
+  - E2-S07
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/pages/research/index.astro
+    - src/content/research/**
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/pages/research/projects/**
+    - src/pages/research/publications/**
+    - src/pages/research/researchers/**
+    - src/layouts/**
+    - src/components/layout/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed.
+  - Confirm implementation follows DESIGN.md.
+  - Confirm implementation follows architecture.
+  - Confirm static build passes.
+  - Confirm hub copy and links remain governed in src/content for future CMS compatibility.

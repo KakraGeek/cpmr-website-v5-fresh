@@ -7,13 +7,14 @@ architect_gate_required: Yes
 user_story: >
   As an academic, I search and filter publications.
 acceptance_criteria:
-  - Listing and detail routes exist when implemented per docs/04_stories/05_story_map.md.
-  - Filters remain static-compatible per docs/01_planning/02_prd.md §12 P2; PDF gating respected.
+  - Publications listing and detail routes exist per docs/04_stories/05_story_map.md.
+  - Filters remain static-compatible per docs/01_planning/02_prd.md §12 P2; PDF gating is respected.
   - Publication list patterns align with DESIGN.md for reuse from department routes.
 tasks:
-  - Implement per docs/04_stories/05_story_map.md Epic E6 story E6-S04 after research hub prerequisites are met.
+  - Implement publications collection and /research/publications/ routes per docs/04_stories/05_story_map.md Epic E6 story E6-S04 after E6-S01.
+  - Implement static-compatible discovery aids (e.g. client-side filtering of a build-generated index or paginated static lists) per docs/01_planning/02_prd.md §12 P2.
 dependencies:
-  - E0-S04
+  - E6-S01
 context_files:
   - docs/04_stories/05_story_map.md
   - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
@@ -42,6 +43,6 @@ qa_checklist:
   - Confirm every acceptance criterion is satisfied.
   - Confirm no forbidden files were changed.
   - Confirm implementation follows DESIGN.md.
-  - Confirm implementation follows docs/03_architecture/04_architecture.md.
-  - Confirm static build passes (npm run build / npm run validate).
-  - Confirm publication content remains governed under src/content for future CMS compatibility.
+  - Confirm implementation follows architecture.
+  - Confirm static build passes.
+  - Confirm publication content remains governed in src/content for future CMS compatibility.

@@ -7,12 +7,14 @@ architect_gate_required: Yes
 user_story: >
   As a scientist, I read structured project stories.
 acceptance_criteria:
-  - Index and /research/projects/[slug]/ detail routes exist when this story is implemented.
-  - Project fields align with docs/01_planning/02_prd.md §11 R2 and relationships per docs/03_architecture/04_architecture.md §5.
+  - Research projects index and /research/projects/[slug]/ detail routes exist per docs/04_stories/05_story_map.md.
+  - Project fields align with docs/01_planning/02_prd.md §11 R2; relationships follow docs/03_architecture/04_architecture.md §5.
   - Implementation preserves build-time collection patterns for future CMS compatibility.
 tasks:
-  - Implement per docs/04_stories/05_story_map.md Epic E6 story E6-S02 (blocked until E6-S01 exists if required by sequencing).
+  - Define the projects content collection and pages per docs/04_stories/05_story_map.md Epic E6 story E6-S02 after E6-S01 and E0-S04 prerequisites.
+  - Wire department and staff cross-links when frontmatter references exist.
 dependencies:
+  - E6-S01
   - E0-S04
 context_files:
   - docs/04_stories/05_story_map.md
@@ -41,6 +43,6 @@ qa_checklist:
   - Confirm every acceptance criterion is satisfied.
   - Confirm no forbidden files were changed.
   - Confirm implementation follows DESIGN.md.
-  - Confirm implementation follows docs/03_architecture/04_architecture.md.
-  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm implementation follows architecture.
+  - Confirm static build passes.
   - Confirm collection usage stays compatible with future CMS ingestion.

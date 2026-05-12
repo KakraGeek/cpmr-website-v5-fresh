@@ -7,7 +7,7 @@ architect_gate_required: No
 user_story: >
   As a user, I browse people with filters.
 acceptance_criteria:
-  - A global staff directory exists at /research/researchers/ or the agreed alternative path documented in the implementation PR.
+  - A global staff directory exists at /research/researchers/ or an agreed alternative path documented in the implementation PR.
   - Profile detail routes resolve from the staff collection with a single profile template pattern.
   - Department relationships surface as links when staff entries reference departments per docs/03_architecture/04_architecture.md relationship rules.
   - Client-side filters for the directory are static-compatible (no SSR) per docs/04_stories/05_story_map.md.
@@ -51,8 +51,8 @@ execution:
     - npm run validate
 qa_checklist:
   - Confirm every acceptance criterion is satisfied.
-  - Confirm implementation follows DESIGN.md.
-  - Confirm implementation follows docs/03_architecture/04_architecture.md.
-  - Confirm static build passes (npm run build / npm run validate).
   - Confirm no forbidden files were changed.
+  - Confirm implementation follows DESIGN.md.
+  - Confirm implementation follows architecture.
+  - Confirm static build passes.
   - Confirm staff entries remain governed in src/content/staff for future CMS compatibility.
