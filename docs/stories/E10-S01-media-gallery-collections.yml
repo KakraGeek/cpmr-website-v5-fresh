@@ -1,0 +1,65 @@
+id: E10-S01
+epic: E10
+sprint_order: 1001
+title: Media gallery collections
+status: TODO
+architect_gate_required: Yes
+user_story: >
+  As media staff, I publish albums with captions so that institutional photography is presented with governed metadata.
+acceptance_criteria:
+  - A gallery content collection is registered in src/content.config.ts or src/content/config.ts with a schema aligned to docs/01_planning/02_prd.md §21 (G1 albums grouped with captions and alt text; G2 optional relationships to events and departments; G3 video embed flags only when allowed by privacy/load policies).
+  - The schema models albums with title, slug, cover image, date, image list (each image with src, alt text, and optional caption), and optional foreign-key string IDs for related departments and events consistent with docs/03_architecture/04_architecture.md §5.
+  - Alt text is required by schema for non-decorative images per docs/01_planning/02_prd.md §7 C4 and docs/02_design/DESIGN.md §15.
+  - At least one governed entry exists under src/content/gallery so a production build can resolve the collection without referencing the entries from any public route yet.
+  - Frontmatter field names and structure remain compatible with future headless CMS or build-time ingestion per docs/03_architecture/04_architecture.md §16.
+tasks:
+  - Add defineCollection (or project-equivalent) for gallery with Zod fields covering album metadata, image list with mandatory alt text, and optional related department and event IDs.
+  - Create one or more seed markdown entries under src/content/gallery with valid frontmatter that the build can resolve.
+  - Document any image asset placement convention (src/assets vs public) inline with the schema or an adjacent editor note, deferring all consumption to E10-S02.
+  - Keep frontmatter and folder layout compatible with future headless CMS migration and build-time ingestion.
+dependencies:
+  - E0-S04
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/content/gallery/**
+    - src/content.config.ts
+    - src/content/config.ts
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/pages/**
+    - src/components/**
+    - src/layouts/**
+    - public/documents/**
+    - src/content/downloads/**
+    - src/content/events/**
+    - src/content/news/**
+    - src/content/announcements/**
+    - src/content/departments/**
+    - src/content/staff/**
+    - src/content/projects/**
+    - src/content/publications/**
+    - src/content/services/**
+    - src/content/products/**
+    - src/content/pages/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed.
+  - Confirm implementation follows DESIGN.md.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md.
+  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm forbidden-file validation (only allowed paths touched).
+  - Confirm gallery entries remain governed under src/content/gallery for future CMS compatibility.

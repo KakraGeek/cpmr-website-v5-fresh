@@ -1,0 +1,52 @@
+id: E10-S04
+epic: E10
+sprint_order: 1004
+title: Download integrity workflow
+status: TODO
+architect_gate_required: No
+user_story: >
+  As an editor, I want a documented workflow for replacing download files so that I can update PDFs and forms safely without breaking links or losing version history.
+acceptance_criteria:
+  - A documented workflow describes how editors replace download files with a changelog expectation per docs/01_planning/02_prd.md §22 DL4 and the integrity rule in docs/03_architecture/04_architecture.md §11.2.
+  - The documentation covers file replacement steps for entries under public/documents/** and corresponding metadata updates in src/content/downloads (date, document type, owning unit, file size/format) so DL2 metadata stays truthful.
+  - The documentation explicitly states that broken download links must never ship and that the build must fail or the entry must be omitted if a referenced file is missing, consistent with docs/02_design/DESIGN.md §13.22 and docs/03_architecture/04_architecture.md §19.
+  - The documentation references the chosen single downloads URL root recorded in E10-S03 and does not introduce a competing root.
+  - The documentation lives under docs/ and/or the project README and does not modify any runtime source, schemas, routes, build config, deployment config, or DESIGN.md.
+  - Review cadence guidance is consistent with docs/01_planning/02_prd.md §7 C5 (fees/contact quarterly; departments/staff semi-annual; static institutional pages annual) where downloads carry equivalent dated metadata.
+tasks:
+  - Author a downloads integrity and replacement workflow section under docs/ (e.g. an editor-facing note co-located with the downloads collection or appended to an existing editor-onboarding doc from E0-S07) describing replacement steps, changelog expectations, and DL2 metadata updates.
+  - Cross-link the workflow to the downloads collection schema introduced in E10-S03 and to docs/01_planning/02_prd.md §22 and docs/03_architecture/04_architecture.md §11.2.
+  - Update README.md or the relevant docs/ index to point editors at the new workflow.
+  - Confirm no runtime source files, schemas, routes, build config, or DESIGN.md are touched by this story.
+dependencies:
+  - E10-S03
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - docs/**
+    - README.md
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/**
+    - public/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed.
+  - Confirm implementation follows DESIGN.md (no UI or token changes; references DownloadCard integrity rules in §13.22).
+  - Confirm implementation follows docs/03_architecture/04_architecture.md (no routing, schema, or deployment changes; consistent with §11.2 and §19).
+  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm forbidden-file validation (only docs and README touched; no src or public changes).
+  - Confirm workflow keeps downloads governed under src/content/downloads and public/documents for future CMS compatibility.

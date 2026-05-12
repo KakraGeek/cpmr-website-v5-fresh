@@ -5,14 +5,28 @@ title: Downloads centre
 status: TODO
 architect_gate_required: Yes
 user_story: >
-  As a user, I find PDFs and forms quickly.
+  As a user, I want to find PDFs and forms quickly so that I can download authoritative CPMR documents with clear metadata.
 acceptance_criteria:
-  - A single downloads root is chosen and documented per docs/03_architecture/04_architecture.md §4.2 when implemented.
-  - Client-side filters and metadata display per docs/04_stories/05_story_map.md Epic E10.
+  - A single downloads URL root is chosen between /resources/downloads/ and /downloads/ and recorded in the implementation PR or docs, per docs/03_architecture/04_architecture.md §4.2 and docs/02_design/03_ux_blueprint.md §22.
+  - A downloads content collection is registered in src/content.config.ts or src/content/config.ts with a schema aligned to docs/01_planning/02_prd.md §22 (DL2 metadata fields title, description, document type, date, owning unit, file size/format; DL3 filters; DL4 integrity expectations).
+  - The downloads hub route lists entries grouped or categorised per docs/01_planning/02_prd.md §22 DL1 (annual reports, forms, brochures, policies, service documents) with metadata surfaced accessibly per docs/02_design/DESIGN.md §13.22 DownloadCard.
+  - Category and date filters are implemented client-side using static-compatible mechanisms (no SSR, no server endpoints) per docs/01_planning/02_prd.md §22 DL3 and docs/03_architecture/04_architecture.md §3.
+  - DownloadCard rendering follows docs/02_design/DESIGN.md §13.22 (list row layout, file-type icon by extension, explicit "Download" action label, visible "(PDF, 2.4 MB)" style summary) with tokens only and no arbitrary Tailwind values.
+  - If a referenced file is missing at build, the build fails or the entry is omitted rather than rendering a broken link, per docs/02_design/DESIGN.md §13.22 accessibility note and docs/03_architecture/04_architecture.md §19 forbidden patterns.
+  - PDFs and forms referenced by entries are stored under public/documents/** (or the agreed stable URL location) per docs/03_architecture/04_architecture.md §11.2.
+  - One h1 per route, breadcrumbs reused from the E2 layout, and an honest empty state when a filter has no matches per docs/02_design/03_ux_blueprint.md §27.
 tasks:
-  - Implement per docs/04_stories/05_story_map.md Epic E10 story E10-S03; record chosen URL root in the implementation PR or docs as required by architecture.
+  - Decide and record the single downloads URL root (e.g. /resources/downloads/ or /downloads/) and document it in the route file header or adjacent README note.
+  - Add defineCollection for downloads with Zod fields covering DL2 metadata and the path to the binary asset under public/documents.
+  - Seed governed entries under src/content/downloads with valid frontmatter so the hub renders.
+  - Implement the downloads hub route under the chosen single root that consumes the downloads collection and renders DownloadCard list rows grouped by category.
+  - Implement client-side filters (category, date, file type, owning unit) using minimal vanilla JS or a story-justified island; no SSR.
+  - Ensure file-existence validation at build time so broken entries fail the build or are omitted rather than ship as broken links.
+  - Place binary assets under public/documents/** with stable URLs and confirm relative paths render correctly under the chosen root.
 dependencies:
   - E0-S04
+  - E2-S01
+  - E2-S07
 context_files:
   - docs/04_stories/05_story_map.md
   - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
@@ -30,17 +44,51 @@ execution:
     - src/content.config.ts
     - src/content/config.ts
     - src/components/content/**
+    - public/documents/**
   files_forbidden:
     - astro.config.mjs
     - package.json
     - docs/02_design/DESIGN.md
+    - src/layouts/**
+    - src/components/layout/**
+    - src/components/ui/**
+    - src/components/search/**
+    - src/components/departments/**
+    - src/components/media/**
+    - src/pages/index.astro
+    - src/pages/about/**
+    - src/pages/departments/**
+    - src/pages/research/**
+    - src/pages/services/**
+    - src/pages/products/**
+    - src/pages/news/**
+    - src/pages/events/**
+    - src/pages/announcements/**
+    - src/pages/media/**
+    - src/pages/media-gallery/**
+    - src/pages/search/**
+    - src/pages/contact/**
+    - src/pages/careers/**
+    - src/content/gallery/**
+    - src/content/events/**
+    - src/content/news/**
+    - src/content/announcements/**
+    - src/content/departments/**
+    - src/content/staff/**
+    - src/content/projects/**
+    - src/content/publications/**
+    - src/content/services/**
+    - src/content/products/**
+    - src/content/pages/**
   verification_commands:
     - npm run build
     - npm run validate
 qa_checklist:
   - Confirm every acceptance criterion is satisfied.
   - Confirm no forbidden files were changed.
-  - Confirm implementation follows DESIGN.md.
-  - Confirm implementation follows docs/03_architecture/04_architecture.md.
+  - Confirm implementation follows DESIGN.md (DownloadCard, tokens, no arbitrary Tailwind values).
+  - Confirm implementation follows docs/03_architecture/04_architecture.md (single chosen root, no SSR, static filters, public/documents asset placement).
   - Confirm static build passes (npm run build / npm run validate).
-  - Confirm download entries remain governed for future CMS compatibility.
+  - Confirm forbidden-file validation (only allowed paths touched).
+  - Confirm no broken download links ship (missing files fail the build or are omitted).
+  - Confirm download entries and asset references remain governed under src/content/downloads for future CMS compatibility.
