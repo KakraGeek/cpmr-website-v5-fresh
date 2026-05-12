@@ -1,166 +1,131 @@
-# CPMR Project Context — Implementation Constitution
+---
+project_name: cpmr-website-v5-fresh
+user_name: Kakra
+date: '2026-05-12'
+sections_completed:
+  - technology_stack
+  - language_rules
+  - framework_rules
+  - testing_rules
+  - quality_rules
+  - workflow_rules
+  - anti_patterns
+status: complete
+rule_count: 48
+optimized_for_llm: true
+inputs:
+  - docs/01_planning/02_prd.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+---
 
-This document is the **binding implementation constitution** for AI agents working on the CPMR institutional website **fresh Astro static rebuild**. It complements human-readable architecture and planning docs; when instructions conflict, resolve using **forbidden assumptions** and **human review** sections below.
+# Project Context for AI Agents — CPMR
 
-**BMAD output convention:** Primary generated artifacts live under `_bmad-output/` per `_bmad/bmm/config.yaml`. This file remains the canonical **project rules** location at `docs/03_architecture/06_project_context.md`.
+_This file is the **implementation constitution** for the CPMR institutional website. Agents must follow it before writing or changing code. It emphasizes unobvious constraints that are easy to violate. Primary planning artifacts also live under `_bmad-output/` per `_bmad/bmm/config.yaml`; this path remains the canonical **project rules** file._
+
+**Conflict resolution:** If `docs/02_design/DESIGN.md` conflicts with static delivery or this file, **this constitution wins** and `DESIGN.md` must be updated (see `DESIGN.md` §0).
 
 ---
 
-## 1. Project identity
+## Technology Stack & Versions
 
-- **Repository:** `cpmr-website-v5-fresh` (package version `0.0.1`).
-- **Product:** CPMR institutional website — static-first public site rebuilt with **Astro** and **Tailwind CSS v4**.
-- **Owner-facing name in UI (bootstrap):** “CPMR Website Rebuild” (see `src/pages/index.astro`) until content stories replace it.
-- **Authoritative planning and design inputs** (read before expanding scope):  
-  `docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md`,  
-  `docs/01_planning/01_analysis.md`,  
-  `docs/01_planning/02_prd.md`,  
-  `docs/02_design/03_ux_blueprint.md`,  
-  `docs/02_design/DESIGN.md`,  
-  `docs/03_architecture/04_architecture.md`,  
-  `docs/03_architecture/05_content_architecture_and_cms_strategy.md`,  
-  `docs/04_stories/05_story_map.md`,  
-  `docs/stories/*.yml`,  
-  `automation/active_story.yml`.
+| Layer | Version / choice | Notes |
+| --- | --- | --- |
+| Node.js | `>= 22.12.0` | `package.json` `engines` |
+| Astro | `^6.3.1` | File-based routing; keep `output: 'static'` |
+| Tailwind CSS | `^4.3.0` | Via `@tailwindcss/vite` `^4.3.0` only — no duplicate PostCSS Tailwind pipeline |
+| Vite | via Astro | `tailwindcss()` in `vite.plugins` inside `astro.config.mjs` |
+| TypeScript | project standard | Use where Astro/scripts expect `.ts` |
+| Package manager | **npm** | Scripts: `dev`, `start`, `build`, `preview`, `validate` |
+
+**Authoritative scripts:** `npm run validate` → `astro build` (merge-ready gate). `npm run build` / `preview` for artefact and local static verification. Deploy **`dist/`** to generic static hosting — **no Node on the production server** for core HTML.
 
 ---
 
-## 2. Locked stack
+## Critical Implementation Rules
 
-Do **not** change these choices without an explicit architecture decision and human approval.
+### Language-specific rules
 
-| Layer | Locked choice |
-| --- | --- |
-| Runtime | **Node.js** `>= 22.12.0` (`package.json` `engines`) |
-| Framework | **Astro** `^6.3.1` |
-| Styling | **Tailwind CSS** `^4.3.0` via **`@tailwindcss/vite`** `^4.3.0` |
-| Build | **Vite** (via Astro); Tailwind registered as a Vite plugin in `astro.config.mjs` |
-| Output mode | **`output: 'static'`** — see Section 4 |
-| Package manager | **npm** (scripts in `package.json`) |
+- Prefer **explicit types** in shared utilities and content loaders; match existing Astro/TS patterns in the repo.
+- **Async data:** Use Astro `getStaticPaths` / `getCollection` / `getEntry` patterns — relationships resolve **at build time**, not per-request DB joins.
+- **IDs:** Use stable string keys in frontmatter (`departmentId`, `relatedProjectIds`, etc.) for cross-collection filtering.
 
-**Scripts (authoritative):**
+### Framework-specific rules (Astro)
 
-- `npm run dev` / `npm start` — `astro dev`
-- `npm run build` — `astro build`
-- `npm run preview` — `astro preview` (local verification of static output)
-- `npm run validate` — runs **`astro build`** (build must succeed for validation)
+- **`astro.config.mjs`:** Must retain `output: 'static'`. Do **not** add Astro server adapters or SSR-default public routes for MVP.
+- **Routes:** `src/pages/` owns URLs; dynamic segments via `[param]`. Pick **one** trailing-slash policy project-wide and stick to it (architecture recommends trailing slash on).
+- **Layouts:** Base layout supplies `<html lang="en">`, skip link, `<main id="main">`, global SEO slots; see `04_architecture.md` §8.
+- **Content Collections:** Declare schemas in `src/content/config.ts` or `src/content.config.ts` (Astro 6 convention) with Zod (or project-standard validator) for every governed type.
+- **`src/data/`:** Navigation aggregates, feature flags, generated indexes — not long-form copy unless explicitly modeled.
+- **Islands:** React/Vue/Svelte islands are **optional and story-gated**; default to minimal JS until a story justifies bundle cost.
+- **Department mini-sites:** Stable subtree `/departments/[department-slug]/…`; department nav/order from frontmatter or `src/data`, not hardcoded per department components.
 
----
+### DESIGN.md & styling rules
 
-## 3. BMAD Method workflow rules
+- **`docs/02_design/DESIGN.md` v1.0.0 is the UI contract** — not a placeholder. All colour, spacing, typography, radius, shadow, and z-index decisions flow from **§1 tokens** mapped to Tailwind `@theme` / utilities.
+- **Zero tolerance:** No raw hex outside §1, no arbitrary Tailwind values (`bg-[#…]`, `p-[13px]`, `rounded-[7px]`, `z-[42]`, arbitrary shadows), no inline `style` for colour/spacing/type/radius/shadow/z-index, no per-component one-off CSS files for theme styling, no `outline: none` without token-based focus replacement.
+- **If no token applies:** Stop and amend `DESIGN.md` — do not invent visual values.
+- **Icons:** Decorative icons `aria-hidden`; sizing uses design tokens (`DESIGN.md` §13–15).
 
-Orientation follows **`bmad-help`** and `_bmad/_config/bmad-help.csv` (BMad Method rows). Agents treat this as the **runtime workflow map**.
+### Content & search rules
 
-### Phase model (BMad Method)
+- **Governed truth:** Institutional copy and structured entities live under **`src/content/`** and **`src/data/`** — components present; they do not own final institutional strings long-term.
+- **Static search (PRD §23):** No SSR or hosted DB for search MVP. Preferred architecture: **Pagefind** post-build under `dist/`, or build-generated JSON + client fuzzy search — see `04_architecture.md` §10.
+- **SR4 honesty:** Do not ship silent gaps in search coverage for production without explicit phased labelling; prefer a minimal honest index over omitting whole content classes quietly.
+- **Forms:** No bespoke PHP/server on shared host; third-party endpoints or approved patterns only — privacy-reviewed.
 
-1. **Analysis (`1-analysis`)** — Brainstorming, market/domain/technical research, product brief or PRFAQ. Optional individually; **do not invent downstream artifacts from thin air** if stakeholders depend on recorded analysis.
-2. **Planning (`2-planning`)** — **Create PRD** is **required** (`required=true`). **Validate / Edit PRD** optional but recommended. **Create UX** runs after PRD and is strongly recommended when UI is primary.
-3. **Solutioning (`3-solutioning`)** — **Create Architecture**, **Create Epics and Stories**, and **Check Implementation Readiness** are **required** gates in order for implementation readiness.
-4. **Implementation (`4-implementation`)** — **Sprint Planning** is **required** before sequential story work. Story loop: **Create Story** → **Validate Story** → **Dev Story** → **Code Review** (iterate DS ↔ CR until approved); optional **Checkpoint**, **QA Automation**, **Retrospective**. **Correct Course** anytime for major pivots.
+### Accessibility & performance
 
-### Operating rules
+- **Target:** Implement per **`DESIGN.md` §15–16** and **`03_ux_blueprint.md`** — WCAG **2.1 AA** baseline in design docs (institutional).
+- Skip link, landmarks, single `h1`, visible focus, labelled forms, table semantics, **`prefers-reduced-motion`**, touch targets ≥ **44×44px**.
+- **Images:** `<Image />` / `astro:assets` where appropriate; **alt text** mandatory in content models; decorative images `alt=""`.
+- **Performance:** Lean JS; lazy-load below-fold media; representative testing on mid-tier Android per PRD §27.
 
-- **Pipeline discipline:** Respect the intended order: brief/analysis → **PM/PRD** only after analyst grounding → UX → architecture → epics/stories → readiness → sprint → stories. **Do not start PRD work without analyst/analysis inputs** where the project expects them.
-- **Single focus:** **One story at a time** with deterministic execution (see Section 9). Do not batch unrelated stories in one implementation pass unless humans explicitly change process.
-- **Fresh context:** Use a **fresh Cursor chat** for each major BMAD workflow step or skill run when practical — avoids contamination and skipped gates.
-- **Command uncertainty:** If unsure which skill or step applies, **`bmad-help`** is the routing authority; do not guess menus or phase ordering.
-- **No fabrication:** **Do not invent requirements** or stakeholder decisions; anchor claims in repo docs or ask for human input.
+### Testing & validation rules
 
----
+- **Mandatory gate:** **`npm run validate` passes** before merge-ready work.
+- **Scope:** When tests exist, follow repo conventions for placement and naming; prefer integration checks on critical static routes when introduced.
+- **Preview:** `astro preview` validates built output locally; production remains static files only.
 
-## 4. Astro static output rules
+### Code quality & style rules
 
-- **`astro.config.mjs` must keep `output: 'static'`.** The public site is **fully static** after `astro build`.
-- **No server runtime** is assumed for the deployed site: no Astro server adapters, no SSR-only APIs, no “needs Node on the host” features unless project governance explicitly migrates away from static hosting (would be a major change).
-- **Pages** live under `src/pages/`. **Layouts and components** under `src/layouts/`, `src/components/` (and similar). **Global CSS** entry: `src/styles/global.css`, imported from pages/layouts as needed.
-- **Build artifact:** default Astro static output (typically `dist/`). Verify with `npm run build` / `npm run validate`.
-- **`astro preview`** is for local verification only; production is still static files.
+- **Components:** Folder split per architecture — e.g. `ui/`, `layout/`, `content/`, `departments/`, `search/` under `src/components/`; presentational components take typed props; pages wire data.
+- **Assets:** PDFs for stable URLs often under `public/`; optimise images via Astro pipeline where applicable.
+- **SEO:** Unique `title`/`description` per template; stable slugs; sitemap/robots when stories add `@astrojs/sitemap` or equivalents.
 
----
+### Development workflow rules (BMAD)
 
-## 5. Tailwind CSS v4 implementation rules
+- **Phase order:** Analysis → **PRD** (`2-planning`) → UX → **Architecture**, **Epics/Stories**, **Implementation Readiness** (`3-solutioning`) → **Sprint Planning** → story loop (`4-implementation`).
+- **Single-story determinism:** Implement **one story** per cycle unless humans explicitly override; follow `docs/stories/*.yml` and `automation/active_story.yml` when present.
+- **Routing uncertainty:** Use **`bmad-help`** — do not guess BMAD menus.
+- **No fabrication:** Do not invent stakeholder decisions; anchor in repo docs or ask humans.
+- **Readiness:** Run **`bmad-check-implementation-readiness`** after epics/stories exist (`04_architecture.md` §20).
 
-- **Vite plugin:** `import tailwindcss from '@tailwindcss/vite'` and include `tailwindcss()` in `vite.plugins` inside `astro.config.mjs`. **Do not** downgrade to Tailwind v3 postcss-only setup unless explicitly directed.
-- **CSS entry:** `src/styles/global.css` must retain **`@import "tailwindcss";`** as the Tailwind v4 entry. Pages/layouts that need utilities should import this stylesheet (see `src/pages/index.astro`).
-- **Utilities:** Use Tailwind utility classes in `.astro` templates; prefer design tokens and consistent patterns once `DESIGN.md` is binding (see Section 7).
-- **Avoid fighting the stack:** Do not add duplicate Tailwind pipelines (e.g., redundant PostCSS Tailwind config) without removing the Vite plugin approach first.
+### Critical don’t-miss rules
 
----
-
-## 6. Content governance rules
-
-- **Editable content** (copy, structured site data, YAML/JSON feeds consumed by the site) **must live under `src/content/` or `src/data/`** — not hidden inside components as hardcoded “final” truth.
-- **Presentation vs content:** Components implement layout and behavior; **marketing and institutional copy** belong in content/data layers so non-developers can evolve them without code edits where possible.
-- **No runtime CMS/database:** Do not assume WordPress, headless CMS APIs, or databases **at runtime** for this static deployment model. Pre-build ingestion (build-time fetch, committed data files) may exist only if explicitly approved and still produces **static** output.
-- **Short-term placeholders** in components are acceptable only when a story explicitly allows bootstrap markup and **must be replaced** by governed content sources as stories land.
-
----
-
-## 7. DESIGN.md governance rules
-
-- **`docs/02_design/DESIGN.md` is the UI contract** for visual design decisions (colors, typography, components, spacing rules) once finalized through UX workflow.
-- **Current state:** The repo may contain a **placeholder** `DESIGN.md` explicitly stating not to implement against it. While placeholder or missing real specs:
-  - **Do not** ship polished UI “finals” derived from the placeholder.
-  - Limit UI work to **neutral scaffolding**, accessibility basics, and story-driven stubs aligned with PRD/architecture.
-- **Do not implement UI outside `DESIGN.md`** once the real contract replaces the placeholder — meaning no one-off styling that contradicts the signed-off design system without updating `DESIGN.md` first.
+1. **No SSR, API routes, or server adapters** for MVP public delivery.
+2. **No runtime database/CMS/API** on the public host for core pages; build-time ingestion must still emit **static `dist/`**.
+3. **No final marketing copy** stranded only in components without a `src/content` / `src/data` path.
+4. **No silent search omissions** (SR4); no broken footer/nav links to unapproved routes (PRD §30 FTR).
+5. **No dependencies** that imply server runtime or non-static deployment without architecture review and human approval.
+6. **Future CMS or app layers:** Separate ADR + constitution amendment; public site stays static Astro unless governance replaces MVP (`04_architecture.md` §16–17).
 
 ---
 
-## 8. Shared-hosting constraints
+## Usage Guidelines
 
-Target deployment is **generic static hosting** (Apache, nginx, GitHub Pages–class surfaces, CDN static origins):
+**For AI agents**
 
-- **Output:** HTML, CSS, JS, and static assets only; **no dependency on Node.js** on the server.
-- **Paths:** Prefer **relative** asset and link patterns suitable for subdirectory deployment when applicable (follow emerging architecture notes when `04_architecture.md` is populated).
-- **Environment:** No server-side secrets, sessions, or databases on the host for core pages.
-- **Performance:** Keep bundles reasonable; lazy-load heavy client islands only when Astro/React/Vue islands are introduced with explicit stories.
+- Read this file and **`DESIGN.md`** before UI work; read **`04_architecture.md`** for routing, collections, and search ADRs.
+- Follow rules exactly; when unsure, prefer the **more restrictive** option or ask for human review (`§12` equivalents above).
+- Update this constitution when stack or governance changes.
 
----
+**For humans**
 
-## 9. Story implementation rules
-
-- **Single-story determinism:** Implement **exactly one story** per development cycle unless humans explicitly reprioritize. Follow **`docs/stories/*.yml`** and **`automation/active_story.yml`** when present.
-- **Serial workflow:** Align with BMad Method implementation phase: **Create Story** → **Validate Story** → **Dev Story** → **Code Review** → next story or epic closure activities.
-- **Scope:** A story implements **only** its acceptance criteria and linked docs; avoid scope bleed into future stories.
-- **Traceability:** Commit messages / PR descriptions should reference the story identifier when the team uses tracked IDs.
-- **Quick Dev (`bmad-quick-dev`)** is not a license to skip gates; it still must obey static output, content locations, and `DESIGN.md` rules.
+- Keep this file lean; remove rules that become obvious as the stack matures.
+- When `DESIGN.md` or PRD changes materially, reconcile this file and architecture docs.
+- Review periodically (e.g. quarterly) for outdated constraints.
 
 ---
 
-## 10. Validation and gate rules
-
-- **Build gate:** **`npm run validate` must pass** before considering work merge-ready (aliases `astro build`).
-- **Planning gates:** PRD → Architecture → Epics/Stories → **Implementation Readiness** must be satisfied before treating implementation as formally “greenlit.”
-- **Story gates:** Story validation and code review are **expected** before merging story work; reopen **Dev Story** when review finds defects.
-- **Optional quality:** PRD validation, checkpoint preview, QA automation, retrospectives — use when stakeholders require them; they do not replace the build gate.
-
----
-
-## 11. Forbidden assumptions
-
-Agents **must not** assume any of the following unless explicitly documented and approved:
-
-1. **SSR, API routes, or server adapters** for Astro in production.
-2. **Runtime databases**, CRM integrations, or authenticated CMS reads on each request.
-3. **Secrets or env-driven server configuration** on the static host for core pages.
-4. **Final marketing copy** embedded only in components **without** `src/content` / `src/data` governance.
-5. **UX completeness** from `DESIGN.md` **while it remains an explicit placeholder**.
-6. **Parallel multi-story implementation** as the default (violates deterministic one-story-at-a-time execution).
-7. **New dependencies** that imply servers, databases, or non-static deployment — without architecture review.
-
----
-
-## 12. When to stop and ask for human review
-
-Stop and request human decisions when:
-
-- **Authoritative docs conflict** (PRD vs architecture vs stories vs this constitution).
-- **`DESIGN.md` is still a placeholder** but the work requires visual finalization or brand-sensitive presentation.
-- **Static output or shared-hosting constraints** cannot be met without changing stack (e.g., need for SSR, dynamic server routes, or runtime data).
-- **Scope creep** or ambiguous acceptance criteria would force multiple stories at once.
-- **Legal, accessibility certification, or institutional approval** is implied but not recorded.
-- **Adding dependencies**, **changing Astro output mode**, or **introducing runtime services** — always human-approved.
-
----
-
-*Generated for the CPMR Astro static rebuild. Stack facts locked to `package.json`, `astro.config.mjs`, `src/pages/index.astro`, and `src/styles/global.css` as of constitution authorship; BMAD phases and gates aligned with `_bmad/_config/bmad-help.csv` (BMad Method).*
+_Last updated: 2026-05-12. Synthesized from `docs/01_planning/02_prd.md`, `docs/02_design/DESIGN.md`, and `docs/03_architecture/04_architecture.md`, plus `package.json` and `astro.config.mjs`._
