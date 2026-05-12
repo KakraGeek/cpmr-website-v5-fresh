@@ -2,49 +2,58 @@ id: E0-S04
 epic: E0
 sprint_order: 4
 title: Content collections bootstrap
-status: TODO
-architect_gate_required: Yes
-user_story: >
-  As a developer, I want a single content config entry point so schemas can grow safely.
+status: DONE
+architect_gate_required: true
+user_story: 'As a developer, I want a single content config entry point so schemas
+  can grow safely.
+
+  '
 acceptance_criteria:
-  - src/content/config.ts or src/content.config.ts exists per Astro 6 project convention.
-  - At least one trivial collection or placeholder export builds successfully.
-  - Schemas follow patterns that preserve future headless CMS and build-time ingestion compatibility (collections as source of truth per architecture).
+- src/content/config.ts or src/content.config.ts exists per Astro 6 project convention.
+- At least one trivial collection or placeholder export builds successfully.
+- Schemas follow patterns that preserve future headless CMS and build-time ingestion
+  compatibility (collections as source of truth per architecture).
 tasks:
-  - Add src/content.config.ts or src/content/config.ts with a minimal defineCollection (or equivalent) that builds.
-  - Place stub entries under src/content/_bootstrap/ only if required for the trivial collection to compile.
-  - Adjust tsconfig.json only if required for content types resolution.
-  - Keep collection definitions aligned with docs/03_architecture/04_architecture.md §5 for future expansion.
+- Add src/content.config.ts or src/content/config.ts with a minimal defineCollection
+  (or equivalent) that builds.
+- Place stub entries under src/content/_bootstrap/ only if required for the trivial
+  collection to compile.
+- Adjust tsconfig.json only if required for content types resolution.
+- Keep collection definitions aligned with docs/03_architecture/04_architecture.md
+  §5 for future expansion.
 dependencies:
-  - E0-S01
+- E0-S01
 context_files:
-  - docs/04_stories/05_story_map.md
-  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
-  - docs/01_planning/01_analysis.md
-  - docs/01_planning/02_prd.md
-  - docs/02_design/03_ux_blueprint.md
-  - docs/02_design/DESIGN.md
-  - docs/03_architecture/04_architecture.md
-  - docs/03_architecture/06_project_context.md
+- docs/04_stories/05_story_map.md
+- docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+- docs/01_planning/01_analysis.md
+- docs/01_planning/02_prd.md
+- docs/02_design/03_ux_blueprint.md
+- docs/02_design/DESIGN.md
+- docs/03_architecture/04_architecture.md
+- docs/03_architecture/06_project_context.md
 execution:
   files_allowed:
-    - src/content.config.ts
-    - src/content/config.ts
-    - tsconfig.json
-    - src/content/_bootstrap/**
+  - src/content.config.ts
+  - src/content/config.ts
+  - tsconfig.json
+  - src/content/_bootstrap/**
   files_forbidden:
-    - astro.config.mjs
-    - package.json
-    - src/pages/**
-    - src/components/**
-    - public/documents/**
+  - astro.config.mjs
+  - package.json
+  - src/pages/**
+  - src/components/**
+  - public/documents/**
   verification_commands:
-    - npm run build
-    - npm run validate
+  - npm run build
+  - npm run validate
 qa_checklist:
-  - Confirm every acceptance criterion is satisfied.
-  - Confirm no forbidden files were changed.
-  - Confirm collection approach stays compatible with DESIGN.md governance expectations for content-driven pages.
-  - Confirm docs/03_architecture/04_architecture.md §5 content collection rules are respected.
-  - Confirm static build passes via npm run build.
-  - Confirm forbidden-file validation (only allowed paths touched).
+- Confirm every acceptance criterion is satisfied.
+- Confirm no forbidden files were changed.
+- Confirm collection approach stays compatible with DESIGN.md governance expectations
+  for content-driven pages.
+- Confirm docs/03_architecture/04_architecture.md §5 content collection rules are
+  respected.
+- Confirm static build passes via npm run build.
+- Confirm forbidden-file validation (only allowed paths touched).
+last_updated: '2026-05-12 16:10:04'
