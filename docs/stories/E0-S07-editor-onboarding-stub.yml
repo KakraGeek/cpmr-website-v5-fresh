@@ -2,7 +2,7 @@ id: E0-S07
 epic: E0
 sprint_order: 7
 title: Editor onboarding stub
-status: DEV_COMPLETE
+status: DONE
 architect_gate_required: false
 user_story: 'As an editor, I want a short doc explaining governed files vs components.
 
@@ -50,4 +50,4 @@ qa_checklist:
   rules.
 - Confirm static build passes via npm run build.
 - Confirm forbidden-file validation (only allowed paths touched).
-last_updated: '2026-05-12 18:00:00'
+last_updated: '2026-05-12 16:53:57'

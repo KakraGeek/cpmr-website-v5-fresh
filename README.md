@@ -10,7 +10,9 @@ Institutional site for the Centre for Plant Medicine Research (CPMR), built with
 | **`src/data/`** | Structured aggregates (JSON/YAML/TS) such as navigation, footer links, and similar site-wide data consumed at build time. |
 | **`src/components/`**, **`src/layouts/`**, **`src/pages/`** | Presentation: layout, UI behaviour, and route shells. They should not be the long-term sole home for “final” institutional truth strings; prefer `src/content/` or `src/data/` when adding new governed material. |
 
-Ownership and workflow expectations align with **PRD §29** (`docs/01_planning/02_prd.md` — CMS / content editing requirements): MVP uses build-time ingestion, not a runtime CMS on the public host.
+What belongs in collections versus data modules (and what must not be embedded only in components long-term) is spelled out in **`docs/03_architecture/04_architecture.md` §9 — Data and content source rules**.
+
+Ownership and workflow expectations align with **PRD §29** (`docs/01_planning/02_prd.md` — CMS / content editing requirements): **CM1** keeps editorial truth under `src/content/` and `src/data/` at build time; **CM3** states there is **no runtime preview server** on MVP hosting—local work uses **`npm run dev`** and preview of the static build uses **`npm run preview`** (this repo’s script for `astro preview`).
 
 ## Commands
 
@@ -24,7 +26,7 @@ From the repository root:
 | `npm run preview` | Serve the **built** `./dist/` output locally to review what deploys |
 | `npm run validate` | Merge gate: runs `astro build` (see project constitution) |
 
-**Editors:** use `npm run dev` while drafting; use `npm run preview` after `npm run build` to confirm the static output before release, per PRD §29 (local preview; no runtime preview server assumed on MVP hosting).
+**Editors:** use `npm run dev` while drafting; run `npm run build` then `npm run preview` to confirm the same HTML/CSS/assets that ship in `./dist/`, matching PRD §29 **CM3** (local preview only; no hosted preview app in MVP).
 
 ## Project layout (high level)
 
