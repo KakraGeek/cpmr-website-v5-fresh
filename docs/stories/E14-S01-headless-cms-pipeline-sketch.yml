@@ -1,0 +1,45 @@
+id: E14-S01
+epic: E14
+sprint_order: 1401
+title: Headless CMS pipeline sketch
+status: TODO
+architect_gate_required: Yes
+user_story: >
+  As a future PM, I know how CMS could feed static builds.
+acceptance_criteria:
+  - Documentation outlines build-time ingestion only (fetch exports or codegen before `astro build`, emitting static `dist/`), consistent with `04_architecture.md` §16.
+  - Documentation records constitution caveats from `04_architecture.md` §16 (runtime CMS reads or preview-on-host require ADR and constitution amendment per `06_project_context.md` references therein).
+  - Documentation preserves future CMS compatibility (stable content schemas, build-time ingestion, Git-based editorial workflows) without proposing MVP runtime CMS on the public host.
+tasks:
+  - Add or extend architecture documentation under `docs/03_architecture/` describing a headless CMS → static build pipeline sketch aligned with §16.
+  - Explicitly state the MVP boundary (no runtime CMS/database on the public host unless constitution is formally revised), citing `02_prd.md` §29 and `06_project_context.md` as needed.
+dependencies: []
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - docs/03_architecture/*.md
+  files_forbidden:
+    - src/**
+    - public/**
+    - astro.config.mjs
+    - package.json
+    - package-lock.json
+    - docs/02_design/DESIGN.md
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed.
+  - Confirm documentation remains consistent with DESIGN.md where editorial or public-site behaviour is referenced (no implied UI contract drift).
+  - Confirm documentation follows `04_architecture.md` and `06_project_context.md` constitution.
+  - Confirm static build passes.
+  - Confirm future CMS compatibility patterns from architecture §16 are preserved in prose.

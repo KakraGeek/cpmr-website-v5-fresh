@@ -1,0 +1,45 @@
+id: E14-S03
+epic: E14
+sprint_order: 1403
+title: Editorial roles mapping
+status: TODO
+architect_gate_required: No
+user_story: >
+  As an editor-in-chief, I map Brief roles to git/PR workflow.
+acceptance_criteria:
+  - A table maps the roles named in `02_prd.md` §29 CM2 (Super Admin, Content Administrator, Department Editor, Service Editor, Media Editor, Reviewer, Publisher) to concrete human workflow steps (e.g. PR approvals, sign-off checklist) as stated in CM2.
+tasks:
+  - Add or update documentation under `docs/01_planning/` containing the CM2 role-to-workflow table derived from `02_prd.md` §29 CM2.
+  - Ensure the mapping references Git/PR-based governance consistent with `04_architecture.md` §16 (Git-based editorial workflows) without inventing tooling beyond documented process.
+dependencies:
+  - E14-S01
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - docs/01_planning/*.md
+  files_forbidden:
+    - src/**
+    - public/**
+    - astro.config.mjs
+    - package.json
+    - package-lock.json
+    - docs/02_design/DESIGN.md
+    - docs/03_architecture/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed.
+  - Confirm the table matches `02_prd.md` §29 CM2 role names and workflow intent only (no invented roles).
+  - Confirm alignment with architecture editorial/Git expectations where cited.
+  - Confirm static build passes.
+  - Confirm future CMS compatibility is not contradicted (process remains valid if headless CMS is adopted later).
