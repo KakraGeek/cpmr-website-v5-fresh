@@ -1,0 +1,49 @@
+id: E2-S03
+epic: E2
+sprint_order: 203
+title: Utility navigation
+status: TODO
+architect_gate_required: No
+user_story: >
+  As a user, I want Clinic, DAU, Downloads, Publications, Contact, and Search one click away on large screens.
+acceptance_criteria:
+  - Utility links match docs/02_design/03_ux_blueprint.md section 4 targets and labels.
+  - Link text is visible on desktop utility row per blueprint section 4.2.
+  - Active route exposes aria-current on the matching utility link.
+  - Links are real anchor elements with href for progressive enhancement.
+tasks:
+  - Implement UtilityNavigation.astro and seed navigation data in src/data/navigation.ts per UX blueprint section 4.
+  - Omit or disable hrefs for destinations not yet approved for public navigation per PRD and architecture forbidden-link rules.
+dependencies:
+  - E2-S02
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/components/layout/UtilityNavigation.astro
+    - src/data/navigation.ts
+  files_forbidden:
+    - astro.config.mjs
+    - src/content/**
+    - src/pages/**
+    - public/documents/**
+    - dist/**
+    - package.json
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed.
+  - Confirm implementation follows DESIGN.md.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md and docs/03_architecture/06_project_context.md.
+  - Confirm static build passes via npm run build.
+  - Confirm forbidden-path validation against execution.files_forbidden.
+  - Confirm utility targets align with blueprint section 4.1 and remain compatible with future CMS or build-time ingestion by keeping durable labels and paths in src/data rather than scattering literals in components.

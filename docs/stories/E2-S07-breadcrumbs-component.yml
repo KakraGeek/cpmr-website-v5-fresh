@@ -1,0 +1,47 @@
+id: E2-S07
+epic: E2
+sprint_order: 207
+title: Breadcrumbs component
+status: TODO
+architect_gate_required: No
+user_story: >
+  As a user, I want context on deep pages.
+acceptance_criteria:
+  - Breadcrumbs.astro renders a trail from provided segments or route context.
+  - Current page is present in the trail but not over-linked as a duplicate destination.
+  - Markup and naming match DESIGN.md component registry for breadcrumbs.
+tasks:
+  - Implement Breadcrumbs.astro as a presentational layout component with typed props for trail items.
+  - Document expected usage from page templates without wiring every route in this story.
+dependencies:
+  - E2-S01
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/components/layout/Breadcrumbs.astro
+  files_forbidden:
+    - astro.config.mjs
+    - src/content/**
+    - src/pages/**
+    - public/documents/**
+    - dist/**
+    - package.json
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed.
+  - Confirm implementation follows DESIGN.md.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md and docs/03_architecture/06_project_context.md.
+  - Confirm static build passes via npm run build.
+  - Confirm forbidden-path validation against execution.files_forbidden.
+  - Confirm breadcrumb items can be supplied from page loaders or content frontmatter later without coupling the component to a specific CMS runtime.
