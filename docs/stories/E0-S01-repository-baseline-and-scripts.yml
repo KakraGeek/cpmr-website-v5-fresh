@@ -2,7 +2,7 @@ id: E0-S01
 epic: E0
 sprint_order: 1
 title: Repository baseline and scripts
-status: TODO
+status: DONE
 architect_gate_required: Yes
 user_story: >
   As a developer, I want consistent npm scripts so that build and validation are deterministic.
@@ -47,3 +47,4 @@ qa_checklist:
   - Confirm implementation follows docs/03_architecture/04_architecture.md and docs/03_architecture/06_project_context.md.
   - Confirm static build passes via npm run build.
   - Confirm forbidden-file validation (only allowed paths touched).
+last_updated: '2026-05-12 16:30:00'
