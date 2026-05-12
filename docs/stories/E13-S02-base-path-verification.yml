@@ -1,0 +1,56 @@
+id: E13-S02
+epic: E13
+sprint_order: 1302
+title: Base path verification
+status: TODO
+architect_gate_required: Yes
+user_story: "As an operator hosting under a subfolder, links resolve."
+acceptance_criteria:
+  - "`astro.config.mjs` supports an optional `base` configuration for subdirectory hosting, documented inline with a comment pointing to the deployment runbook (`docs/04_stories/05_story_map.md`)."
+  - "When `base` is set (e.g. `/cpmr/`), `npm run build` produces a `dist/` whose internal links, asset URLs, and route hrefs are correctly prefixed; no asset 404s on spot-checked routes (`docs/01_planning/02_prd.md` §28)."
+  - "Default configuration (no subdirectory) remains unchanged and continues to build cleanly."
+  - "Change does not introduce a server adapter, SSR, or any runtime dependency forbidden by `docs/03_architecture/04_architecture.md` §19."
+  - "Deployment runbook (E13-S01) gains a 'Subdirectory hosting' section linking the toggle, the build steps, and the spot-check verification list."
+tasks:
+  - "Add or formalise an optional `base` property in `astro.config.mjs` with an inline comment explaining when and how to set it for subdirectory hosting."
+  - "Run `npm run build` with default config and confirm `dist/` is correct."
+  - "Run `npm run build` with a sample `base` (e.g. `/cpmr/`) and confirm `dist/` link and asset prefixes are correct."
+  - "Record verification spot-checks (home, one department route, 404, one downloads link, one image asset) in `docs/deployment/runbook.md`."
+  - "Append a 'Subdirectory hosting' section to the runbook covering toggle, build, verify, deploy."
+  - "Confirm `output: 'static'` and the absence of any server adapter remain intact."
+dependencies:
+  - E13-S01
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - astro.config.mjs
+    - docs/deployment/**
+    - docs/**
+  files_forbidden:
+    - src/**
+    - src/content/**
+    - src/data/**
+    - src/styles/**
+    - public/documents/**
+    - package.json
+    - package-lock.json
+    - scripts/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed (except explicit waivers).
+  - Confirm DESIGN.md is not affected and no token, component, or layout file was touched.
+  - "Confirm change complies with `docs/03_architecture/04_architecture.md` (still `output: 'static'`, no server adapter, no SSR introduced)."
+  - "Confirm static build passes for both default and subdirectory-base configurations (`npm run build` / `npm run validate`)."
+  - Confirm architect gate approval is recorded because this story alters `astro.config.mjs` `base` and deployment path strategy.
+  - Confirm future CMS compatibility is preserved (no runtime fetch added; content remains build-time only).

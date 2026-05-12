@@ -1,0 +1,57 @@
+id: E13-S03
+epic: E13
+sprint_order: 1303
+title: Redirect note placeholder
+status: TODO
+architect_gate_required: No
+user_story: "As SEO, I plan legacy 301s."
+acceptance_criteria:
+  - "A placeholder document under `docs/seo/` describes the intended approach to legacy 301 redirects and states that real entries are blocked on completion of the legacy URL inventory (`docs/01_planning/02_prd.md` §26 SEO4; `docs/04_stories/05_story_map.md`)."
+  - "The document defines the canonical record format future redirect entries will use (legacy source, new target, status code, owner, date verified)."
+  - "The document names the eventual implementation surface (e.g. shared-hosting `.htaccess` or hosting panel rules) without authoring any rules."
+  - "No `.htaccess`, no `astro.config.mjs` redirect configuration, and no runtime redirect handler are introduced by this story."
+  - "No fake, sample-as-live, or speculative source-to-target mappings are committed."
+tasks:
+  - "Create `docs/seo/redirects.md` as the placeholder strategy document."
+  - "State the inventory dependency and cross-link `docs/01_planning/02_prd.md` §26 SEO4."
+  - "Define the redirect record schema (source, target, status, owner, verified-on)."
+  - "Name the implementation surface (`.htaccess` on shared hosting) and explicitly defer authoring real rules."
+  - "Add a 'Do not invent redirects' caveat block referencing this story."
+  - "Cross-link the redirect placeholder from the deployment runbook (E13-S01) so operators discover it before launch."
+dependencies:
+  - E13-S01
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - docs/seo/**
+    - docs/deployment/**
+    - docs/**
+  files_forbidden:
+    - src/**
+    - src/content/**
+    - src/data/**
+    - public/**
+    - astro.config.mjs
+    - package.json
+    - package-lock.json
+    - .htaccess
+    - scripts/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed (except explicit waivers).
+  - Confirm document makes no UI claims and does not contradict DESIGN.md.
+  - "Confirm document aligns with `docs/03_architecture/04_architecture.md` (no runtime redirect handler; static hosting only)."
+  - "Confirm static build passes (`npm run build` / `npm run validate`)."
+  - Confirm no fake or speculative redirect entries were committed.
+  - Confirm future CMS compatibility is preserved (no assumed runtime redirect service).
