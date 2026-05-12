@@ -1,0 +1,52 @@
+id: E9-S02
+epic: E9
+sprint_order: 902
+title: Events listing grouped by month
+status: TODO
+architect_gate_required: Yes
+user_story: >
+  As a visitor, I scan upcoming events.
+acceptance_criteria:
+  - /events/ renders a listing sourced from the events collection without SSR.
+  - Events are presented as a vertical list grouped by calendar month with a sticky month heading using muted small text per docs/02_design/DESIGN.md §14.5.
+  - Listing items follow the EventCard contract in docs/02_design/DESIGN.md §13.14 (stretched link title, <time datetime>, venue, status chip, optional registration and department as applicable on cards).
+  - URL and trailing-slash behaviour match agreed site policy in docs/03_architecture/06_project_context.md and routing table in docs/03_architecture/04_architecture.md.
+tasks:
+  - Implement src/pages/events/index.astro using getCollection('events') (or equivalent) with static output only.
+  - Group displayed events by month and render sticky month labels per DESIGN.md §14.5.
+  - Compose EventCard (or equivalent components under allowed paths) using design tokens only.
+  - Filter or sort listing per PRD §20 E2 static-compatible calendar/list intent without inventing new product rules beyond cited docs.
+dependencies:
+  - E9-S01
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/pages/events/index.astro
+    - src/components/content/**
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/content/events/**
+    - src/content.config.ts
+    - src/content/config.ts
+    - public/documents/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed.
+  - Confirm implementation follows DESIGN.md.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md.
+  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm forbidden-file validation (only allowed paths touched).
+  - Confirm listing reads governed events from src/content/events for future CMS compatibility.

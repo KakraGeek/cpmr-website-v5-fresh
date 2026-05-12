@@ -1,22 +1,20 @@
-id: E8-S02
+id: E8-S03
 epic: E8
-sprint_order: 802
-title: News listing and detail
+sprint_order: 803
+title: News archive pagination
 status: TODO
 architect_gate_required: Yes
 user_story: >
-  As media, I read institutional stories.
+  As a researcher, I browse older items.
 acceptance_criteria:
-  - /news/ renders a grid listing sourced from the news collection.
-  - News detail routes exist with stable URLs per docs/03_architecture/04_architecture.md.
-  - Fields match docs/01_planning/02_prd.md §18 N1 (title, date, category, featured image with alt, excerpt, body; optional related department or project; attribution when used).
-  - Related department or project links use stable relationship IDs when present.
+  - Static pagination is implemented via getStaticPaths over finite page ranges per docs/03_architecture/04_architecture.md §4.3.
+  - Paginated routes use stable URLs that remain valid across rebuilds.
+  - Behaviour aligns with docs/01_planning/02_prd.md §18 N3 (archive compatible with static generation).
 tasks:
-  - Define the news collection schema and seed governed entries under src/content/news.
-  - Implement listing and detail Astro routes under src/pages/news without SSR.
-  - Wire optional relationships using string IDs consistent with docs/04_stories/05_story_map.md dependency rules.
+  - Extend news listing routing to emit paginated index pages without introducing SSR or runtime pagination.
+  - Ensure navigation between pages is keyboard operable and consistent with DESIGN.md listing patterns where applicable.
 dependencies:
-  - E0-S04
+  - E8-S02
 context_files:
   - docs/04_stories/05_story_map.md
   - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
@@ -29,15 +27,18 @@ context_files:
 execution:
   files_allowed:
     - src/pages/news/**
-    - src/content/news/**
-    - src/content.config.ts
-    - src/content/config.ts
     - src/components/content/**
   files_forbidden:
     - astro.config.mjs
     - package.json
     - docs/02_design/DESIGN.md
+    - src/content.config.ts
+    - src/content/config.ts
+    - src/content/news/**
+    - src/layouts/**
     - src/pages/index.astro
+    - src/pages/announcements/**
+    - src/pages/events/**
     - public/documents/**
   verification_commands:
     - npm run build
@@ -48,4 +49,4 @@ qa_checklist:
   - Confirm implementation follows DESIGN.md.
   - Confirm implementation follows docs/03_architecture/04_architecture.md.
   - Confirm static build passes (npm run build / npm run validate).
-  - Confirm news entries remain governed in src/content/news for future CMS compatibility.
+  - Confirm pagination adds no forbidden-file edits outside allowed globs.

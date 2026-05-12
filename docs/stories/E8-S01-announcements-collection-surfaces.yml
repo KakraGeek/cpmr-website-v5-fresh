@@ -1,0 +1,59 @@
+id: E8-S01
+epic: E8
+sprint_order: 801
+title: Announcements collection and surfaces
+status: TODO
+architect_gate_required: Yes
+user_story: >
+  As communications, I publish urgent notices.
+acceptance_criteria:
+  - The announcements content collection schema exists and validates entries per docs/01_planning/02_prd.md §19 (priority, date range, audience tags if needed, optional homepage surfacing, optional CTA link).
+  - The homepage announcements strip introduced in E3-S03 reads from the announcements collection without changing the epic ordering described in docs/04_stories/05_story_map.md.
+  - Announcements remain distinct from news templates per docs/01_planning/02_prd.md §19 AN1.
+tasks:
+  - Register the announcements collection in the project content config with Zod schemas aligned to PRD §19 fields.
+  - Add governed Markdown entries under src/content/announcements structured for future headless CMS ingestion (frontmatter as institutional truth).
+  - Rewire src/pages/index.astro strip from prior stub data source to query the announcements collection while preserving H3 strip behaviour (at most two visible items, high contrast, non-dismissible default).
+dependencies:
+  - E0-S04
+  - E3-S03
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/content/announcements/**
+    - src/content.config.ts
+    - src/content/config.ts
+    - src/pages/index.astro
+    - src/components/content/**
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/layouts/**
+    - src/components/layout/**
+    - src/pages/news/**
+    - src/pages/events/**
+    - src/pages/departments/**
+    - src/pages/research/**
+    - src/pages/services/**
+    - src/pages/products/**
+    - src/components/search/**
+    - public/documents/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed.
+  - Confirm implementation follows DESIGN.md.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md.
+  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm announcement entries remain governed under src/content/announcements for future CMS compatibility.

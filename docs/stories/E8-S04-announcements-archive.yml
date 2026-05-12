@@ -1,22 +1,20 @@
-id: E8-S02
+id: E8-S04
 epic: E8
-sprint_order: 802
-title: News listing and detail
+sprint_order: 804
+title: Announcements archive
 status: TODO
 architect_gate_required: Yes
 user_story: >
-  As media, I read institutional stories.
+  As a citizen, I review past notices.
 acceptance_criteria:
-  - /news/ renders a grid listing sourced from the news collection.
-  - News detail routes exist with stable URLs per docs/03_architecture/04_architecture.md.
-  - Fields match docs/01_planning/02_prd.md §18 N1 (title, date, category, featured image with alt, excerpt, body; optional related department or project; attribution when used).
-  - Related department or project links use stable relationship IDs when present.
+  - An announcements archive route exists under /announcements/ per docs/03_architecture/04_architecture.md §4.2 IA mapping.
+  - Presentation prioritises notice urgency and avoids news-card layouts so announcements stay visually distinct from news per docs/01_planning/02_prd.md §19 AN1.
+  - Empty states are honest when no announcements exist.
 tasks:
-  - Define the news collection schema and seed governed entries under src/content/news.
-  - Implement listing and detail Astro routes under src/pages/news without SSR.
-  - Wire optional relationships using string IDs consistent with docs/04_stories/05_story_map.md dependency rules.
+  - Implement archive listing consuming the announcements collection from E8-S01.
+  - Apply priority and date-range semantics from collection fields without mixing news templates.
 dependencies:
-  - E0-S04
+  - E8-S01
 context_files:
   - docs/04_stories/05_story_map.md
   - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
@@ -28,16 +26,19 @@ context_files:
   - docs/03_architecture/06_project_context.md
 execution:
   files_allowed:
-    - src/pages/news/**
-    - src/content/news/**
-    - src/content.config.ts
-    - src/content/config.ts
+    - src/pages/announcements/**
     - src/components/content/**
   files_forbidden:
     - astro.config.mjs
     - package.json
     - docs/02_design/DESIGN.md
+    - src/content.config.ts
+    - src/content/config.ts
+    - src/content/announcements/**
+    - src/layouts/**
     - src/pages/index.astro
+    - src/pages/news/**
+    - src/pages/events/**
     - public/documents/**
   verification_commands:
     - npm run build
@@ -48,4 +49,4 @@ qa_checklist:
   - Confirm implementation follows DESIGN.md.
   - Confirm implementation follows docs/03_architecture/04_architecture.md.
   - Confirm static build passes (npm run build / npm run validate).
-  - Confirm news entries remain governed in src/content/news for future CMS compatibility.
+  - Confirm announcements content stays governed in src/content/announcements for future CMS compatibility.

@@ -1,0 +1,52 @@
+id: E9-S03
+epic: E9
+sprint_order: 903
+title: Event detail pages
+status: TODO
+architect_gate_required: Yes
+user_story: >
+  As a user, I register or learn details.
+acceptance_criteria:
+  - Event detail routes exist under /events/ with stable URLs and getStaticPaths derived from the events collection per docs/03_architecture/04_architecture.md.
+  - Page presents title, schedule (with <time> where applicable), venue, status, body/description, organiser, optional registration link, and optional related department per docs/01_planning/02_prd.md §20 E1.
+  - Registration link is optional and external links use safe patterns consistent with docs/02_design/DESIGN.md and UX blueprint.
+  - Exactly one h1; landmarks and focus behaviour meet DESIGN.md §15 baseline on new interactive elements if any.
+tasks:
+  - Add src/pages/events/[slug].astro (or agreed dynamic segment) with static paths for all events entries.
+  - Map frontmatter fields to the detail template; omit optional blocks when absent.
+  - Wire optional related department using stable department slug or ID consistent with existing department routes.
+  - Avoid SSR-only APIs; keep static generation only.
+dependencies:
+  - E9-S01
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - src/pages/events/[slug].astro
+    - src/components/content/**
+  files_forbidden:
+    - astro.config.mjs
+    - package.json
+    - docs/02_design/DESIGN.md
+    - src/content/events/**
+    - src/content.config.ts
+    - src/content/config.ts
+    - public/documents/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed.
+  - Confirm implementation follows DESIGN.md.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md.
+  - Confirm static build passes (npm run build / npm run validate).
+  - Confirm forbidden-file validation (only allowed paths touched).
+  - Confirm detail pages remain driven by src/content/events entries for future CMS compatibility.
