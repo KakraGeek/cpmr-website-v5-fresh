@@ -1,17 +1,10 @@
 ---
-import "../styles/global.css";
+import Layout from '../layouts/Layout.astro';
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>CPMR Website Rebuild</title>
-  </head>
-  <body>
-    <main class="min-h-screen p-6">
-      <h1 class="text-3xl font-bold">CPMR Website Rebuild</h1>
-      <p class="mt-4 text-base">Astro static output and Tailwind CSS are active.</p>
-    </main>
-  </body>
-</html>
+<Layout title="CPMR Website Rebuild">
+  <main class="min-h-screen p-6">
+    <h1 class="text-3xl font-bold">CPMR Website Rebuild</h1>
+    <p class="mt-4 text-base">Astro static output and Tailwind CSS are active.</p>
+  </main>
+</Layout>
