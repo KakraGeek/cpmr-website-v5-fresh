@@ -24,15 +24,27 @@ ACTIVE_STORY_FILE = AUTOMATION_DIR / "active_story.yml"
 EXECUTION_HISTORY_FILE = AUTOMATION_DIR / "execution_history.yml"
 ARCHITECT_GATE_FILE = AUTOMATION_DIR / "architect_gates.yml"
 BACKLOG_AUDIT_FILE = AUTOMATION_DIR / "backlog_integrity.yml"
+PROCESS_FIX_FILE = AUTOMATION_DIR / "process_fix_required.yml"
 
 STATUSES = [
-    "TODO", "READY", "IN_PROGRESS", "DEV_COMPLETE", "ANALYST_REVIEW",
-    "ARCHITECT_REVIEW", "QA_FAILED", "BLOCKED", "VERIFIED", "DONE"
+    "TODO",
+    "READY",
+    "IN_PROGRESS",
+    "DEV_COMPLETE",
+    "ANALYST_REVIEW",
+    "ARCHITECT_REVIEW",
+    "QA_FAILED",
+    "PROCESS_FIX_REQUIRED",
+    "BLOCKED",
+    "VERIFIED",
+    "DONE",
 ]
+
 EXECUTABLE = ["QA_FAILED", "READY", "TODO"]
 
 DEFAULT_CONTEXT_FILES = [
     "docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md",
+    "docs/01_planning/01_analysis.md",
     "docs/01_planning/02_prd.md",
     "docs/02_design/03_ux_blueprint.md",
     "docs/02_design/DESIGN.md",
@@ -42,12 +54,24 @@ DEFAULT_CONTEXT_FILES = [
 ]
 
 REQUIRED_FIELDS = [
-    "id", "epic", "sprint_order", "title", "status", "user_story",
-    "acceptance_criteria", "tasks", "dependencies", "context_files",
-    "execution", "qa_checklist"
+    "id",
+    "epic",
+    "sprint_order",
+    "title",
+    "status",
+    "user_story",
+    "acceptance_criteria",
+    "tasks",
+    "dependencies",
+    "context_files",
+    "execution",
+    "qa_checklist",
 ]
+
 REQUIRED_EXECUTION_FIELDS = [
-    "files_allowed", "files_forbidden", "verification_commands"
+    "files_allowed",
+    "files_forbidden",
+    "verification_commands",
 ]
 
 
@@ -98,12 +122,15 @@ def append_event(event: str, story_id: str = "") -> None:
 
 def validate_story(story: Dict[str, Any], path: Path) -> List[str]:
     errors: List[str] = []
+
     for field in REQUIRED_FIELDS:
         if field not in story:
             errors.append(f"{path.name}: missing required field {field}")
+
     status = normalize_status(story.get("status"))
     if status not in STATUSES:
         errors.append(f"{path.name}: invalid status {status}")
+
     execution = story.get("execution", {})
     if not isinstance(execution, dict):
         errors.append(f"{path.name}: execution must be a mapping")
@@ -111,11 +138,13 @@ def validate_story(story: Dict[str, Any], path: Path) -> List[str]:
         for field in REQUIRED_EXECUTION_FIELDS:
             if field not in execution:
                 errors.append(f"{path.name}: missing execution.{field}")
+
     if "sprint_order" in story:
         try:
             int(story.get("sprint_order"))
         except Exception:
             errors.append(f"{path.name}: sprint_order must be an integer")
+
     return errors
 
 
@@ -197,6 +226,10 @@ def clear_active() -> None:
         ACTIVE_STORY_FILE.unlink()
 
 
+def current_story_rel(path: Path) -> str:
+    return path.relative_to(ROOT).as_posix()
+
+
 def context_text(story: Dict[str, Any]) -> str:
     context_files = story.get("context_files") or DEFAULT_CONTEXT_FILES
     chunks: List[str] = []
@@ -219,16 +252,44 @@ def format_list(items: Any) -> str:
     return str(items)
 
 
+def process_metadata_allowed(path: Path, execution: Dict[str, Any]) -> List[str]:
+    """
+    QA-only metadata allowance.
+
+    This does NOT give the Dev agent permission to edit story YAML.
+    It only prevents QA from failing because the sprint runner itself updated
+    the active story's status, timestamps, or bookkeeping fields.
+    """
+    current = current_story_rel(path)
+    items = execution.get("process_metadata_allowed")
+
+    if not items:
+        return [current]
+
+    if isinstance(items, str):
+        values = [items]
+    elif isinstance(items, list):
+        values = [str(item) for item in items]
+    else:
+        values = []
+
+    if current not in values:
+        values.append(current)
+
+    return values
+
+
 def build_dev_prompt(path: Path) -> str:
     story = read_yaml(path)
     execution = story.get("execution", {})
+
     return f"""# BMAD DEV AGENT EXECUTION PROMPT
 
 You are the BMAD Developer Agent for the CPMR fresh Astro rebuild.
 You must implement exactly ONE story.
 
 # STORY FILE
-{path.relative_to(ROOT).as_posix()}
+{current_story_rel(path)}
 
 # STORY METADATA
 Story ID: {story.get('id')}
@@ -250,10 +311,10 @@ Architect Gate Required: {story.get('architect_gate_required', 'No')}
 # DEPENDENCIES
 {format_list(story.get('dependencies', []))}
 
-# FILES ALLOWED
+# IMPLEMENTATION FILES ALLOWED
 {format_list(execution.get('files_allowed', []))}
 
-# FILES FORBIDDEN
+# FILES FORBIDDEN FOR IMPLEMENTATION
 {format_list(execution.get('files_forbidden', []))}
 
 # VERIFICATION COMMANDS THAT MUST PASS
@@ -265,17 +326,20 @@ Architect Gate Required: {story.get('architect_gate_required', 'No')}
 # AUTHORITATIVE CONTEXT
 {context_text(story)}
 
-# STRICT EXECUTION RULES
+# STRICT DEV EXECUTION RULES
 1. Implement only this story.
 2. Do not implement future stories.
-3. Do not modify forbidden files.
-4. Preserve Astro static output compatibility.
-5. Do not introduce SSR-only behavior.
-6. Do not invent UI styles outside DESIGN.md.
-7. Do not hardcode final editable content into components.
-8. Stop if authoritative documents conflict.
-9. Return a clear implementation summary.
-10. Do not mark DONE.
+3. Modify only IMPLEMENTATION FILES ALLOWED.
+4. Do not manually edit the story YAML, active_story.yml, execution_history.yml, architect_gates.yml, backlog_integrity.yml, process_fix_required.yml, or generated prompt files.
+5. Treat sprint-runner metadata files as runner-owned process state, not implementation scope.
+6. Do not modify files listed under FILES FORBIDDEN FOR IMPLEMENTATION.
+7. Preserve Astro static output compatibility.
+8. Do not introduce SSR-only behavior.
+9. Do not invent UI styles outside DESIGN.md.
+10. Do not hardcode final editable institutional content into components.
+11. Stop if authoritative documents conflict.
+12. Return a clear implementation summary.
+13. Do not mark VERIFIED or DONE.
 
 # REQUIRED OUTPUT AFTER IMPLEMENTATION
 1. Story implemented: Yes or No
@@ -290,6 +354,7 @@ Architect Gate Required: {story.get('architect_gate_required', 'No')}
 def build_qa_prompt(path: Path) -> str:
     story = read_yaml(path)
     execution = story.get("execution", {})
+
     return f"""# BMAD ANALYST ACCEPTANCE VALIDATION PROMPT
 
 You are performing the CPMR acceptance validation gate.
@@ -297,7 +362,7 @@ Validate exactly ONE implemented story.
 Do not approve unless every acceptance criterion is satisfied.
 
 # STORY FILE
-{path.relative_to(ROOT).as_posix()}
+{current_story_rel(path)}
 
 # STORY METADATA
 Story ID: {story.get('id')}
@@ -316,10 +381,13 @@ Architect Gate Required: {story.get('architect_gate_required', 'No')}
 # QA CHECKLIST
 {format_list(story.get('qa_checklist'))}
 
-# FILES ALLOWED
+# IMPLEMENTATION FILES ALLOWED
 {format_list(execution.get('files_allowed', []))}
 
-# FILES FORBIDDEN
+# PROCESS METADATA ALLOWED FOR QA ONLY
+{format_list(process_metadata_allowed(path, execution))}
+
+# FILES FORBIDDEN FOR IMPLEMENTATION
 {format_list(execution.get('files_forbidden', []))}
 
 # VERIFICATION COMMANDS
@@ -328,19 +396,69 @@ Architect Gate Required: {story.get('architect_gate_required', 'No')}
 # AUTHORITATIVE CONTEXT
 {context_text(story)}
 
+# REQUIRED LOCAL INSPECTION COMMANDS
+Run or request evidence equivalent to:
+- git status --short
+- git diff --name-only
+- git diff -- {current_story_rel(path)}
+- npm run build
+- npm run validate
+
+# FORBIDDEN FILE VALIDATION RULE
+Implementation changes must be limited to IMPLEMENTATION FILES ALLOWED.
+
+Files listed under PROCESS METADATA ALLOWED FOR QA ONLY are permitted only for runner-owned workflow metadata updates such as:
+- status changes
+- last_updated timestamps
+- QA notes
+- validation notes
+- execution-state tracking
+- sprint-runner bookkeeping
+
+The current story YAML file must not fail forbidden-file validation merely because the sprint runner updated metadata fields.
+
+However, the current story YAML must FAIL Process Metadata Review if the diff changes:
+- user_story
+- acceptance_criteria
+- tasks
+- dependencies
+- context_files
+- files_allowed
+- files_forbidden
+- verification_commands
+- qa_checklist
+- architect_gate_required
+- any story scope, requirement, or implementation instruction
+
+Any other file matching FILES FORBIDDEN FOR IMPLEMENTATION must fail validation unless it is explicitly listed in IMPLEMENTATION FILES ALLOWED.
+
+# QA ROUTING RULE
+Return to Dev ONLY when the defect is in implementation work inside IMPLEMENTATION FILES ALLOWED.
+
+Do NOT return to Dev for:
+- sprint-runner script defects
+- prompt-generation defects
+- story YAML schema defects
+- process metadata policy defects
+- stale active_story.yml state
+- architect gate bookkeeping problems
+
+For those issues, recommend: PROCESS FIX REQUIRED.
+
 # VALIDATION TASK
 Check:
 1. Every acceptance criterion.
 2. Every QA checklist item.
-3. Forbidden file changes.
-4. DESIGN.md alignment.
-5. Architecture alignment.
-6. Static build compatibility.
-7. Accessibility expectations.
-8. Responsive behavior.
-9. Raw metadata or placeholder text.
-10. Scope leakage into future stories.
-11. Whether Architect gate is required.
+3. Forbidden file changes using IMPLEMENTATION FILES ALLOWED, PROCESS METADATA ALLOWED FOR QA ONLY, and FILES FORBIDDEN FOR IMPLEMENTATION.
+4. Process metadata diff discipline.
+5. DESIGN.md alignment where applicable.
+6. Architecture alignment.
+7. Static build compatibility.
+8. Accessibility expectations where applicable.
+9. Responsive behavior where applicable.
+10. Raw metadata or placeholder text.
+11. Scope leakage into future stories.
+12. Whether Architect gate is required.
 
 # REQUIRED OUTPUT FORMAT
 Analyst Validation Result: PASS or FAIL
@@ -361,8 +479,12 @@ Forbidden File Review:
 - PASS or FAIL
 - Evidence
 
-DESIGN.md Review:
+Process Metadata Review:
 - PASS or FAIL
+- Evidence
+
+DESIGN.md Review:
+- PASS or FAIL or NOT APPLICABLE
 - Evidence
 
 Architecture Review:
@@ -378,8 +500,10 @@ Architect Gate Required:
 - Reason
 
 Recommendation:
+Choose exactly one:
 - Proceed to Architect gate
 - Return to Dev
+- Process Fix Required
 - Mark VERIFIED
 """
 
@@ -399,11 +523,16 @@ def cmd_status() -> None:
     if active:
         print("\nActive story:")
         print(active)
+    process_fix = read_yaml(PROCESS_FIX_FILE)
+    if process_fix:
+        print("\nProcess fix required:")
+        print(process_fix)
 
 
 def cmd_validate_backlog() -> None:
     errors: List[str] = []
     ids: Set[str] = set()
+
     for story in load_all_stories():
         path = story["__path"]
         errors.extend(validate_story(story, path))
@@ -411,37 +540,52 @@ def cmd_validate_backlog() -> None:
         if sid in ids:
             errors.append(f"Duplicate story id: {sid}")
         ids.add(sid)
+
     for story in load_all_stories():
         for dep in story.get("dependencies", []) or []:
             if str(dep) not in ids:
                 errors.append(f"{story.get('id')}: dependency not found: {dep}")
+
     audit = {"checked_at": now(), "status": "PASS" if not errors else "FAIL", "errors": errors}
     write_yaml(BACKLOG_AUDIT_FILE, audit)
+
     if errors:
         print("BACKLOG VALIDATION FAILED")
         for e in errors:
             print(f"- {e}")
         sys.exit(1)
+
     print("BACKLOG VALIDATION PASSED")
 
 
 def cmd_next() -> None:
     cmd_validate_backlog()
+
+    if PROCESS_FIX_FILE.exists():
+        process_fix = read_yaml(PROCESS_FIX_FILE)
+        if process_fix:
+            print("PROCESS FIX REQUIRED is currently open. Resolve or clear it before selecting another story.")
+            print(process_fix)
+            sys.exit(1)
+
     current = active_path()
     if current:
         current_story = read_yaml(current)
         current_status = normalize_status(current_story.get("status"))
         if current_status not in ["DONE", "VERIFIED", "QA_FAILED", "BLOCKED"]:
-            print("Active story is still open. Run recover, verify, mark-verified, mark-done, or mark-qa-failed before selecting a new story.")
+            print("Active story is still open. Run recover, verify, mark-verified, mark-done, mark-qa-failed, or mark-process-fix-required before selecting a new story.")
             print(f"Active story: {current_story.get('id')} - {current_story.get('title')} [{current_status}]")
             sys.exit(1)
+
     path = find_next_story()
     if not path:
         print("No executable story found.")
         return
+
     set_status(path, "IN_PROGRESS")
     save_active(path)
     write_prompts(path)
+
     story = read_yaml(path)
     print("Next story selected:")
     print(f"File: {path.relative_to(ROOT)}")
@@ -497,6 +641,36 @@ def cmd_mark_qa_failed() -> None:
     set_status(path, "QA_FAILED")
 
 
+def cmd_mark_process_fix_required() -> None:
+    path = active_path()
+    if not path:
+        print("No active story found.")
+        sys.exit(1)
+    story = read_yaml(path)
+    reason = " ".join(sys.argv[2:]).strip() or "Process fix required. See QA output."
+    set_status(path, "PROCESS_FIX_REQUIRED")
+    write_yaml(PROCESS_FIX_FILE, {
+        "story_id": story.get("id"),
+        "story_file": current_story_rel(path),
+        "title": story.get("title"),
+        "reason": reason,
+        "created_at": now(),
+    })
+    print("Process fix required recorded.")
+
+
+def cmd_clear_process_fix() -> None:
+    path = active_path()
+    if PROCESS_FIX_FILE.exists():
+        PROCESS_FIX_FILE.unlink()
+    if path:
+        story = read_yaml(path)
+        if normalize_status(story.get("status")) == "PROCESS_FIX_REQUIRED":
+            set_status(path, "QA_FAILED")
+            print("Story moved back to QA_FAILED for rerun after process fix.")
+    print("Process fix state cleared.")
+
+
 def cmd_mark_verified() -> None:
     path = active_path()
     if not path:
@@ -547,10 +721,20 @@ def main() -> None:
     ensure_dirs()
     parser = argparse.ArgumentParser(description="CPMR Deterministic BMAD Sprint Runner")
     parser.add_argument("command", choices=[
-        "status", "validate-backlog", "next", "recover", "verify",
-        "mark-qa-failed", "mark-verified", "mark-done", "architect-pass"
+        "status",
+        "validate-backlog",
+        "next",
+        "recover",
+        "verify",
+        "mark-qa-failed",
+        "mark-process-fix-required",
+        "clear-process-fix",
+        "mark-verified",
+        "mark-done",
+        "architect-pass",
     ])
     args = parser.parse_args()
+
     if args.command == "status":
         cmd_status()
     elif args.command == "validate-backlog":
@@ -563,6 +747,10 @@ def main() -> None:
         cmd_verify()
     elif args.command == "mark-qa-failed":
         cmd_mark_qa_failed()
+    elif args.command == "mark-process-fix-required":
+        cmd_mark_process_fix_required()
+    elif args.command == "clear-process-fix":
+        cmd_clear_process_fix()
     elif args.command == "mark-verified":
         cmd_mark_verified()
     elif args.command == "mark-done":
@@ -573,4 +761,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
