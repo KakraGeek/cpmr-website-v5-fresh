@@ -1,0 +1,49 @@
+id: E0-S02
+epic: E0
+sprint_order: 2
+title: Astro static output guardrails
+status: TODO
+architect_gate_required: Yes
+user_story: >
+  As a maintainer, I want static output enforced so that shared hosting remains valid.
+acceptance_criteria:
+  - output is static in astro.config.mjs.
+  - No Astro server adapter is added.
+  - Comment or documentation pointer references the constitution static-output rule.
+tasks:
+  - Set or verify output static in astro.config.mjs.
+  - Confirm no server adapter packages or integrations are added for MVP public routes.
+  - Add an inline comment or pointer to docs/03_architecture/06_project_context.md or docs/03_architecture/04_architecture.md static rules.
+dependencies:
+  - E0-S01
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - astro.config.mjs
+  files_forbidden:
+    - package.json
+    - src/content/**
+    - src/pages/**
+    - src/components/**
+    - src/layouts/**
+    - src/styles/**
+    - src/data/**
+    - public/documents/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed.
+  - Confirm implementation follows DESIGN.md where applicable.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md static-output constraints.
+  - Confirm static build passes via npm run build.
+  - Confirm forbidden-file validation (only allowed paths touched).

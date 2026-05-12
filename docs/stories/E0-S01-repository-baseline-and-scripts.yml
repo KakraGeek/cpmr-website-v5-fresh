@@ -1,0 +1,49 @@
+id: E0-S01
+epic: E0
+sprint_order: 1
+title: Repository baseline and scripts
+status: TODO
+architect_gate_required: Yes
+user_story: >
+  As a developer, I want consistent npm scripts so that build and validation are deterministic.
+acceptance_criteria:
+  - package.json exposes dev, build, preview, validate per constitution.
+  - validate runs astro build.
+  - Node engine matches package.json engines field.
+tasks:
+  - Align package.json scripts with constitution (dev, build, preview, validate).
+  - Ensure npm run validate invokes astro build.
+  - Ensure engines.node matches the pinned requirement in package.json.
+dependencies: []
+context_files:
+  - docs/04_stories/05_story_map.md
+  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+  - docs/01_planning/01_analysis.md
+  - docs/01_planning/02_prd.md
+  - docs/02_design/03_ux_blueprint.md
+  - docs/02_design/DESIGN.md
+  - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/06_project_context.md
+execution:
+  files_allowed:
+    - package.json
+    - astro.config.mjs
+  files_forbidden:
+    - src/content/**
+    - src/pages/**
+    - src/components/**
+    - src/layouts/**
+    - src/styles/**
+    - src/data/**
+    - public/documents/**
+    - docs/**
+  verification_commands:
+    - npm run build
+    - npm run validate
+qa_checklist:
+  - Confirm every acceptance criterion is satisfied.
+  - Confirm no forbidden files were changed.
+  - Confirm implementation follows DESIGN.md where applicable.
+  - Confirm implementation follows docs/03_architecture/04_architecture.md and docs/03_architecture/06_project_context.md.
+  - Confirm static build passes via npm run build.
+  - Confirm forbidden-file validation (only allowed paths touched).
