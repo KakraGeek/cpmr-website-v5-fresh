@@ -64,6 +64,14 @@
   --color-text-link-visited: var(--color-brand-800);
   --color-text-on-brand: var(--color-neutral-50);
   --color-text-on-accent: var(--color-neutral-0);
+
+  /* Shorthand color names — same tokens; DESIGN.md / §13 examples use text-link, text-on-accent, etc. */
+  --color-link: var(--color-text-link);
+  --color-link-hover: var(--color-text-link-hover);
+  --color-link-visited: var(--color-text-link-visited);
+  --color-on-brand: var(--color-text-on-brand);
+  --color-on-accent: var(--color-text-on-accent);
+
   --color-border-subtle: var(--color-neutral-200);
   --color-border-default: var(--color-neutral-300);
   --color-border-strong: var(--color-neutral-500);
@@ -91,6 +99,8 @@
   --text-3xl: 2.25rem;
   --text-4xl: 2.75rem;
   --text-5xl: 3.5rem;
+  /* Semantic heading step — DESIGN.md §1 font_size maps h4 → xl (1.5rem) */
+  --text-h4: var(--text-xl);
 
   /* SPACING (only documented steps) */
   --spacing: 0.25rem;
@@ -137,6 +147,24 @@
   --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
   --easing-entrance: cubic-bezier(0, 0, 0.2, 1);
   --easing-exit: cubic-bezier(0.4, 0, 1, 1);
+}
+
+/*
+ * E1-S02 — Semantic utility aliases (grep this block + class names below).
+ * DESIGN.md §20.4: bg-surface-card text-text-primary text-text-secondary border-border-subtle shadow-e2
+ * DESIGN.md §13 example: text-link text-h4 size-md size-sm hover:shadow-e2 text-on-accent (§14 hero)
+ * bg-surface-* / text-text-* / border-border-* / shadow-e* resolve via @theme --color-* / --shadow-* above.
+ */
+
+/* Icon square sizes — DESIGN.md §1 icon.size: sm = body (1rem), md = 1.25rem → type tokens text-base / text-lg */
+@utility size-sm {
+  width: var(--text-base);
+  height: var(--text-base);
+}
+
+@utility size-md {
+  width: var(--text-lg);
+  height: var(--text-lg);
 }
 
 /* Skip link (visible on focus) — DESIGN.md §20.1 */

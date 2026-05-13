@@ -2,7 +2,7 @@ id: E1-S01
 epic: E1
 sprint_order: 101
 title: Token transcription to `@theme`
-status: DEV_COMPLETE
+status: DONE
 architect_gate_required: Yes
 user_story: >
   As a UI developer, I want tokens in CSS so that Tailwind utilities match DESIGN.md.
