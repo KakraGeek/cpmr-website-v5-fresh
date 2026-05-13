@@ -1,0 +1,22 @@
+---
+/**
+ * Inline icon wrapper — DESIGN.md §1 icon.size (sm = body, md = 1.25rem).
+ * Pass SVG via default slot; parent supplies governed/decorative markup.
+ */
+interface Props {
+  /** When true, icon is decorative; visible text must exist elsewhere. */
+  decorative?: boolean;
+  size?: 'sm' | 'md';
+  class?: string;
+}
+
+const { decorative = true, size = 'md', class: className = '' } = Astro.props;
+const sizeClass = size === 'sm' ? 'size-sm' : 'size-md';
+---
+
+<span
+  class:list={['inline-flex shrink-0 items-center justify-center text-current', sizeClass, className]}
+  aria-hidden={decorative ? 'true' : undefined}
+>
+  <slot />
+</span>

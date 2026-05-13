@@ -1,0 +1,229 @@
+events:
+- timestamp: '2026-05-12 13:18:43'
+  story_id: E0-S01
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-12 13:23:35'
+  story_id: E0-S01
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-12 13:31:25'
+  story_id: E0-S01
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-12 13:37:50'
+  story_id: E0-S01
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-12 13:43:33'
+  story_id: E0-S01
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-12 14:04:33'
+  story_id: E0-S01
+  event: recovery regenerated prompts
+- timestamp: '2026-05-12 14:53:59'
+  story_id: E0-S01
+  event: recovery regenerated prompts
+- timestamp: '2026-05-12 15:01:41'
+  story_id: E0-S01
+  event: architect gate PASS
+- timestamp: '2026-05-12 15:01:54'
+  story_id: E0-S01
+  event: architect gate PASS
+- timestamp: '2026-05-12 15:04:15'
+  story_id: E0-S01
+  event: architect gate PASS
+- timestamp: '2026-05-12 15:04:23'
+  story_id: E0-S01
+  event: status -> VERIFIED
+- timestamp: '2026-05-12 15:04:36'
+  story_id: E0-S01
+  event: status -> DONE
+- timestamp: '2026-05-12 15:06:35'
+  story_id: E0-S02
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-12 15:12:08'
+  story_id: E0-S02
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-12 15:18:15'
+  story_id: E0-S02
+  event: recovery regenerated prompts
+- timestamp: '2026-05-12 15:33:01'
+  story_id: E0-S02
+  event: architect gate PASS
+- timestamp: '2026-05-12 15:34:11'
+  story_id: E0-S02
+  event: status -> VERIFIED
+- timestamp: '2026-05-12 15:34:24'
+  story_id: E0-S02
+  event: status -> DONE
+- timestamp: '2026-05-12 15:41:25'
+  story_id: E0-S03
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-12 15:45:17'
+  story_id: E0-S03
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-12 15:53:31'
+  story_id: E0-S03
+  event: status -> VERIFIED
+- timestamp: '2026-05-12 15:53:41'
+  story_id: E0-S03
+  event: status -> DONE
+- timestamp: '2026-05-12 15:57:18'
+  story_id: E0-S04
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-12 16:03:00'
+  story_id: E0-S04
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-12 16:09:34'
+  story_id: E0-S04
+  event: architect gate PASS
+- timestamp: '2026-05-12 16:09:55'
+  story_id: E0-S04
+  event: status -> VERIFIED
+- timestamp: '2026-05-12 16:10:04'
+  story_id: E0-S04
+  event: status -> DONE
+- timestamp: '2026-05-12 16:13:10'
+  story_id: E0-S05
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-12 16:17:25'
+  story_id: E0-S05
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-12 16:24:56'
+  story_id: E0-S05
+  event: status -> VERIFIED
+- timestamp: '2026-05-12 16:25:03'
+  story_id: E0-S05
+  event: status -> DONE
+- timestamp: '2026-05-12 16:27:26'
+  story_id: E0-S06
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-12 16:34:00'
+  story_id: E0-S06
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-12 16:36:56'
+  story_id: E0-S06
+  event: status -> VERIFIED
+- timestamp: '2026-05-12 16:37:15'
+  story_id: E0-S06
+  event: status -> DONE
+- timestamp: '2026-05-12 16:38:19'
+  story_id: E0-S07
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-12 16:48:39'
+  story_id: E0-S07
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-12 16:51:05'
+  story_id: E0-S07
+  event: status -> VERIFIED
+- timestamp: '2026-05-12 16:51:17'
+  story_id: E0-S07
+  event: status -> DONE
+- timestamp: '2026-05-13 11:01:40'
+  story_id: E1-S01
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-13 11:08:05'
+  story_id: E1-S01
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-13 11:20:18'
+  story_id: E1-S01
+  event: architect gate PASS
+- timestamp: '2026-05-13 11:21:00'
+  story_id: E1-S01
+  event: status -> VERIFIED
+- timestamp: '2026-05-13 11:21:12'
+  story_id: E1-S01
+  event: status -> DONE
+- timestamp: '2026-05-13 11:25:23'
+  story_id: E1-S02
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-13 11:33:24'
+  story_id: E1-S02
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-13 11:37:28'
+  story_id: E1-S02
+  event: status -> VERIFIED
+- timestamp: '2026-05-13 11:37:45'
+  story_id: E1-S02
+  event: status -> DONE
+- timestamp: '2026-05-13 11:39:41'
+  story_id: E1-S03
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-13 11:45:23'
+  story_id: E1-S03
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-13 12:18:33'
+  story_id: E1-S03
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-13 12:19:07'
+  story_id: E1-S03
+  event: status -> VERIFIED
+- timestamp: '2026-05-13 12:19:16'
+  story_id: E1-S03
+  event: status -> DONE
+- timestamp: '2026-05-13 12:29:55'
+  story_id: E1-S04
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-13 12:37:36'
+  story_id: E1-S04
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-13 12:41:31'
+  story_id: E1-S04
+  event: status -> VERIFIED
+- timestamp: '2026-05-13 12:41:43'
+  story_id: E1-S04
+  event: status -> DONE
+- timestamp: '2026-05-13 12:45:11'
+  story_id: E1-S05
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-13 12:51:21'
+  story_id: E1-S05
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-13 12:55:51'
+  story_id: E1-S05
+  event: status -> VERIFIED
+- timestamp: '2026-05-13 12:56:01'
+  story_id: E1-S05
+  event: status -> DONE
+- timestamp: '2026-05-13 13:25:12'
+  story_id: E2-S01
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-13 13:31:08'
+  story_id: E2-S01
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-13 13:47:20'
+  story_id: E2-S01
+  event: status -> VERIFIED
+- timestamp: '2026-05-13 13:47:38'
+  story_id: E2-S01
+  event: status -> DONE
+- timestamp: '2026-05-13 13:50:33'
+  story_id: E1-S04
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-13 13:52:05'
+  story_id: E1-S04
+  event: recovery regenerated prompts
+- timestamp: '2026-05-13 13:52:41'
+  story_id: E1-S04
+  event: status -> VERIFIED
+- timestamp: '2026-05-13 13:52:50'
+  story_id: E1-S04
+  event: status -> DONE
+- timestamp: '2026-05-13 13:53:42'
+  story_id: E1-S05
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-13 13:54:18'
+  story_id: E1-S05
+  event: status -> VERIFIED
+- timestamp: '2026-05-13 13:54:28'
+  story_id: E1-S05
+  event: status -> DONE
+- timestamp: '2026-05-13 13:55:22'
+  story_id: E2-S02
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-13 14:05:26'
+  story_id: E2-S02
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-13 14:08:37'
+  story_id: E2-S02
+  event: status -> VERIFIED
+- timestamp: '2026-05-13 14:08:49'
+  story_id: E2-S02
+  event: status -> DONE

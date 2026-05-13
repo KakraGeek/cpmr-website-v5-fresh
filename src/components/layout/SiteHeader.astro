@@ -1,0 +1,120 @@
+---
+/**
+ * E2-S02 — Site header composition (DESIGN.md §13.1).
+ * Logo first after skip-link; utility row, mega panels, mobile drawer, and search overlay wire in E2-S03+.
+ * Stub controls stay focusable (`aria-disabled`) so tab order is stable without unapproved destinations.
+ */
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+	/** Active path for `aria-current` on the home/logo control */
+	currentPath?: string;
+	variant?: 'default' | 'compact';
+	/** When false, the desktop utility composition region is omitted */
+	showUtility?: boolean;
+}
+
+const { variant = 'default', showUtility = true } = Astro.props;
+const pathname = Astro.props.currentPath ?? Astro.url.pathname;
+const isHome = pathname === '/' || pathname === '';
+
+const shellClasses =
+	variant === 'compact'
+		? 'border-b border-border-subtle bg-surface-card shadow-e1'
+		: 'border-b border-border-subtle bg-surface-card';
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const ghostTrigger =
+	`inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-2 rounded-md ` +
+	`border border-transparent bg-transparent px-3 py-2 font-sans text-sm font-medium text-text-link ` +
+	`shadow-e0 hover:bg-brand-50 ${focusRing}`;
+---
+
+<header role="banner" class:list={['relative z-header text-text-primary', shellClasses]}>
+	<div class="mx-auto flex w-full max-w-page items-center gap-4 px-4 py-4">
+		<a
+			href="/"
+			class:list={[
+				'inline-flex min-h-11 shrink-0 items-center gap-3 rounded-md no-underline outline-none',
+				focusRing,
+			]}
+			aria-current={isHome ? 'page' : undefined}
+		>
+			<img class="size-8 shrink-0" src="/favicon.svg" alt="" width="32" height="32" />
+			<span class="font-sans text-base font-semibold text-text-primary">CPMR</span>
+		</a>
+
+		{
+			showUtility ? (
+				<div
+					class="hidden min-h-0 flex-1 lg:flex lg:justify-end"
+					data-slot="utility-navigation"
+				/>
+			) : null
+		}
+
+		<nav class="hidden shrink-0 items-center gap-2 lg:flex" aria-label="Primary">
+			<button
+				type="button"
+				class={ghostTrigger}
+				aria-expanded="false"
+				aria-disabled="true"
+			>
+				About CPMR
+			</button>
+			<button
+				type="button"
+				class={ghostTrigger}
+				aria-expanded="false"
+				aria-disabled="true"
+			>
+				Research
+			</button>
+		</nav>
+
+		<div class="ml-auto flex shrink-0 items-center gap-2 lg:ml-0">
+			<button
+				type="button"
+				class:list={[ghostTrigger, 'lg:hidden']}
+				aria-expanded="false"
+				aria-controls="cpmr-mobile-nav-drawer-root"
+				aria-label="Open menu"
+				aria-disabled="true"
+			>
+				<Icon decorative size="sm">
+					<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-sm">
+						<path
+							d="M4 7h16M4 12h16M4 17h16"
+							stroke="currentColor"
+							stroke-width="1.75"
+							stroke-linecap="round"
+						/>
+					</svg>
+				</Icon>
+			</button>
+			<button
+				type="button"
+				class={ghostTrigger}
+				aria-haspopup="dialog"
+				aria-label="Open search"
+				aria-disabled="true"
+			>
+				<Icon decorative size="sm">
+					<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-sm">
+						<path
+							d="M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14Zm8 2-4-4"
+							stroke="currentColor"
+							stroke-width="1.75"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
+					</svg>
+				</Icon>
+			</button>
+		</div>
+	</div>
+
+	<div id="cpmr-mobile-nav-drawer-root" hidden></div>
+</header>

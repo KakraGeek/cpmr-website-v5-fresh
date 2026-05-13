@@ -1,0 +1,91 @@
+---
+/**
+ * DESIGN.md §13.23 — navigation/download/anchor actions as &lt;a&gt;.
+ * Optional icons via named slots (no Lucide dependency in this package).
+ */
+interface Props {
+  href: string;
+  label: string;
+  variant?: 'primary' | 'secondary' | 'ghost' | 'link';
+  size?: 'sm' | 'md' | 'lg';
+  external?: boolean;
+  fullWidth?: boolean;
+  class?: string;
+}
+
+const {
+  href,
+  label,
+  variant = 'primary',
+  size = 'md',
+  external = false,
+  fullWidth = false,
+  class: className = '',
+} = Astro.props;
+
+const baseFocus =
+  'focus-visible:outline-none focus-visible:shadow-ring-focus focus-visible:relative';
+
+const width = fullWidth ? 'w-full justify-center' : '';
+
+const sizeClasses: Record<NonNullable<Props['size']>, string> = {
+  sm: 'rounded-md py-2 px-3 text-sm gap-2',
+  md: 'rounded-md py-3 px-5 text-sm gap-2',
+  lg: 'rounded-md py-4 px-6 text-base gap-2',
+};
+
+const variantClasses: Record<NonNullable<Props['variant']>, string> = {
+  primary:
+    'bg-brand-600 text-text-on-brand shadow-e1 hover:bg-brand-700 active:bg-brand-700 ' + baseFocus,
+  secondary:
+    'border border-border-brand bg-surface-card text-text-link shadow-e0 hover:bg-brand-50 ' +
+    baseFocus,
+  ghost: 'bg-transparent text-text-link shadow-e0 hover:bg-brand-50 ' + baseFocus,
+  link:
+    'inline min-h-0 rounded-none bg-transparent p-0 text-text-link underline shadow-e0 hover:text-text-link-hover ' +
+    baseFocus,
+};
+
+const layout =
+  variant === 'link' ? 'inline-flex items-center gap-2' : 'inline-flex items-center gap-2 font-sans';
+
+const ariaLabel = external ? `${label} (opens external site)` : undefined;
+---
+
+<a
+  href={href}
+  class:list={[
+    layout,
+    variantClasses[variant],
+    variant !== 'link' ? sizeClasses[size] : '',
+    width,
+    className,
+  ]}
+  rel={external ? 'noopener noreferrer' : undefined}
+  target={external ? '_blank' : undefined}
+  aria-label={ariaLabel}
+>
+  {Astro.slots.has('icon-leading') ? <slot name="icon-leading" /> : null}
+  <span class:list={[variant === 'link' ? '' : 'text-left']}>{label}</span>
+  {
+    external ? (
+      <span class="inline-flex shrink-0" aria-hidden="true">
+        <svg
+          class="size-sm text-current"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M10 2h4v4M14 2 8 8M6 14H2v-4M2 14l6-6"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </span>
+    ) : null
+  }
+  {Astro.slots.has('icon-trailing') ? <slot name="icon-trailing" /> : null}
+</a>

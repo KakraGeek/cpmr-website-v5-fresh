@@ -1,0 +1,69 @@
+---
+/**
+ * DESIGN.md §13.25 — generic container; slots for media, body, footer.
+ */
+interface Props {
+  surface?: 'card' | 'sunken' | 'brand-soft';
+  elevation?: 'flat' | 'outline' | 'hover-lift';
+  padding?: '4' | '5' | '6' | '8';
+  radius?: 'md' | 'lg';
+  as?: 'article' | 'div';
+  class?: string;
+}
+
+const {
+  surface = 'card',
+  elevation = 'outline',
+  padding = '5',
+  radius = 'md',
+  as: Tag = 'article',
+  class: className = '',
+} = Astro.props;
+
+const surfaceClass: Record<NonNullable<Props['surface']>, string> = {
+  card: 'bg-surface-card',
+  sunken: 'bg-surface-sunken',
+  'brand-soft': 'bg-brand-50',
+};
+
+const elevationClass: Record<NonNullable<Props['elevation']>, string> = {
+  flat: 'border-transparent shadow-e0',
+  outline: 'border border-border-subtle shadow-e0',
+  'hover-lift':
+    'border border-border-subtle shadow-e0 transition-shadow duration-base hover:shadow-e2',
+};
+
+const paddingClass: Record<NonNullable<Props['padding']>, string> = {
+  '4': 'p-4',
+  '5': 'p-5',
+  '6': 'p-6',
+  '8': 'p-8',
+};
+
+const radiusClass = radius === 'lg' ? 'rounded-lg' : 'rounded-md';
+---
+
+<Tag
+  class:list={[
+    'text-text-primary',
+    surfaceClass[surface],
+    elevationClass[elevation],
+    paddingClass[padding],
+    radiusClass,
+    className,
+  ]}
+>
+  {Astro.slots.has('media') ? (
+    <div class="mb-4">
+      <slot name="media" />
+    </div>
+  ) : null}
+  <div class="flex flex-col gap-4">
+    <slot />
+  </div>
+  {Astro.slots.has('footer') ? (
+    <footer class="mt-6 border-t border-border-subtle pt-4 text-sm text-text-secondary">
+      <slot name="footer" />
+    </footer>
+  ) : null}
+</Tag>

@@ -2,46 +2,51 @@ id: E2-S02
 epic: E2
 sprint_order: 202
 title: Site header composition
-status: TODO
-architect_gate_required: No
-user_story: >
-  As a visitor, I want branding and primary navigation entry points visible on desktop.
+status: DONE
+architect_gate_required: false
+user_story: 'As a visitor, I want branding and primary navigation entry points visible
+  on desktop.
+
+  '
 acceptance_criteria:
-  - Header uses design tokens only.
-  - Header contains logo, utility slot, and nav trigger affordances per DESIGN.md.
-  - Keyboard focus order through header controls is logical.
+- Header uses design tokens only.
+- Header contains logo, utility slot, and nav trigger affordances per DESIGN.md.
+- Keyboard focus order through header controls is logical.
 tasks:
-  - Implement SiteHeader.astro using layout and ui primitives from E1.
-  - Reserve composition slots for utility row and mega or mobile navigation without shipping unapproved destination links.
+- Implement SiteHeader.astro using layout and ui primitives from E1.
+- Reserve composition slots for utility row and mega or mobile navigation without
+  shipping unapproved destination links.
 dependencies:
-  - E2-S01
+- E2-S01
 context_files:
-  - docs/04_stories/05_story_map.md
-  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
-  - docs/01_planning/01_analysis.md
-  - docs/01_planning/02_prd.md
-  - docs/02_design/03_ux_blueprint.md
-  - docs/02_design/DESIGN.md
-  - docs/03_architecture/04_architecture.md
-  - docs/03_architecture/06_project_context.md
+- docs/04_stories/05_story_map.md
+- docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+- docs/01_planning/01_analysis.md
+- docs/01_planning/02_prd.md
+- docs/02_design/03_ux_blueprint.md
+- docs/02_design/DESIGN.md
+- docs/03_architecture/04_architecture.md
+- docs/03_architecture/06_project_context.md
 execution:
   files_allowed:
-    - src/components/layout/SiteHeader.astro
+  - src/components/layout/SiteHeader.astro
   files_forbidden:
-    - astro.config.mjs
-    - src/content/**
-    - src/pages/**
-    - public/documents/**
-    - dist/**
-    - package.json
+  - astro.config.mjs
+  - src/content/**
+  - src/pages/**
+  - public/documents/**
+  - dist/**
+  - package.json
   verification_commands:
-    - npm run build
-    - npm run validate
+  - npm run build
+  - npm run validate
 qa_checklist:
-  - Confirm every acceptance criterion is satisfied.
-  - Confirm no forbidden files were changed.
-  - Confirm implementation follows DESIGN.md.
-  - Confirm implementation follows docs/03_architecture/04_architecture.md and docs/03_architecture/06_project_context.md.
-  - Confirm static build passes via npm run build.
-  - Confirm forbidden-path validation against execution.files_forbidden.
-  - Confirm nav labels and hrefs remain data-driven or explicitly gated until routes are approved per PRD footer rule.
+- Confirm every acceptance criterion is satisfied.
+- Confirm no forbidden files were changed.
+- Confirm implementation follows DESIGN.md.
+- Confirm implementation follows docs/03_architecture/04_architecture.md and docs/03_architecture/06_project_context.md.
+- Confirm static build passes via npm run build.
+- Confirm forbidden-path validation against execution.files_forbidden.
+- Confirm nav labels and hrefs remain data-driven or explicitly gated until routes
+  are approved per PRD footer rule.
+last_updated: '2026-05-13 14:08:49'
