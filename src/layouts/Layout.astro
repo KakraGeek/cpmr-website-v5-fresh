@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import SiteHeader from '../components/layout/SiteHeader.astro';
+import SiteFooter from '../components/layout/SiteFooter.astro';
 
 interface Props {
 	title?: string;
@@ -40,5 +41,6 @@ const pathname = Astro.url.pathname;
 	<body class="min-h-full bg-surface-page antialiased">
 		<SiteHeader currentPath={pathname} />
 		<slot />
+		<SiteFooter currentPath={pathname} />
 	</body>
 </html>

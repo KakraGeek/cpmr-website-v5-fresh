@@ -1,0 +1,274 @@
+---
+/**
+ * E2-S06 — Deep footer (DESIGN.md §13.5; UX blueprint §23).
+ * Columns + meta + contact are data-driven from `src/data/footer.ts`.
+ * lg+: multi-column grid; <lg: single-column `<details>` accordions per DESIGN.md §13.5.
+ */
+import {
+	footerColumns,
+	footerContact,
+	footerCopyrightLegalName,
+	footerCopyrightYear,
+	footerMetaLinks,
+	footerSocialLinks,
+} from '../../data/footer';
+
+interface Props {
+	currentPath?: string;
+}
+
+const { currentPath = '/' } = Astro.props;
+
+function normalizePath(path: string): string {
+	if (!path || path === '/') return '/';
+	const trimmed = path.endsWith('/') && path.length > 1 ? path.slice(0, -1) : path;
+	return trimmed === '' ? '/' : trimmed;
+}
+
+const pathNow = normalizePath(currentPath);
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const linkOnInverse =
+	`block min-h-11 rounded-sm px-1 py-2.5 font-sans text-sm text-text-on-brand no-underline ` +
+	`underline-offset-4 hover:underline ${focusRing}`;
+
+const pendingOnInverse = 'block min-h-11 px-1 py-2.5 font-sans text-sm text-text-inverse/75';
+
+const summaryClass =
+	`flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-sm px-1 py-2 ` +
+	`font-sans text-sm font-semibold text-text-inverse outline-none marker:content-none ` +
+	`[&::-webkit-details-marker]:hidden ${focusRing}`;
+---
+
+<footer role="contentinfo" class="border-t border-border-subtle bg-surface-inverse text-text-inverse">
+	<div class="mx-auto max-w-page px-4 py-10">
+		<!-- Mobile / narrow: accordion columns (DESIGN.md §13.5) -->
+		<div class="lg:hidden">
+			{
+				footerColumns.map((column) => (
+					<details class="group border-b border-white/15 last:border-b-0">
+						<summary class={summaryClass}>
+							<span>{column.title}</span>
+							<span class="text-text-inverse/70 transition-transform group-open:rotate-180" aria-hidden="true">
+								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="inline-block">
+									<path
+										d="M6 9l6 6 6-6"
+										stroke="currentColor"
+										stroke-width="1.75"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									/>
+								</svg>
+							</span>
+						</summary>
+						<ul class="m-0 list-none space-y-1 px-1 pb-3 pt-1">
+							{column.links.map((link) => {
+								const target = normalizePath(link.href);
+								const isCurrent = link.routeLive && pathNow === target;
+								return (
+									<li>
+										{link.routeLive ? (
+											<a
+												href={link.href}
+												class:list={[linkOnInverse, isCurrent ? 'underline' : null]}
+												aria-current={isCurrent ? 'page' : undefined}
+												target={link.external ? '_blank' : undefined}
+												rel={link.external ? 'noopener noreferrer' : undefined}
+											>
+												{link.label}
+											</a>
+										) : (
+											<span class={pendingOnInverse}>{link.label}</span>
+										)}
+									</li>
+								);
+							})}
+						</ul>
+					</details>
+				))
+			}
+			<section aria-labelledby="footer-contact-heading-mobile" class="border-b border-white/15 py-4 last:border-b-0">
+				<h2 id="footer-contact-heading-mobile" class="m-0 mb-3 font-sans text-sm font-semibold text-text-inverse">
+					Contact
+				</h2>
+				<address class="not-italic">
+					{footerContact.address.map((line) => (
+						<p class="m-0 mb-2 font-sans text-sm leading-relaxed text-text-inverse/90 last:mb-0">{line}</p>
+					))}
+					{footerContact.phone ? (
+						<p class="m-0 mb-2 font-sans text-sm text-text-inverse/90">
+							<span class="font-medium text-text-inverse">Phone: </span>
+							<a href={`tel:${footerContact.phone.replace(/\s/g, '')}`} class:list={[linkOnInverse, 'inline']}>
+								{footerContact.phone}
+							</a>
+						</p>
+					) : null}
+					{footerContact.email ? (
+						<p class="m-0 mb-2 font-sans text-sm text-text-inverse/90">
+							<span class="font-medium text-text-inverse">Email: </span>
+							<a href={`mailto:${footerContact.email}`} class:list={[linkOnInverse, 'inline']}>
+								{footerContact.email}
+							</a>
+						</p>
+					) : null}
+					{footerContact.mapHref ? (
+						<p class="m-0 mb-2 font-sans text-sm">
+							<a href={footerContact.mapHref} class={linkOnInverse}>
+								Location map
+							</a>
+						</p>
+					) : null}
+					{footerContact.hours?.length ? (
+						<div class="mt-3 font-sans text-sm text-text-inverse/90">
+							<p class="m-0 mb-1 font-medium text-text-inverse">Hours</p>
+							<ul class="m-0 list-none space-y-1 p-0">
+								{footerContact.hours.map((line) => (
+									<li>{line}</li>
+								))}
+							</ul>
+						</div>
+					) : null}
+				</address>
+			</section>
+		</div>
+
+		<!-- Desktop: 6 IA columns + contact (UX blueprint §23.1) -->
+		<div class="hidden gap-8 lg:grid lg:grid-cols-7">
+			{
+				footerColumns.map((column) => (
+					<section aria-labelledby={`${column.id}-heading`} class="min-w-0">
+						<h2 id={`${column.id}-heading`} class="m-0 mb-3 font-sans text-sm font-semibold text-text-inverse">
+							{column.title}
+						</h2>
+						<ul class="m-0 list-none space-y-1 p-0">
+							{column.links.map((link) => {
+								const target = normalizePath(link.href);
+								const isCurrent = link.routeLive && pathNow === target;
+								return (
+									<li>
+										{link.routeLive ? (
+											<a
+												href={link.href}
+												class:list={[linkOnInverse, isCurrent ? 'underline' : null]}
+												aria-current={isCurrent ? 'page' : undefined}
+												target={link.external ? '_blank' : undefined}
+												rel={link.external ? 'noopener noreferrer' : undefined}
+											>
+												{link.label}
+											</a>
+										) : (
+											<span class={pendingOnInverse}>{link.label}</span>
+										)}
+									</li>
+								);
+							})}
+						</ul>
+					</section>
+				))
+			}
+
+			<section aria-labelledby="footer-contact-heading" class="min-w-0">
+				<h2 id="footer-contact-heading" class="m-0 mb-3 font-sans text-sm font-semibold text-text-inverse">
+					Contact
+				</h2>
+				<address class="not-italic">
+					{footerContact.address.map((line) => (
+						<p class="m-0 mb-2 font-sans text-sm leading-relaxed text-text-inverse/90 last:mb-0">{line}</p>
+					))}
+					{footerContact.phone ? (
+						<p class="m-0 mb-2 font-sans text-sm text-text-inverse/90">
+							<span class="font-medium text-text-inverse">Phone: </span>
+							<a href={`tel:${footerContact.phone.replace(/\s/g, '')}`} class:list={[linkOnInverse, 'inline']}>
+								{footerContact.phone}
+							</a>
+						</p>
+					) : null}
+					{footerContact.email ? (
+						<p class="m-0 mb-2 font-sans text-sm text-text-inverse/90">
+							<span class="font-medium text-text-inverse">Email: </span>
+							<a href={`mailto:${footerContact.email}`} class:list={[linkOnInverse, 'inline']}>
+								{footerContact.email}
+							</a>
+						</p>
+					) : null}
+					{footerContact.mapHref ? (
+						<p class="m-0 mb-2 font-sans text-sm">
+							<a href={footerContact.mapHref} class={linkOnInverse}>
+								Location map
+							</a>
+						</p>
+					) : null}
+					{footerContact.hours?.length ? (
+						<div class="mt-3 font-sans text-sm text-text-inverse/90">
+							<p class="m-0 mb-1 font-medium text-text-inverse">Hours</p>
+							<ul class="m-0 list-none space-y-1 p-0">
+								{footerContact.hours.map((line) => (
+									<li>{line}</li>
+								))}
+							</ul>
+						</div>
+					) : null}
+				</address>
+			</section>
+		</div>
+
+		{
+			footerSocialLinks.length ? (
+				<div class="mt-8 border-t border-white/15 pt-6">
+					<ul class="m-0 flex list-none flex-wrap gap-4 p-0">
+						{footerSocialLinks.map((s) => (
+							<li>
+								<a
+									href={s.href}
+									class:list={[linkOnInverse, 'inline-flex min-h-11 min-w-11 items-center justify-center']}
+									target="_blank"
+									rel="noopener noreferrer"
+									aria-label={s.label}
+								>
+									{s.platform}
+								</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			) : null
+		}
+	</div>
+
+	<div class="border-t border-white/15 bg-surface-inverse py-6">
+		<div class="mx-auto flex max-w-page flex-col gap-4 px-4 font-sans text-sm text-text-inverse/85 md:flex-row md:items-center md:justify-between">
+			<p class="m-0">
+				© {footerCopyrightYear} {footerCopyrightLegalName}
+			</p>
+			<nav aria-label="Footer meta">
+				<ul class="m-0 flex list-none flex-wrap gap-x-6 gap-y-2 p-0">
+					{
+						footerMetaLinks.map((m) => {
+							const target = normalizePath(m.href);
+							const isCurrent = m.routeLive && pathNow === target;
+							return (
+								<li>
+									{m.routeLive ? (
+										<a
+											href={m.href}
+											class:list={[linkOnInverse, 'inline-flex min-h-11 items-center py-2', isCurrent ? 'underline' : null]}
+											aria-current={isCurrent ? 'page' : undefined}
+											target={m.external ? '_blank' : undefined}
+											rel={m.external ? 'noopener noreferrer' : undefined}
+										>
+											{m.label}
+										</a>
+									) : (
+										<span class:list={[pendingOnInverse, 'inline-flex items-center py-2']}>{m.label}</span>
+									)}
+								</li>
+							);
+						})
+					}
+				</ul>
+			</nav>
+		</div>
+	</div>
+</footer>

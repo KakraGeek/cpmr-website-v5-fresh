@@ -2,48 +2,57 @@ id: E2-S06
 epic: E2
 sprint_order: 206
 title: Footer depth
-status: TODO
-architect_gate_required: No
-user_story: >
-  As a visitor, I want institutional links and contact clarity in the footer.
+status: DONE
+architect_gate_required: false
+user_story: 'As a visitor, I want institutional links and contact clarity in the footer.
+
+  '
 acceptance_criteria:
-  - Footer presents multi-column institutional clusters per UX blueprint and DESIGN.md footer template.
-  - Footer data is sourced from src/data or a governed collection entry rather than ad hoc literals in the component.
-  - Footer does not link to routes without approved public content per PRD MVP footer rule and architecture section 19 item 6.
-  - Contact block is present with institutionally correct pathways or honest omission until content exists.
+- Footer presents multi-column institutional clusters per UX blueprint and DESIGN.md
+  footer template.
+- Footer data is sourced from src/data or a governed collection entry rather than
+  ad hoc literals in the component.
+- Footer does not link to routes without approved public content per PRD MVP footer
+  rule and architecture section 19 item 6.
+- Contact block is present with institutionally correct pathways or honest omission
+  until content exists.
 tasks:
-  - Implement SiteFooter.astro consuming src/data/footer.ts for columns and links.
-  - Align footer cluster mirror relationship to mega navigation per UX blueprint section 5.3 and section 23 where applicable.
+- Implement SiteFooter.astro consuming src/data/footer.ts for columns and links.
+- Align footer cluster mirror relationship to mega navigation per UX blueprint section
+  5.3 and section 23 where applicable.
 dependencies:
-  - E2-S01
+- E2-S01
 context_files:
-  - docs/04_stories/05_story_map.md
-  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
-  - docs/01_planning/01_analysis.md
-  - docs/01_planning/02_prd.md
-  - docs/02_design/03_ux_blueprint.md
-  - docs/02_design/DESIGN.md
-  - docs/03_architecture/04_architecture.md
-  - docs/03_architecture/06_project_context.md
+- docs/04_stories/05_story_map.md
+- docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+- docs/01_planning/01_analysis.md
+- docs/01_planning/02_prd.md
+- docs/02_design/03_ux_blueprint.md
+- docs/02_design/DESIGN.md
+- docs/03_architecture/04_architecture.md
+- docs/03_architecture/06_project_context.md
 execution:
   files_allowed:
-    - src/components/layout/SiteFooter.astro
-    - src/data/footer.ts
+  - src/components/layout/SiteFooter.astro
+  - src/data/footer.ts
+  - src/layouts/Layout.astro
   files_forbidden:
-    - astro.config.mjs
-    - src/content/**
-    - src/pages/**
-    - public/documents/**
-    - dist/**
-    - package.json
+  - astro.config.mjs
+  - src/content/**
+  - src/pages/**
+  - public/documents/**
+  - dist/**
+  - package.json
   verification_commands:
-    - npm run build
-    - npm run validate
+  - npm run build
+  - npm run validate
 qa_checklist:
-  - Confirm every acceptance criterion is satisfied.
-  - Confirm no forbidden files were changed.
-  - Confirm implementation follows DESIGN.md.
-  - Confirm implementation follows docs/03_architecture/04_architecture.md and docs/03_architecture/06_project_context.md.
-  - Confirm static build passes via npm run build.
-  - Confirm forbidden-path validation against execution.files_forbidden.
-  - Confirm footer copy and link targets remain data-driven so future CMS or editorial workflows can replace src/data entries without component forks.
+- Confirm every acceptance criterion is satisfied.
+- Confirm no forbidden files were changed.
+- Confirm implementation follows DESIGN.md.
+- Confirm implementation follows docs/03_architecture/04_architecture.md and docs/03_architecture/06_project_context.md.
+- Confirm static build passes via npm run build.
+- Confirm forbidden-path validation against execution.files_forbidden.
+- Confirm footer copy and link targets remain data-driven so future CMS or editorial
+  workflows can replace src/data entries without component forks.
+last_updated: '2026-05-13 16:48:52'
