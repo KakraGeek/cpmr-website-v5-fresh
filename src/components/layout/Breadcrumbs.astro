@@ -1,0 +1,145 @@
+---
+/**
+ * E2-S07 — Breadcrumbs (DESIGN.md §13.6 `Breadcrumbs`).
+ *
+ * Usage (page templates / layouts — wire routes in later stories):
+ * - Pass explicit `items` from a loader, `getStaticPaths` context, or frontmatter when labels
+ *   should not be derived from URL segments (recommended for production pages).
+ * - Omit `items` to derive a trail from `Astro.url.pathname`: first crumb is always "Home" (`/`),
+ *   intermediate segments are linked with trailing slashes, the last segment is the current page
+ *   (no `href`, `aria-current="page"`).
+ *
+ * @example Explicit trail
+ *   <Breadcrumbs
+ *     items={[
+ *       { label: 'Home', href: '/' },
+ *       { label: 'Departments', href: '/departments/' },
+ *       { label: 'Phytochemistry' },
+ *     ]}
+ *   />
+ *
+ * @example Route-derived (same host path)
+ *   <Breadcrumbs />
+ */
+export interface BreadcrumbCrumb {
+	label: string;
+	/** Omit on the current page segment — renders as text with `aria-current="page"`. */
+	href?: string;
+}
+
+interface Props {
+	items?: BreadcrumbCrumb[];
+	separator?: 'chevron' | 'slash';
+}
+
+const { items: itemsProp, separator = 'chevron' } = Astro.props;
+
+const pathname = Astro.url.pathname;
+
+const sepChar = separator === 'slash' ? '/' : '\u203a';
+
+function normalizePath(path: string): string {
+	if (!path || path === '/') return '/';
+	const trimmed = path.endsWith('/') && path.length > 1 ? path.slice(0, -1) : path;
+	return trimmed === '' ? '/' : trimmed;
+}
+
+function withTrailingSlash(href: string): string {
+	if (href === '/' || href === '') return '/';
+	return href.endsWith('/') ? href : `${href}/`;
+}
+
+function pathsEqual(a: string, b: string): boolean {
+	return normalizePath(withTrailingSlash(a)) === normalizePath(withTrailingSlash(b));
+}
+
+function humanizeSegment(segment: string): string {
+	if (!segment) return '';
+	return segment
+		.split('-')
+		.filter(Boolean)
+		.map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+		.join(' ');
+}
+
+/** DESIGN.md: Home first; minimum two levels on deep routes; root is Home only (current). */
+function trailFromPathname(raw: string): BreadcrumbCrumb[] {
+	const trimmed = raw.endsWith('/') && raw.length > 1 ? raw.slice(0, -1) : raw;
+	const segments = trimmed.split('/').filter(Boolean);
+	if (segments.length === 0) {
+		return [{ label: 'Home' }];
+	}
+	const out: BreadcrumbCrumb[] = [{ label: 'Home', href: '/' }];
+	let acc = '';
+	for (let i = 0; i < segments.length; i++) {
+		const seg = segments[i]!;
+		acc += `/${seg}`;
+		const isLast = i === segments.length - 1;
+		out.push({
+			label: humanizeSegment(seg),
+			href: isLast ? undefined : `${acc}/`,
+		});
+	}
+	return out;
+}
+
+function resolveItems(
+	prop: BreadcrumbCrumb[] | undefined,
+	currentPath: string,
+): BreadcrumbCrumb[] {
+	const cur = normalizePath(currentPath);
+	const base = prop && prop.length > 0 ? prop : trailFromPathname(pathname);
+	return base.map((c, i, arr) => {
+		const isLast = i === arr.length - 1;
+		if (!isLast) return c;
+		if (c.href === undefined || c.href === '') {
+			return { label: c.label, href: undefined };
+		}
+		if (pathsEqual(c.href, cur)) {
+			return { label: c.label, href: undefined };
+		}
+		return c;
+	});
+}
+
+const items = resolveItems(itemsProp, pathname);
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const linkClass =
+	`font-sans text-sm font-medium no-underline transition-colors ` +
+	`text-text-secondary hover:text-text-primary min-h-11 inline-flex items-center rounded-md px-1 py-1 ${focusRing}`;
+
+const currentClass = 'font-sans text-sm font-medium text-text-primary';
+
+const sepClass = 'font-sans text-sm text-text-muted select-none';
+---
+
+<nav aria-label="Breadcrumb" class="w-full min-w-0">
+	<ol class="m-0 flex list-none flex-wrap items-center gap-2 p-0">
+		{
+			items.map((crumb, index) => {
+				const isLast = index === items.length - 1;
+				const hasHref = crumb.href !== undefined && crumb.href !== '';
+				const isCurrentPage = isLast && !hasHref;
+				return (
+					<li class="flex max-w-full items-center gap-2">
+						{index > 0 ? <span aria-hidden="true" class={sepClass}>{sepChar}</span> : null}
+						{isCurrentPage ? (
+							<span aria-current="page" class={currentClass}>
+								{crumb.label}
+							</span>
+						) : hasHref ? (
+							<a href={withTrailingSlash(crumb.href!)} class={linkClass}>
+								{crumb.label}
+							</a>
+						) : (
+							<span class={currentClass}>{crumb.label}</span>
+						)}
+					</li>
+				);
+			})
+		}
+	</ol>
+</nav>
