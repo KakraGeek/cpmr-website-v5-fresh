@@ -1,0 +1,43 @@
+---
+/**
+ * E2-S01 — Base layout shell (DESIGN.md §15, §14.2; docs/03_architecture/04_architecture.md §8).
+ * Skip link is the first focusable control; primary page content belongs in the default slot inside <main id="main">.
+ * Optional named slots: `header`, `footer` (chrome outside main), `head` (extra SEO/meta/link tags).
+ */
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { title = 'CPMR Website Rebuild', description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="h-full">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+		/>
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+		{description ? <meta name="description" content={description} /> : null}
+		<title>{title}</title>
+		<slot name="head" />
+	</head>
+	<body class="relative min-h-full bg-surface-page antialiased">
+		<a href="#main" class="skip-to-content">Skip to main content</a>
+		<slot name="header" />
+		<main id="main">
+			<slot />
+		</main>
+		<slot name="footer" />
+	</body>
+</html>
