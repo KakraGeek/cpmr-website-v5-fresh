@@ -1,11 +1,13 @@
 ---
 import '../styles/global.css';
+import SiteHeader from '../components/layout/SiteHeader.astro';
 
 interface Props {
 	title?: string;
 }
 
 const { title = 'CPMR Website Rebuild' } = Astro.props;
+const pathname = Astro.url.pathname;
 ---
 
 <!doctype html>
@@ -35,7 +37,8 @@ const { title = 'CPMR Website Rebuild' } = Astro.props;
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
-	<body class="min-h-full antialiased">
+	<body class="min-h-full bg-surface-page antialiased">
+		<SiteHeader currentPath={pathname} />
 		<slot />
 	</body>
 </html>

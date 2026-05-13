@@ -1,0 +1,95 @@
+---
+/**
+ * E2-S03 — Utility navigation (DESIGN.md §13.2; UX blueprint §4).
+ * Desktop (lg+) row: visible text labels; `aria-current="page"` on the active item when routed as a link.
+ */
+import {
+	utilityNavLinks,
+	utilitySearchRouteLive,
+} from '../../data/navigation';
+
+interface Props {
+	/** Normalised against `href` for aria-current (usually `Astro.url.pathname`) */
+	pathname: string;
+}
+
+const { pathname } = Astro.props;
+
+function normalizePath(path: string): string {
+	if (!path || path === '/') return '/';
+	const trimmed = path.endsWith('/') && path.length > 1 ? path.slice(0, -1) : path;
+	return trimmed === '' ? '/' : trimmed;
+}
+
+const currentPath = normalizePath(pathname);
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const itemInteractive =
+	`font-sans text-sm font-medium no-underline transition-colors ` +
+	`text-text-secondary hover:text-text-primary min-h-11 inline-flex items-center rounded-md px-2 py-2 ${focusRing}`;
+
+const itemCurrent = 'text-text-primary underline decoration-border-brand underline-offset-4';
+
+const itemPending =
+	`font-sans text-sm font-medium text-text-muted min-h-11 inline-flex cursor-default items-center px-2 py-2`;
+
+const searchTriggerBase =
+	`font-sans text-sm font-medium text-text-secondary min-h-11 inline-flex items-center rounded-md px-2 py-2 ` +
+	`border border-transparent bg-transparent hover:text-text-primary ${focusRing}`;
+---
+
+<nav aria-label="Utility" class="flex w-full min-w-0 justify-end">
+	<ul class="m-0 flex list-none flex-wrap items-center justify-end gap-1 p-0 sm:gap-2">
+		{
+			utilityNavLinks.map((item) => {
+				const target = normalizePath(item.href);
+				const isCurrent = item.routeLive && currentPath === target;
+				return (
+					<li class="shrink-0">
+						{item.routeLive ? (
+							<a
+								href={item.href}
+								class:list={[itemInteractive, isCurrent ? itemCurrent : null]}
+								aria-current={isCurrent ? 'page' : undefined}
+								rel={item.external ? 'noopener noreferrer' : undefined}
+								target={item.external ? '_blank' : undefined}
+							>
+								{item.label}
+							</a>
+						) : (
+							<span class={itemPending}>{item.label}</span>
+						)}
+					</li>
+				);
+			})
+		}
+		<li class="shrink-0">
+			{
+				utilitySearchRouteLive ? (
+					<a
+						href="/search/"
+						class:list={[
+							itemInteractive,
+							normalizePath('/search/') === currentPath ? itemCurrent : null,
+						]}
+						aria-current={normalizePath('/search/') === currentPath ? 'page' : undefined}
+					>
+						Search
+					</a>
+				) : (
+					<button
+						type="button"
+						class:list={[searchTriggerBase, 'text-text-muted']}
+						aria-haspopup="dialog"
+						aria-label="Open search"
+						aria-disabled="true"
+					>
+						Search
+					</button>
+				)
+			}
+		</li>
+	</ul>
+</nav>
