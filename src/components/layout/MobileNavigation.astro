@@ -1,0 +1,367 @@
+---
+/**
+ * E2-S05 — Mobile navigation drawer (DESIGN.md §13.4; UX blueprint §6.1–6.2).
+ * Quick links → primary IA accordions → optional secondary; `<dialog>` + shared seeds from `navigation.ts`.
+ */
+import Icon from '../ui/Icon.astro';
+import {
+	megaNavSections,
+	mobileDrawerSecondaryLinks,
+	utilityNavLinks,
+	utilitySearchRouteLive,
+} from '../../data/navigation';
+
+interface Props {
+	pathname: string;
+}
+
+const { pathname } = Astro.props;
+
+function normalizePath(path: string): string {
+	if (!path || path === '/') return '/';
+	const trimmed = path.endsWith('/') && path.length > 1 ? path.slice(0, -1) : path;
+	return trimmed === '' ? '/' : trimmed;
+}
+
+const currentPath = normalizePath(pathname);
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const closeBtnClass =
+	`inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-md border border-transparent ` +
+	`bg-transparent font-sans text-sm font-medium text-text-link shadow-e0 hover:bg-brand-50 ${focusRing}`;
+
+const quickLinkInteractive =
+	`flex min-h-11 w-full items-center rounded-md px-3 py-2 font-sans text-base font-medium text-text-link ` +
+	`no-underline hover:bg-brand-50 hover:underline ${focusRing}`;
+
+const quickLinkPending =
+	`flex min-h-11 w-full cursor-default items-center rounded-md px-3 py-2 font-sans text-base font-medium text-text-muted`;
+
+const searchTriggerClass =
+	`flex min-h-11 w-full items-center rounded-md border border-transparent bg-transparent px-3 py-2 ` +
+	`font-sans text-base font-medium text-text-secondary hover:bg-brand-50 hover:text-text-primary ${focusRing}`;
+
+const accordionBtnClass =
+	`flex min-h-11 w-full items-center justify-between gap-2 rounded-md border border-border-subtle bg-surface-sunken ` +
+	`px-3 py-2 text-left font-sans text-base font-semibold text-text-primary shadow-e0 hover:bg-brand-50 ${focusRing}`;
+
+const panelLinkClass =
+	`block min-h-11 rounded-md px-3 py-2 font-sans text-base text-text-link no-underline ` +
+	`hover:bg-brand-50 hover:underline ${focusRing}`;
+
+const panelPendingClass = 'block min-h-11 px-3 py-2 font-sans text-base text-text-muted';
+---
+
+<dialog
+	id="cpmr-mobile-nav-drawer-root"
+	class="cpmr-mobile-drawer fixed inset-y-0 right-0 left-auto z-mobile-drawer m-0 flex h-dvh max-h-dvh w-[min(100vw,20rem)] max-w-full flex-col border-0 border-l border-border-subtle bg-surface-card p-0 shadow-e4"
+	aria-labelledby="cpmr-mobile-drawer-title"
+>
+	<div class="flex min-h-0 flex-1 flex-col">
+		<div class="flex shrink-0 items-center justify-between gap-3 border-b border-border-subtle px-4 py-3">
+			<h2 id="cpmr-mobile-drawer-title" class="m-0 font-sans text-base font-semibold text-text-primary">
+				Menu
+			</h2>
+			<button
+				type="button"
+				class={closeBtnClass}
+				data-mobile-drawer-close
+				aria-label="Close menu"
+			>
+				<Icon decorative size="sm">
+					<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-sm">
+						<path
+							d="M6 6l12 12M18 6L6 18"
+							stroke="currentColor"
+							stroke-width="1.75"
+							stroke-linecap="round"
+						/>
+					</svg>
+				</Icon>
+			</button>
+		</div>
+
+		<div class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4">
+			<section class="mb-6" aria-label="Quick links">
+				<h3 class="m-0 mb-2 font-sans text-xs font-semibold uppercase tracking-wide text-text-secondary">
+					Quick links
+				</h3>
+				<ul class="m-0 list-none space-y-1 p-0">
+					{
+						utilityNavLinks.map((item) => {
+							const target = normalizePath(item.href);
+							const isCurrent = item.routeLive && currentPath === target;
+							return (
+								<li>
+									{item.routeLive ? (
+										<a
+											href={item.href}
+											class:list={[quickLinkInteractive, isCurrent ? 'underline decoration-border-brand underline-offset-4' : null]}
+											aria-current={isCurrent ? 'page' : undefined}
+											rel={item.external ? 'noopener noreferrer' : undefined}
+											target={item.external ? '_blank' : undefined}
+										>
+											{item.label}
+										</a>
+									) : (
+										<span class={quickLinkPending}>{item.label}</span>
+									)}
+								</li>
+							);
+						})
+					}
+					<li>
+						{
+							utilitySearchRouteLive ? (
+								<a
+									href="/search/"
+									class:list={[
+										quickLinkInteractive,
+										normalizePath('/search/') === currentPath
+											? 'underline decoration-border-brand underline-offset-4'
+											: null,
+									]}
+									aria-current={normalizePath('/search/') === currentPath ? 'page' : undefined}
+								>
+									Search
+								</a>
+							) : (
+								<button
+									type="button"
+									class:list={[searchTriggerClass, 'text-text-muted']}
+									aria-haspopup="dialog"
+									aria-label="Open search"
+									aria-disabled="true"
+								>
+									Search
+								</button>
+							)
+						}
+					</li>
+				</ul>
+			</section>
+
+			<section class="mb-6" aria-label="Site sections">
+				<h3 class="sr-only">Primary navigation</h3>
+				<ul class="m-0 list-none space-y-2 p-0">
+					{
+						megaNavSections.map((section) => {
+							const panelId = `mobile-acc-panel-${section.id}`;
+							const btnId = `mobile-acc-btn-${section.id}`;
+							return (
+								<li class="min-w-0">
+									<h4 class="m-0">
+										<button
+											type="button"
+											id={btnId}
+											class={accordionBtnClass}
+											aria-expanded="false"
+											aria-controls={panelId}
+											data-mobile-accordion={section.id}
+										>
+											<span>{section.label}</span>
+											<Icon decorative size="sm">
+												<svg
+													viewBox="0 0 24 24"
+													fill="none"
+													xmlns="http://www.w3.org/2000/svg"
+													class="size-sm shrink-0 transition-transform"
+													data-mobile-accordion-chevron
+												>
+													<path
+														d="M6 9l6 6 6-6"
+														stroke="currentColor"
+														stroke-width="1.75"
+														stroke-linecap="round"
+														stroke-linejoin="round"
+													/>
+												</svg>
+											</Icon>
+										</button>
+									</h4>
+									<div
+										id={panelId}
+										role="region"
+										class="border-x border-b border-border-subtle bg-surface-card px-2 py-3"
+										aria-labelledby={btnId}
+										data-mobile-accordion-panel={section.id}
+										hidden
+									>
+										{
+											section.groups.map((group) => (
+												<div class="mb-4 last:mb-0">
+													<p class="m-0 mb-2 font-sans text-sm font-semibold text-text-primary">{group.title}</p>
+													<ul class="m-0 list-none space-y-1 p-0">
+														{group.links.map((link) => {
+															const target = normalizePath(link.href);
+															const isCurrent = link.routeLive && currentPath === target;
+															return (
+																<li>
+																	{link.routeLive ? (
+																		<a
+																			href={link.href}
+																			class:list={[
+																				panelLinkClass,
+																				isCurrent ? 'underline decoration-border-brand underline-offset-4' : null,
+																			]}
+																			aria-current={isCurrent ? 'page' : undefined}
+																		>
+																			{link.label}
+																		</a>
+																	) : (
+																		<span class={panelPendingClass}>{link.label}</span>
+																	)}
+																</li>
+															);
+														})}
+													</ul>
+												</div>
+											))
+										}
+									</div>
+								</li>
+							);
+						})
+					}
+				</ul>
+			</section>
+
+			{
+				mobileDrawerSecondaryLinks.length > 0 ? (
+					<section class="border-t border-border-subtle pt-4" aria-label="More links">
+						<h3 class="m-0 mb-2 font-sans text-xs font-semibold uppercase tracking-wide text-text-secondary">
+							More
+						</h3>
+						<ul class="m-0 list-none space-y-1 p-0">
+							{mobileDrawerSecondaryLinks.map((item) => {
+								const target = normalizePath(item.href);
+								const isCurrent = item.routeLive && currentPath === target;
+								return (
+									<li>
+										{item.routeLive ? (
+											<a
+												href={item.href}
+												class:list={[quickLinkInteractive, isCurrent ? 'underline decoration-border-brand underline-offset-4' : null]}
+												aria-current={isCurrent ? 'page' : undefined}
+												rel={item.external ? 'noopener noreferrer' : undefined}
+												target={item.external ? '_blank' : undefined}
+											>
+												{item.label}
+											</a>
+										) : (
+											<span class={quickLinkPending}>{item.label}</span>
+										)}
+									</li>
+								);
+							})}
+						</ul>
+					</section>
+				) : null
+			}
+		</div>
+	</div>
+</dialog>
+
+<style is:global>
+	.cpmr-mobile-drawer::backdrop {
+		background: var(--color-surface-overlay);
+	}
+
+	.cpmr-mobile-drawer {
+		transform: translateX(100%);
+		transition: transform var(--duration-base) var(--easing-standard);
+	}
+
+	.cpmr-mobile-drawer[open] {
+		transform: translateX(0);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.cpmr-mobile-drawer {
+			transition: none;
+		}
+	}
+</style>
+
+<script is:inline>
+	(() => {
+		const dialog = document.getElementById('cpmr-mobile-nav-drawer-root');
+		if (!(dialog instanceof HTMLDialogElement)) return;
+
+		const trigger = document.querySelector('[aria-controls="cpmr-mobile-nav-drawer-root"]');
+		if (!(trigger instanceof HTMLButtonElement)) return;
+
+		const closeButtons = () => Array.from(dialog.querySelectorAll('[data-mobile-drawer-close]'));
+
+		function syncTriggerExpanded(open) {
+			trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+		}
+
+		function openDrawer() {
+			if (dialog.open) return;
+			dialog.showModal();
+			syncTriggerExpanded(true);
+			const firstClose = closeButtons()[0];
+			if (firstClose instanceof HTMLElement) firstClose.focus();
+		}
+
+		function closeDrawer() {
+			if (!dialog.open) return;
+			dialog.close();
+			syncTriggerExpanded(false);
+			trigger.focus();
+		}
+
+		trigger.addEventListener('click', () => {
+			if (dialog.open) closeDrawer();
+			else openDrawer();
+		});
+
+		for (const btn of closeButtons()) {
+			btn.addEventListener('click', () => closeDrawer());
+		}
+
+		dialog.addEventListener('close', () => {
+			syncTriggerExpanded(false);
+		});
+
+		const accButtons = Array.from(dialog.querySelectorAll('[data-mobile-accordion]'));
+		const accPanels = Array.from(dialog.querySelectorAll('[data-mobile-accordion-panel]'));
+
+		function setChevron(btn, open) {
+			const ch = btn.querySelector('[data-mobile-accordion-chevron]');
+			if (ch instanceof SVGElement) ch.classList.toggle('rotate-180', open);
+		}
+
+		function collapseAccordion(btn) {
+			const id = btn.dataset.mobileAccordion;
+			if (!id) return;
+			btn.setAttribute('aria-expanded', 'false');
+			setChevron(btn, false);
+			const panel = accPanels.find((p) => p.dataset.mobileAccordionPanel === id);
+			if (panel instanceof HTMLElement) panel.hidden = true;
+		}
+
+		function expandAccordion(btn) {
+			const id = btn.dataset.mobileAccordion;
+			if (!id) return;
+			for (const other of accButtons) {
+				if (other !== btn) collapseAccordion(other);
+			}
+			btn.setAttribute('aria-expanded', 'true');
+			setChevron(btn, true);
+			const panel = accPanels.find((p) => p.dataset.mobileAccordionPanel === id);
+			if (panel instanceof HTMLElement) panel.hidden = false;
+		}
+
+		for (const btn of accButtons) {
+			btn.addEventListener('click', () => {
+				const expanded = btn.getAttribute('aria-expanded') === 'true';
+				if (expanded) collapseAccordion(btn);
+				else expandAccordion(btn);
+			});
+		}
+	})();
+</script>

@@ -1,11 +1,12 @@
 ---
 /**
  * E2-S02 — Site header composition (DESIGN.md §13.1).
- * Logo first after skip-link; utility row (E2-S03); mega primary row (E2-S04) on lg+; mobile drawer + search overlay in later stories.
+ * Logo first after skip-link; utility row (E2-S03); mega primary row (E2-S04) on lg+; mobile drawer (E2-S05); search overlay in later stories.
  */
 import Icon from '../ui/Icon.astro';
 import UtilityNavigation from './UtilityNavigation.astro';
 import MegaNavigation from './MegaNavigation.astro';
+import MobileNavigation from './MobileNavigation.astro';
 
 interface Props {
 	/** Active path for `aria-current` on the home/logo control */
@@ -61,8 +62,8 @@ const ghostTrigger =
 				class:list={[ghostTrigger, 'lg:hidden']}
 				aria-expanded="false"
 				aria-controls="cpmr-mobile-nav-drawer-root"
+				aria-haspopup="dialog"
 				aria-label="Open menu"
-				aria-disabled="true"
 			>
 				<Icon decorative size="sm">
 					<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-sm">
@@ -103,5 +104,5 @@ const ghostTrigger =
 		</div>
 	</div>
 
-	<div id="cpmr-mobile-nav-drawer-root" hidden></div>
+	<MobileNavigation pathname={pathname} />
 </header>

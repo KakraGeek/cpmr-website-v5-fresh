@@ -59,6 +59,17 @@ export const utilityNavLinks: UtilityNavLinkSeed[] = [
 /** When true, Search is `<a href="/search/">`; when false, stub control until overlay/E11 (DESIGN.md §13.2). */
 export const utilitySearchRouteLive = false;
 
+/** Optional footer rows inside the mobile drawer after primary IA (UX blueprint §6.1). Keep empty until routes exist. */
+export type MobileDrawerSecondaryLink = {
+	id: string;
+	label: string;
+	href: string;
+	external?: boolean;
+	routeLive: boolean;
+};
+
+export const mobileDrawerSecondaryLinks: MobileDrawerSecondaryLink[] = [];
+
 /** Mega menu link seeds — stable `id` for future CMS mapping (E2-S04 QA). */
 export type MegaNavLinkSeed = {
 	id: string;
