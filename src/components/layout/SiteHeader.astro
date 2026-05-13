@@ -1,11 +1,11 @@
 ---
 /**
  * E2-S02 — Site header composition (DESIGN.md §13.1).
- * Logo first after skip-link; utility row (E2-S03 UtilityNavigation) on lg+; mega panels, mobile drawer, and search overlay wire in E2-S04+.
- * Stub controls stay focusable (`aria-disabled`) so tab order is stable without unapproved destinations.
+ * Logo first after skip-link; utility row (E2-S03); mega primary row (E2-S04) on lg+; mobile drawer + search overlay in later stories.
  */
 import Icon from '../ui/Icon.astro';
 import UtilityNavigation from './UtilityNavigation.astro';
+import MegaNavigation from './MegaNavigation.astro';
 
 interface Props {
 	/** Active path for `aria-current` on the home/logo control */
@@ -55,25 +55,6 @@ const ghostTrigger =
 			) : null
 		}
 
-		<nav class="hidden shrink-0 items-center gap-2 lg:flex" aria-label="Primary">
-			<button
-				type="button"
-				class={ghostTrigger}
-				aria-expanded="false"
-				aria-disabled="true"
-			>
-				About CPMR
-			</button>
-			<button
-				type="button"
-				class={ghostTrigger}
-				aria-expanded="false"
-				aria-disabled="true"
-			>
-				Research
-			</button>
-		</nav>
-
 		<div class="ml-auto flex shrink-0 items-center gap-2 lg:ml-0">
 			<button
 				type="button"
@@ -113,6 +94,12 @@ const ghostTrigger =
 					</svg>
 				</Icon>
 			</button>
+		</div>
+	</div>
+
+	<div class="hidden w-full border-t border-border-subtle lg:block">
+		<div class="relative mx-auto max-w-page px-4 py-2">
+			<MegaNavigation pathname={pathname} />
 		</div>
 	</div>
 

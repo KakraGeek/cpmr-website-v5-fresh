@@ -1,0 +1,217 @@
+---
+/**
+ * E2-S04 — Mega navigation desktop (DESIGN.md §13.3; UX blueprint §5.1–5.3).
+ * lg+ only: button triggers, full-width panel, shared IA from `src/data/navigation.ts`.
+ */
+import { megaNavSections, type MegaNavSection } from '../../data/navigation';
+
+interface Props {
+	pathname: string;
+}
+
+const { pathname } = Astro.props;
+
+function normalizePath(path: string): string {
+	if (!path || path === '/') return '/';
+	const trimmed = path.endsWith('/') && path.length > 1 ? path.slice(0, -1) : path;
+	return trimmed === '' ? '/' : trimmed;
+}
+
+const currentPath = normalizePath(pathname);
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const triggerBase =
+	`inline-flex min-h-11 shrink-0 items-center gap-1 rounded-md border border-transparent ` +
+	`bg-transparent px-3 py-2 font-sans text-sm font-medium text-text-link shadow-e0 ` +
+	`hover:bg-brand-50 aria-expanded:bg-brand-100 ${focusRing}`;
+
+const linkClass =
+	`block rounded-sm px-1 py-1.5 font-sans text-sm text-text-link no-underline ` +
+	`hover:text-text-link-hover hover:underline ${focusRing}`;
+
+const pendingClass = 'block px-1 py-1.5 font-sans text-sm text-text-muted';
+
+function gridClass(section: MegaNavSection): string {
+	return section.layoutVariant === 'wide' ? 'grid gap-6 sm:grid-cols-2 lg:grid-cols-4' : 'grid gap-6 sm:grid-cols-2 lg:grid-cols-3';
+}
+
+const rootId = 'cpmr-mega-nav-root';
+---
+
+<div id={rootId} class="mega-nav-root relative w-full" data-mega-root>
+	<nav aria-label="Primary" class="min-w-0">
+		<ul class="m-0 flex list-none flex-wrap items-center gap-1 p-0">
+			{
+				megaNavSections.map((section) => {
+					const panelId = `mega-panel-${section.id}`;
+					return (
+						<li class="relative shrink-0">
+							<button
+								type="button"
+								class={triggerBase}
+								aria-expanded="false"
+								aria-controls={panelId}
+								data-mega-trigger={section.id}
+								id={`mega-trigger-${section.id}`}
+							>
+								{section.label}
+							</button>
+							<div
+								id={panelId}
+								role="region"
+								class="mega-nav-panel absolute left-1/2 top-full z-mega mt-0 w-screen max-w-none -translate-x-1/2"
+								aria-labelledby={`mega-trigger-${section.id}`}
+								data-mega-panel={section.id}
+								hidden
+							>
+								<div class="border-b border-border-subtle bg-surface-card shadow-e3">
+									<div class:list={['mx-auto max-w-page px-4 py-6', gridClass(section)]}>
+										{
+											section.groups.map((group) => (
+												<div class="min-w-0">
+													<h3 class="m-0 mb-3 font-sans text-sm font-semibold text-text-primary">{group.title}</h3>
+													<ul class="m-0 list-none space-y-1 p-0">
+														{group.links.map((link) => {
+															const target = normalizePath(link.href);
+															const isCurrent = link.routeLive && currentPath === target;
+															return (
+																<li>
+																	{link.routeLive ? (
+																		<a
+																			href={link.href}
+																			class:list={[
+																				linkClass,
+																				isCurrent ? 'underline decoration-border-brand underline-offset-4' : null,
+																			]}
+																			aria-current={isCurrent ? 'page' : undefined}
+																			id={link.id}
+																		>
+																			{link.label}
+																		</a>
+																	) : (
+																		<span class={pendingClass} id={link.id}>
+																			{link.label}
+																		</span>
+																	)}
+																</li>
+															);
+														})}
+													</ul>
+													{group.viewAllHref ? (
+														<p class="mt-3 mb-0">
+															{group.viewAllRouteLive ? (
+																<a
+																	href={group.viewAllHref}
+																	class:list={[
+																		linkClass,
+																		'font-medium',
+																		normalizePath(group.viewAllHref) === currentPath
+																			? 'underline decoration-border-brand underline-offset-4'
+																			: null,
+																	]}
+																	aria-current={
+																		group.viewAllRouteLive && normalizePath(group.viewAllHref) === currentPath
+																			? 'page'
+																			: undefined
+																	}
+																>
+																	View all in section
+																</a>
+															) : (
+																<span class="font-sans text-sm font-medium text-text-muted">View all in section</span>
+															)}
+														</p>
+													) : null}
+												</div>
+											))
+										}
+									</div>
+								</div>
+							</div>
+						</li>
+					);
+				})
+			}
+		</ul>
+	</nav>
+
+	<script is:inline>
+		(() => {
+			const root = document.getElementById('cpmr-mega-nav-root');
+			if (!root) return;
+
+			const triggers = Array.from(root.querySelectorAll('[data-mega-trigger]'));
+			const panels = Array.from(root.querySelectorAll('[data-mega-panel]'));
+
+			let openId = null;
+
+			function closeAll() {
+				for (const p of panels) {
+					p.hidden = true;
+				}
+				for (const t of triggers) {
+					t.setAttribute('aria-expanded', 'false');
+				}
+				openId = null;
+			}
+
+			function openSection(id, trigger) {
+				closeAll();
+				const panel = panels.find((p) => p.dataset.megaPanel === id);
+				if (!panel) return;
+				panel.hidden = false;
+				trigger.setAttribute('aria-expanded', 'true');
+				openId = id;
+			}
+
+			function toggle(trigger) {
+				const id = trigger.dataset.megaTrigger;
+				if (!id) return;
+				if (openId === id) {
+					closeAll();
+					trigger.focus();
+					return;
+				}
+				openSection(id, trigger);
+			}
+
+			for (const trigger of triggers) {
+				trigger.addEventListener('click', () => toggle(trigger));
+			}
+
+			root.addEventListener('keydown', (e) => {
+				if (e.key !== 'Escape') return;
+				if (!openId) return;
+				const t = triggers.find((x) => x.dataset.megaTrigger === openId);
+				closeAll();
+				if (t) t.focus();
+				e.preventDefault();
+				e.stopPropagation();
+			});
+
+			document.addEventListener('focusin', (e) => {
+				const next = e.target;
+				if (!next || !root.contains(next)) {
+					closeAll();
+					return;
+				}
+				if (
+					next instanceof HTMLButtonElement &&
+					next.dataset.megaTrigger &&
+					openId &&
+					openId !== next.dataset.megaTrigger
+				) {
+					closeAll();
+				}
+			});
+
+			document.addEventListener('mousedown', (e) => {
+				const t = e.target;
+				if (t instanceof Node && root.contains(t)) return;
+				closeAll();
+			});
+		})();
+	</script>
+</div>
