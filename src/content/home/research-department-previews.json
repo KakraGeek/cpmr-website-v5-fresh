@@ -1,0 +1,36 @@
+{
+  "editorial_status": "approved",
+  "content_owner_role": "content_admin",
+  "last_reviewed": "2026-05-14",
+  "last_updated": "2026-05-14",
+  "research": {
+    "eyebrow": "Science pathways",
+    "title": "Research highlights",
+    "lede": "Explore how CPMR advances plant medicine science, from discovery to application.",
+    "hub_card": {
+      "title": "Research at CPMR",
+      "description": "Programmes, projects, and evidence outputs will list here once the research landing route and listings ship in a future release.",
+      "href": "/research/"
+    },
+    "preview_cards": [],
+    "empty_state": {
+      "title": "Project cards are not published yet",
+      "body": "The research area is still being connected to governed collections. A dedicated research landing route is not part of this static build yet; project cards will appear here once content and routes are approved and published."
+    }
+  },
+  "departments": {
+    "eyebrow": "Organisation",
+    "title": "Departments",
+    "lede": "Each department hosts its own services, people, and publications once the mini-site engine ships.",
+    "hub_card": {
+      "title": "Department directory",
+      "description": "This card points at the future departments index URL; the hub is planned and not available in the current static build.",
+      "href": "/departments/"
+    },
+    "preview_cards": [],
+    "empty_state": {
+      "title": "Department previews are not available yet",
+      "body": "Individual department profile cards will render here after the department landing and slug routes from the mini-site epic ship; those URLs are not in this build yet. We are not showing placeholder departments."
+    }
+  }
+}

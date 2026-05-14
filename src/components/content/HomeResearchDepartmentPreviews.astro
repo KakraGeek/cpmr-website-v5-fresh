@@ -1,0 +1,44 @@
+---
+/**
+ * E3-S05 — Homepage modules H5 (research) and H6 (departments). Governed copy:
+ * `src/content/home/research-department-previews.json`. Hub cards link to architecture
+ * canonical routes; optional `preview_cards` stay empty until collections and E5 routes exist.
+ */
+import HomeSciencePathwaySection from './HomeSciencePathwaySection.astro';
+import type { PathwaySectionContent } from './HomeSciencePathwaySection.astro';
+
+export type HomeResearchDepartmentPreviewsData = {
+	editorial_status?: 'draft' | 'in_review' | 'approved' | 'archived';
+	content_owner_role?: 'super_admin' | 'content_admin';
+	last_reviewed?: string;
+	last_updated?: string;
+	research: PathwaySectionContent;
+	departments: PathwaySectionContent;
+};
+
+interface Props {
+	data: HomeResearchDepartmentPreviewsData;
+}
+
+const { data } = Astro.props;
+const approved = !data.editorial_status || data.editorial_status === 'approved';
+---
+
+{
+	approved ? (
+		<>
+			<HomeSciencePathwaySection
+				section={data.research}
+				headingId="home-research-previews-heading"
+				surface="page"
+				hubVisual="research"
+			/>
+			<HomeSciencePathwaySection
+				section={data.departments}
+				headingId="home-departments-previews-heading"
+				surface="sunken"
+				hubVisual="departments"
+			/>
+		</>
+	) : null
+}
