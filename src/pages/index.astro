@@ -1,10 +1,26 @@
 ---
-import Layout from '../layouts/Layout.astro';
+/**
+ * E3-S01 — Home route: `BaseLayout` + governed hero from `src/content/home/hero.md`.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import SiteFooter from '../components/layout/SiteFooter.astro';
+import HomeHero from '../components/content/HomeHero.astro';
+import { getEntry } from 'astro:content';
+
+const pathname = Astro.url.pathname;
+const heroEntry = await getEntry('home', 'hero');
+if (!heroEntry) {
+	throw new Error('Missing homepage hero: expected src/content/home/hero.md');
+}
+
+const { data } = heroEntry;
+const pageTitle = 'CPMR';
+const pageDescription = data.lede ?? data.title;
 ---
 
-<Layout title="CPMR Website Rebuild">
-  <main class="min-h-screen p-6">
-    <h1 class="text-3xl font-bold">CPMR Website Rebuild</h1>
-    <p class="mt-4 text-base">Astro static output and Tailwind CSS are active.</p>
-  </main>
-</Layout>
+<BaseLayout title={pageTitle} description={pageDescription}>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<HomeHero data={data} />
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>

@@ -23,6 +23,34 @@ const _bootstrap = defineCollection({
   }),
 });
 
+/** E3-S01 — Homepage hero (DESIGN.md §13.7 `Hero`, §14.1 `home.hero`). */
+const home = defineCollection({
+  loader: glob({ base: './src/content/home', pattern: 'hero.md' }),
+  schema: z.object({
+    eyebrow: z.string().optional(),
+    title: z.string().min(1),
+    lede: z.string().optional(),
+    /** At most one primary CTA (DESIGN.md §13.7, §14.1). */
+    primary_action: z
+      .object({
+        label: z.string().min(1),
+        href: z.string().min(1),
+      })
+      .optional(),
+    variant: z.enum(['centered', 'split']).default('centered'),
+    surface: z.enum(['page', 'inverse']).default('page'),
+    image: z
+      .object({
+        src: z.string().min(1),
+        alt: z.string(),
+        width: z.number().int().positive(),
+        height: z.number().int().positive(),
+      })
+      .optional(),
+  }),
+});
+
 export const collections = {
   _bootstrap,
+  home,
 };

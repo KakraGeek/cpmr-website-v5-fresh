@@ -1,0 +1,157 @@
+---
+/**
+ * E3-S01 — Homepage `Hero` (DESIGN.md §13.7), data from `src/content/home/hero.md`.
+ * ≤ 1 primary `ButtonLink`; optional background image with overlay scrim when used as backdrop (centered variant).
+ */
+import ButtonLink from '../ui/ButtonLink.astro';
+
+export interface HomeHeroData {
+	eyebrow?: string;
+	title: string;
+	lede?: string;
+	primary_action?: { label: string; href: string };
+	variant?: 'centered' | 'split';
+	surface?: 'page' | 'inverse';
+	image?: { src: string; alt: string; width: number; height: number };
+}
+
+interface Props {
+	data: HomeHeroData;
+}
+
+const { data } = Astro.props;
+const variant = data.variant ?? 'centered';
+const surface = data.surface ?? 'page';
+const hasImage = Boolean(data.image?.src);
+const isSplit = variant === 'split' && hasImage;
+/** Full-bleed backdrop + scrim — only for centered hero with art (not split column layout). */
+const useImageBackdrop = hasImage && !isSplit;
+
+const surfaceSection =
+	surface === 'inverse'
+		? 'bg-surface-inverse text-text-inverse'
+		: 'bg-surface-page text-text-primary';
+
+const ledeClass = useImageBackdrop
+	? 'text-text-inverse/95'
+	: surface === 'inverse'
+		? 'text-text-inverse/90'
+		: 'text-text-secondary';
+
+const eyebrowClass = useImageBackdrop
+	? 'text-text-inverse/90'
+	: surface === 'inverse'
+		? 'text-text-inverse/80'
+		: 'text-text-secondary';
+
+const onBackdrop = useImageBackdrop;
+
+const external =
+	data.primary_action?.href.startsWith('http://') ||
+	data.primary_action?.href.startsWith('https://');
+---
+
+<section
+	class:list={[
+		'relative isolate w-full overflow-hidden',
+		surfaceSection,
+		'max-h-[70vh]',
+		isSplit ? '' : 'text-center',
+	]}
+	aria-labelledby="home-hero-heading"
+>
+	{
+		useImageBackdrop && data.image ? (
+			<div class="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
+				<img
+					class="h-full w-full object-cover"
+					src={data.image.src}
+					alt={data.image.alt}
+					width={data.image.width}
+					height={data.image.height}
+					loading="eager"
+					fetchpriority="high"
+					decoding="async"
+				/>
+				<div class="absolute inset-0 bg-surface-overlay" aria-hidden="true" />
+			</div>
+		) : null
+	}
+
+	<div
+		class:list={[
+			'relative z-10 mx-auto flex w-full max-w-content flex-col gap-6 px-4 py-10 md:py-12',
+			isSplit && data.image ? 'md:grid md:max-h-[70vh] md:grid-cols-2 md:items-center md:gap-10' : '',
+			isSplit && data.image ? 'text-left md:text-left' : '',
+		]}
+	>
+		<div class:list={[isSplit && data.image ? 'md:pr-4' : '', 'flex flex-col gap-4']}>
+			{
+				data.eyebrow ? (
+					<p
+						class:list={[
+							'font-sans text-sm font-semibold uppercase tracking-wide',
+							eyebrowClass,
+						]}
+					>
+						{data.eyebrow}
+					</p>
+				) : null
+			}
+			<h1
+				id="home-hero-heading"
+				class:list={[
+					'font-serif text-4xl font-bold leading-tight tracking-tight lg:text-5xl',
+					onBackdrop ? 'text-text-inverse drop-shadow-sm' : '',
+				]}
+			>
+				{data.title}
+			</h1>
+			{
+				data.lede ? (
+					<p
+						class:list={[
+							'max-w-prose text-pretty font-sans text-lg leading-relaxed',
+							ledeClass,
+							isSplit && data.image ? '' : 'mx-auto',
+						]}
+					>
+						{data.lede}
+					</p>
+				) : null
+			}
+			{
+				data.primary_action ? (
+					<div class:list={[isSplit && data.image ? '' : 'flex justify-center', 'pt-2']}>
+						<ButtonLink
+							href={data.primary_action.href}
+							label={data.primary_action.label}
+							variant="primary"
+							size="lg"
+							external={external}
+							fullWidth
+							class="sm:w-auto sm:min-w-44"
+						/>
+					</div>
+				) : null
+			}
+		</div>
+
+		{
+			isSplit && data.image ? (
+				<div class="relative hidden overflow-hidden rounded-xl shadow-e2 md:block">
+					<img
+						class="aspect-[4/3] w-full object-cover lg:aspect-[21/9]"
+						src={data.image.src}
+						alt={data.image.alt}
+						width={data.image.width}
+						height={data.image.height}
+						loading="eager"
+						fetchpriority="high"
+						decoding="async"
+					/>
+				</div>
+			) : null
+		}
+	</div>
+</section>

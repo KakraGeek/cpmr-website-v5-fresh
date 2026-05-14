@@ -302,3 +302,9 @@ events:
 - timestamp: '2026-05-13 17:00:31'
   story_id: E2-S07
   event: status -> DONE
+- timestamp: '2026-05-14 10:18:47'
+  story_id: E3-S01
+  event: status -> VERIFIED
+- timestamp: '2026-05-14 10:19:03'
+  story_id: E3-S01
+  event: status -> DONE
