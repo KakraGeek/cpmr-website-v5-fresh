@@ -2,63 +2,81 @@ id: E3-S10
 epic: E3
 sprint_order: 310
 title: Homepage integration QA
-status: TODO
-architect_gate_required: No
-user_story: >
-  As QA, I want no duplicate H1 and stable CLS.
+status: DONE
+architect_gate_required: false
+user_story: 'As QA, I want no duplicate H1 and stable CLS.
+
+  '
 acceptance_criteria:
-  - Lighthouse smoke is optional.
-  - Heading order is correct on the homepage.
-  - Images are sized appropriately.
-  - npm run validate is green.
+- Lighthouse smoke is optional.
+- Heading order is correct on the homepage.
+- Images are sized appropriately.
+- npm run validate is green.
 tasks:
-  - Audit src/pages/index.astro for a single h1 and logical heading order across all homepage modules.
-  - Verify image dimensions and loading attributes for CLS stability per DESIGN.md and PRD image guidance.
-  - Run npm run validate and fix any regressions found within homepage scope.
+- '[x] Audit src/pages/index.astro for a single h1 and logical heading order across
+  all homepage modules.'
+- '[x] Verify image dimensions and loading attributes for CLS stability per DESIGN.md
+  and PRD image guidance.'
+- '[x] Run npm run validate and fix any regressions found within homepage scope.'
 dependencies:
-  - E3-S01
-  - E3-S02
-  - E3-S03
-  - E3-S04
-  - E3-S05
-  - E3-S06
-  - E3-S07
-  - E3-S08
-  - E3-S09
+- E3-S01
+- E3-S02
+- E3-S03
+- E3-S04
+- E3-S05
+- E3-S06
+- E3-S07
+- E3-S08
+- E3-S09
 context_files:
-  - docs/04_stories/05_story_map.md
-  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
-  - docs/01_planning/01_analysis.md
-  - docs/01_planning/02_prd.md
-  - docs/02_design/03_ux_blueprint.md
-  - docs/02_design/DESIGN.md
-  - docs/03_architecture/04_architecture.md
-  - docs/03_architecture/06_project_context.md
+- docs/04_stories/05_story_map.md
+- docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+- docs/01_planning/01_analysis.md
+- docs/01_planning/02_prd.md
+- docs/02_design/03_ux_blueprint.md
+- docs/02_design/DESIGN.md
+- docs/03_architecture/04_architecture.md
+- docs/03_architecture/06_project_context.md
 execution:
   files_allowed:
-    - src/pages/index.astro
-    - src/components/content/**
-    - src/content/home/**
+  - src/pages/index.astro
+  - src/components/content/**
+  - src/content/home/**
   files_forbidden:
-    - astro.config.mjs
-    - package.json
-    - docs/02_design/DESIGN.md
-    - src/layouts/**
-    - src/components/layout/**
-    - src/data/**
-    - src/pages/departments/**
-    - src/pages/about/**
-    - src/pages/research/**
-    - src/pages/services/**
-    - src/pages/news/**
-    - src/pages/events/**
-    - src/pages/products/**
+  - astro.config.mjs
+  - package.json
+  - docs/02_design/DESIGN.md
+  - src/layouts/**
+  - src/components/layout/**
+  - src/data/**
+  - src/pages/departments/**
+  - src/pages/about/**
+  - src/pages/research/**
+  - src/pages/services/**
+  - src/pages/news/**
+  - src/pages/events/**
+  - src/pages/products/**
   verification_commands:
-    - npm run build
-    - npm run validate
+  - npm run build
+  - npm run validate
 qa_checklist:
-  - Confirm every acceptance criterion is satisfied.
-  - Confirm implementation follows DESIGN.md.
-  - Confirm implementation follows docs/03_architecture/04_architecture.md.
-  - Confirm static build passes (npm run build / npm run validate).
-  - Confirm no forbidden files were changed.
+- Confirm every acceptance criterion is satisfied.
+- Confirm implementation follows DESIGN.md.
+- Confirm implementation follows docs/03_architecture/04_architecture.md.
+- Confirm static build passes (npm run build / npm run validate).
+- Confirm no forbidden files were changed.
+last_updated: '2026-05-14 17:48:59'
+dev_agent_record:
+  completion_notes: 'Audited homepage heading tree: only `HomeHero.astro` emits `h1`;
+    `SiteHeader` has no `h1`. Fixed skipped level in pathway bands — `HomeSciencePathwaySection`
+    preview tiles were `h4` under section `h2` while hub used `h3`; preview titles
+    are now `h3` peers of the hub `h3` (valid h2→h3 sequence). Hero and partner images
+    already carry `width`/`height`, `decoding`, and appropriate `loading` (`eager`
+    above-the-fold hero, `lazy` partner strip). Documented QA note on `index.astro`.
+    `npm run validate` green.'
+  file_list:
+  - src/components/content/HomeSciencePathwaySection.astro
+  - src/pages/index.astro
+  change_log:
+  - '2026-05-14: E3-S10 — heading order fix (pathway preview h4→h3); homepage QA audit
+    notes.'
