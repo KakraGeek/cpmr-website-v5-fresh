@@ -1,4 +1,5 @@
 ---
+kind: hero
 eyebrow: Centre for Plant Medicine Research
 title: Science-led herbal medicine for public health
 lede: >-

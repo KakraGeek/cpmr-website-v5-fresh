@@ -27,31 +27,71 @@ const _bootstrap = defineCollection({
   }),
 });
 
+const quickAccessTileIcon = z.enum([
+  'clinic',
+  'dau',
+  'departments',
+  'publications',
+  'products',
+  'contact',
+]);
+
 /** E3-S01 — Homepage hero (DESIGN.md §13.7 `Hero`, §14.1 `home.hero`). */
+const homeHeroSchema = z.object({
+  kind: z.literal('hero'),
+  eyebrow: z.string().optional(),
+  title: z.string().min(1),
+  lede: z.string().optional(),
+  /** At most one primary CTA (DESIGN.md §13.7, §14.1). */
+  primary_action: z
+    .object({
+      label: z.string().min(1),
+      href: z.string().min(1),
+    })
+    .optional(),
+  variant: z.enum(['centered', 'split']).default('centered'),
+  surface: z.enum(['page', 'inverse']).default('page'),
+  image: z
+    .object({
+      src: z.string().min(1),
+      alt: z.string(),
+      width: z.number().int().positive(),
+      height: z.number().int().positive(),
+    })
+    .optional(),
+});
+
+/** E3-S02 — Quick access grid (DESIGN.md §13.8 `QuickAccessCard`, UX Blueprint §7 H2). */
+const homeQuickAccessSchema = z
+  .object({
+    kind: z.literal('quick_access'),
+    section_title: z.string().min(1).default('Quick access'),
+    tiles: z
+      .array(
+        z.object({
+          label: z.string().min(1),
+          href: z.string().min(1),
+          helper: z.string().max(60).optional(),
+          icon: quickAccessTileIcon,
+          tone: z.enum(['neutral', 'brand']).default('neutral'),
+        }),
+      )
+      .length(6),
+  })
+  .superRefine((data, ctx) => {
+    const brandCount = data.tiles.filter((t) => t.tone === 'brand').length;
+    if (brandCount > 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'At most one tile may use tone "brand" (DESIGN.md §13.8).',
+        path: ['tiles'],
+      });
+    }
+  });
+
 const home = defineCollection({
-  loader: glob({ base: './src/content/home', pattern: 'hero.md' }),
-  schema: z.object({
-    eyebrow: z.string().optional(),
-    title: z.string().min(1),
-    lede: z.string().optional(),
-    /** At most one primary CTA (DESIGN.md §13.7, §14.1). */
-    primary_action: z
-      .object({
-        label: z.string().min(1),
-        href: z.string().min(1),
-      })
-      .optional(),
-    variant: z.enum(['centered', 'split']).default('centered'),
-    surface: z.enum(['page', 'inverse']).default('page'),
-    image: z
-      .object({
-        src: z.string().min(1),
-        alt: z.string(),
-        width: z.number().int().positive(),
-        height: z.number().int().positive(),
-      })
-      .optional(),
-  }),
+  loader: glob({ base: './src/content/home', pattern: '**/*.md' }),
+  schema: z.discriminatedUnion('kind', [homeHeroSchema, homeQuickAccessSchema]),
 });
 
 /**

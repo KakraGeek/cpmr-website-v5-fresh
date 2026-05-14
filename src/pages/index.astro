@@ -1,11 +1,13 @@
 ---
 /**
  * E3-S01 — Home route: `BaseLayout` + governed hero from `src/content/home/hero.md`.
+ * E3-S02 — Quick access grid from `src/content/home/quick-access.md`.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import HomeHero from '../components/content/HomeHero.astro';
+import QuickAccessCard from '../components/content/QuickAccessCard.astro';
 import { getEntry } from 'astro:content';
 
 const pathname = Astro.url.pathname;
@@ -13,12 +15,48 @@ const heroEntry = await getEntry('home', 'hero');
 if (!heroEntry) {
 	throw new Error('Missing homepage hero: expected src/content/home/hero.md');
 }
+if (heroEntry.data.kind !== 'hero') {
+	throw new Error('Invalid homepage hero: src/content/home/hero.md must use kind: hero');
+}
 
-const { data } = heroEntry;
+const quickAccessEntry = await getEntry('home', 'quick-access');
+if (!quickAccessEntry) {
+	throw new Error('Missing quick access content: expected src/content/home/quick-access.md');
+}
+if (quickAccessEntry.data.kind !== 'quick_access') {
+	throw new Error('Invalid quick access: src/content/home/quick-access.md must use kind: quick_access');
+}
+
+const { data: heroData } = heroEntry;
+const qa = quickAccessEntry.data;
 ---
 
 <BaseLayout>
 	<SiteHeader slot="header" currentPath={pathname} />
-	<HomeHero data={data} />
+	<HomeHero data={heroData} />
+	<section
+		class="border-t border-border-subtle bg-surface-page"
+		aria-labelledby="home-quick-access-heading"
+	>
+		<div class="mx-auto w-full max-w-content px-4 py-10 md:py-12">
+			<h2
+				id="home-quick-access-heading"
+				class="font-serif text-2xl font-bold tracking-tight text-text-primary md:text-3xl"
+			>
+				{qa.section_title}
+			</h2>
+			<div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+				{qa.tiles.map((tile) => (
+					<QuickAccessCard
+						label={tile.label}
+						href={tile.href}
+						helper={tile.helper}
+						icon={tile.icon}
+						tone={tile.tone}
+					/>
+				))}
+			</div>
+		</div>
+	</section>
 	<SiteFooter slot="footer" currentPath={pathname} />
 </BaseLayout>

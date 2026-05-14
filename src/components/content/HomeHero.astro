@@ -6,6 +6,8 @@
 import ButtonLink from '../ui/ButtonLink.astro';
 
 export interface HomeHeroData {
+	/** Discriminator from `src/content.config.ts` home collection; ignored at render time. */
+	kind?: 'hero';
 	eyebrow?: string;
 	title: string;
 	lede?: string;

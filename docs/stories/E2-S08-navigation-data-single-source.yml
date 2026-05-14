@@ -2,7 +2,7 @@ id: E2-S08
 epic: E2
 sprint_order: 208
 title: Navigation data single source
-status: TODO
+status: DONE
 architect_gate_required: Yes
 user_story: >
   As a maintainer, I want mega, mobile, and footer driven from one structured definition.
