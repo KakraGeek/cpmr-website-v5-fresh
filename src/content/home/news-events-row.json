@@ -1,0 +1,24 @@
+{
+  "editorial_status": "approved",
+  "content_owner_role": "content_admin",
+  "last_reviewed": "2026-05-14",
+  "last_updated": "2026-05-14",
+  "section_eyebrow": "Media",
+  "section_title": "News and events",
+  "news": {
+    "column_heading": "Latest news",
+    "all_news_label": "View all news",
+    "all_news_href": "",
+    "empty_state": {
+      "title": "News index is not wired in this build",
+      "body": "When the governed news collection and `/news/` routes from epic E8 ship, this column will list recent items here. The static build does not invent articles or URLs."
+    }
+  },
+  "events": {
+    "column_heading": "Upcoming events",
+    "stub_state": {
+      "title": "Events calendar is not published yet",
+      "body": "The events collection and calendar routes from epic E9 are not merged. This space stays explicit until editorial and engineering wire the events vertical."
+    }
+  }
+}

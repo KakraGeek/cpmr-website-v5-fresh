@@ -1,0 +1,184 @@
+---
+/**
+ * E3-S07 — Homepage module H9 (PRD / blueprint): news vs events recency row.
+ * Governed copy: `src/content/home/news-events-row.json`. `newsItems` is populated
+ * from `getCollection('news')` in `index.astro` once E8-S02 registers the collection
+ * and news routes exist; until then callers pass an empty array (honest empty state).
+ */
+export type HomeNewsEventsRowNewsItem = {
+	title: string;
+	href: string;
+	date?: string;
+	summary?: string;
+};
+
+export type HomeNewsEventsRowData = {
+	editorial_status?: 'draft' | 'in_review' | 'approved' | 'archived';
+	content_owner_role?: 'super_admin' | 'content_admin';
+	last_reviewed?: string;
+	last_updated?: string;
+	section_eyebrow?: string;
+	section_title: string;
+	news: {
+		column_heading: string;
+		all_news_label?: string;
+		/** Empty string omits the “view all” anchor (PRD: valid links or hidden). */
+		all_news_href?: string;
+		empty_state: { title: string; body: string };
+	};
+	events: {
+		column_heading: string;
+		stub_state: { title: string; body: string };
+	};
+};
+
+interface Props {
+	data: HomeNewsEventsRowData;
+	newsItems: HomeNewsEventsRowNewsItem[];
+}
+
+const { data, newsItems } = Astro.props;
+const approved = !data.editorial_status || data.editorial_status === 'approved';
+
+const allNewsHref = data.news.all_news_href?.trim() ?? '';
+const allNewsLabel = data.news.all_news_label?.trim() ?? '';
+const showAllNews = allNewsHref.length > 0 && allNewsLabel.length > 0;
+
+const tabBase =
+	'inline-flex min-h-11 min-w-11 flex-1 cursor-pointer items-center justify-center rounded-md border px-3 py-2 text-center font-sans text-sm font-semibold transition-colors duration-base ease-standard focus-visible:outline-none focus-visible:shadow-ring-focus';
+const tabIdle = 'border-border-subtle bg-surface-card text-text-secondary';
+---
+
+{
+	approved ? (
+		<section
+			class="border-t border-border-subtle bg-surface-sunken"
+			aria-labelledby="home-news-events-heading"
+		>
+			<div class="mx-auto w-full max-w-content px-4 py-10 md:py-12">
+				{data.section_eyebrow ? (
+					<p class="font-sans text-sm font-semibold uppercase tracking-wide text-text-secondary">
+						{data.section_eyebrow}
+					</p>
+				) : null}
+				<h2
+					id="home-news-events-heading"
+					class="mt-1 font-serif text-2xl font-bold tracking-tight text-text-primary md:text-3xl"
+				>
+					{data.section_title}
+				</h2>
+
+				{/* Mobile: tabs (News | Events). Desktop: split columns. */}
+				<div class="mt-8">
+					<input
+						type="radio"
+						name="home-news-events-tab"
+						id="home-news-events-tab-news"
+						class="peer/news sr-only"
+						checked
+					/>
+					<input
+						type="radio"
+						name="home-news-events-tab"
+						id="home-news-events-tab-events"
+						class="peer/events sr-only"
+					/>
+
+					<div
+						class="mb-6 flex gap-2 md:hidden"
+						role="tablist"
+						aria-label="Choose news or events"
+					>
+						<label
+							for="home-news-events-tab-news"
+							role="tab"
+							class:list={[tabBase, tabIdle, 'peer-checked/news:border-brand-700 peer-checked/news:text-text-primary']}
+						>
+							{data.news.column_heading}
+						</label>
+						<label
+							for="home-news-events-tab-events"
+							role="tab"
+							class:list={[tabBase, tabIdle, 'peer-checked/events:border-brand-700 peer-checked/events:text-text-primary']}
+						>
+							{data.events.column_heading}
+						</label>
+					</div>
+
+					<div class="md:grid md:grid-cols-2 md:gap-10 lg:gap-12">
+						{/* News column */}
+						<div class="hidden peer-checked/news:block md:block">
+							<div class="rounded-lg border border-border-subtle bg-surface-card p-6 shadow-e0">
+								<h3 class="font-serif text-xl font-bold text-text-primary md:text-2xl">
+									{data.news.column_heading}
+								</h3>
+								{newsItems.length > 0 ? (
+									<>
+										<ul class="mt-4 space-y-4" role="list">
+											{newsItems.map((item) => (
+												<li class="border-b border-border-subtle pb-4 last:border-b-0 last:pb-0">
+													{item.date ? (
+														<p class="font-sans text-xs font-medium uppercase tracking-wide text-text-muted">
+															{item.date}
+														</p>
+													) : null}
+													<a
+														href={item.href}
+														class="mt-1 block font-sans text-base font-semibold text-text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:shadow-ring-focus"
+													>
+														{item.title}
+													</a>
+													{item.summary ? (
+														<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+															{item.summary}
+														</p>
+													) : null}
+												</li>
+											))}
+										</ul>
+										{showAllNews ? (
+											<p class="mt-6">
+												<a
+													href={allNewsHref}
+													class="font-sans text-sm font-semibold text-brand-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:shadow-ring-focus"
+												>
+													{allNewsLabel}
+												</a>
+											</p>
+										) : null}
+									</>
+								) : (
+									<div class="mt-4 rounded-md border border-dashed border-border-subtle bg-surface-page p-4">
+										<p class="font-sans text-base font-semibold text-text-primary">
+											{data.news.empty_state.title}
+										</p>
+										<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+											{data.news.empty_state.body}
+										</p>
+									</div>
+								)}
+							</div>
+						</div>
+
+						{/* Events column (stub until E9-S02) */}
+						<div class="mt-6 hidden peer-checked/events:block md:mt-0 md:block">
+							<div class="rounded-lg border border-border-subtle bg-surface-card p-6 shadow-e0">
+								<h3 class="font-serif text-xl font-bold text-text-primary md:text-2xl">
+									{data.events.column_heading}
+								</h3>
+								<div class="mt-4 rounded-md border border-dashed border-border-subtle bg-surface-page p-4">
+									<p class="font-sans text-base font-semibold text-text-primary">
+										{data.events.stub_state.title}
+									</p>
+									<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+										{data.events.stub_state.body}
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	) : null
+}
