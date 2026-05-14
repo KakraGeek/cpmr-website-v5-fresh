@@ -1,0 +1,67 @@
+---
+/**
+ * E3-S04 — Homepage mandate snapshot (DESIGN.md §14.1 `home.mandate`, UX Blueprint H4).
+ * Governed copy: `src/content/home/mandate-snapshot.json` (story `files_allowed` excludes `src/content.config.ts`,
+ * so this module mirrors the interim JSON pattern used by `announcements-strip.json`).
+ */
+import ButtonLink from '../ui/ButtonLink.astro';
+
+export type HomeMandateSnapshotData = {
+	eyebrow?: string;
+	title: string;
+	paragraphs: string[];
+	cta?: { label: string; href: string };
+};
+
+interface Props {
+	data: HomeMandateSnapshotData;
+}
+
+const { data } = Astro.props;
+const external =
+	Boolean(data.cta?.href.startsWith('http://')) || Boolean(data.cta?.href.startsWith('https://'));
+---
+
+<section
+	class="border-t border-border-subtle bg-surface-sunken"
+	aria-labelledby="home-mandate-heading"
+>
+	<div class="mx-auto w-full max-w-content px-4 py-10 md:py-12">
+		{
+			data.eyebrow ? (
+				<p class="font-sans text-sm font-semibold uppercase tracking-wide text-text-secondary">
+					{data.eyebrow}
+				</p>
+			) : null
+		}
+		<h2
+			id="home-mandate-heading"
+			class:list={[
+				'font-serif text-2xl font-bold tracking-tight text-text-primary md:text-3xl',
+				data.eyebrow ? 'mt-2' : '',
+			]}
+		>
+			{data.title}
+		</h2>
+		<div
+			class="mt-6 max-w-none font-sans text-base leading-relaxed text-text-secondary md:columns-2 md:gap-10 [&>p+p]:mt-4"
+		>
+			{data.paragraphs.map((text) => (
+				<p class="break-inside-avoid">{text}</p>
+			))}
+		</div>
+		{
+			data.cta ? (
+				<div class="mt-8">
+					<ButtonLink
+						href={data.cta.href}
+						label={data.cta.label}
+						variant="secondary"
+						size="md"
+						external={external}
+					/>
+				</div>
+			) : null
+		}
+	</div>
+</section>

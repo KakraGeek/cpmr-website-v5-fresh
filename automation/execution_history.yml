@@ -335,3 +335,15 @@ events:
 - timestamp: '2026-05-14 15:43:22'
   story_id: E3-S03
   event: status -> DONE
+- timestamp: '2026-05-14 15:46:49'
+  story_id: E3-S04
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-14 15:52:52'
+  story_id: E3-S04
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-14 15:56:19'
+  story_id: E3-S04
+  event: status -> VERIFIED
+- timestamp: '2026-05-14 15:56:31'
+  story_id: E3-S04
+  event: status -> DONE

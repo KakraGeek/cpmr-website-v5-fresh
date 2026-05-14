@@ -2,52 +2,71 @@ id: E3-S04
 epic: E3
 sprint_order: 304
 title: Mandate snapshot
-status: TODO
-architect_gate_required: No
-user_story: >
-  As a stakeholder, I grasp legal/social role quickly.
+status: DONE
+architect_gate_required: false
+user_story: 'As a stakeholder, I grasp legal/social role quickly.
+
+  '
 acceptance_criteria:
-  - Short copy block plus link to About or Mandate.
-  - Presentation is content-driven.
+- Short copy block plus link to About or Mandate.
+- Presentation is content-driven.
 tasks:
-  - Extend governed home content for the mandate snapshot module (H4).
-  - Render the mandate snapshot section on the homepage from that content without hard-coding institutional strings in components.
+- '[x] Extend governed home content for the mandate snapshot module (H4).'
+- '[x] Render the mandate snapshot section on the homepage from that content without
+  hard-coding institutional strings in components.'
 dependencies:
-  - E3-S01
+- E3-S01
 context_files:
-  - docs/04_stories/05_story_map.md
-  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
-  - docs/01_planning/01_analysis.md
-  - docs/01_planning/02_prd.md
-  - docs/02_design/03_ux_blueprint.md
-  - docs/02_design/DESIGN.md
-  - docs/03_architecture/04_architecture.md
-  - docs/03_architecture/06_project_context.md
+- docs/04_stories/05_story_map.md
+- docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+- docs/01_planning/01_analysis.md
+- docs/01_planning/02_prd.md
+- docs/02_design/03_ux_blueprint.md
+- docs/02_design/DESIGN.md
+- docs/03_architecture/04_architecture.md
+- docs/03_architecture/06_project_context.md
 execution:
   files_allowed:
-    - src/pages/index.astro
-    - src/content/home/**
-    - src/components/content/**
+  - src/pages/index.astro
+  - src/content/home/**
+  - src/components/content/**
   files_forbidden:
-    - astro.config.mjs
-    - package.json
-    - docs/02_design/DESIGN.md
-    - src/layouts/**
-    - src/components/layout/**
-    - src/data/**
-    - src/pages/about/**
-    - src/pages/departments/**
-    - src/pages/research/**
-    - src/pages/services/**
-    - src/pages/news/**
-    - src/pages/events/**
-    - src/pages/products/**
+  - astro.config.mjs
+  - package.json
+  - docs/02_design/DESIGN.md
+  - src/layouts/**
+  - src/components/layout/**
+  - src/data/**
+  - src/pages/about/**
+  - src/pages/departments/**
+  - src/pages/research/**
+  - src/pages/services/**
+  - src/pages/news/**
+  - src/pages/events/**
+  - src/pages/products/**
   verification_commands:
-    - npm run build
-    - npm run validate
+  - npm run build
+  - npm run validate
 qa_checklist:
-  - Confirm every acceptance criterion is satisfied.
-  - Confirm implementation follows DESIGN.md.
-  - Confirm implementation follows docs/03_architecture/04_architecture.md.
-  - Confirm static build passes (npm run build / npm run validate).
-  - Confirm no forbidden files were changed.
+- Confirm every acceptance criterion is satisfied.
+- Confirm implementation follows DESIGN.md.
+- Confirm implementation follows docs/03_architecture/04_architecture.md.
+- Confirm static build passes (npm run build / npm run validate).
+- Confirm no forbidden files were changed.
+last_updated: '2026-05-14 15:56:31'
+dev_agent_record:
+  completion_notes: 'Implemented H4 mandate snapshot after announcements strip (DESIGN
+    §14.1 order). Added `src/content/home/mandate-snapshot.json` (governed copy +
+    CTA to `/about/`) and `HomeMandateSnapshot.astro` (layout/tokens only; no institutional
+    strings in code). Did not edit `src/content.config.ts` because E3-S04 `files_allowed`
+    excludes it; JSON envelope matches the interim pattern used by `announcements-strip.json`.
+    Wired in `src/pages/index.astro`. `npm run build` and `npm run validate` pass.
+
+    '
+  file_list:
+  - src/content/home/mandate-snapshot.json
+  - src/components/content/HomeMandateSnapshot.astro
+  - src/pages/index.astro
+  change_log:
+  - '2026-05-14: E3-S04 mandate snapshot — governed JSON + HomeMandateSnapshot; homepage
+    section after announcements.'

@@ -3,16 +3,21 @@
  * E3-S01 — Home route: `BaseLayout` + governed hero from `src/content/home/hero.md`.
  * E3-S02 — Quick access grid from `src/content/home/quick-access.md`.
  * E3-S03 — Announcements strip from `src/content/home/announcements-strip.json` (interim; E8-S01 may rewire source).
+ * E3-S04 — Mandate snapshot from `src/content/home/mandate-snapshot.json` (DESIGN.md §14.1 `home.mandate`;
+ * JSON envelope matches E3-S03 interim pattern until collection schema can include `kind: mandate`).
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import HomeHero from '../components/content/HomeHero.astro';
 import HomeAnnouncementsStrip from '../components/content/HomeAnnouncementsStrip.astro';
+import HomeMandateSnapshot from '../components/content/HomeMandateSnapshot.astro';
 import QuickAccessCard from '../components/content/QuickAccessCard.astro';
 import announcementsStrip from '../content/home/announcements-strip.json';
+import mandateSnapshot from '../content/home/mandate-snapshot.json';
 import { getEntry } from 'astro:content';
 import type { HomeAnnouncementsStripData } from '../components/content/HomeAnnouncementsStrip.astro';
+import type { HomeMandateSnapshotData } from '../components/content/HomeMandateSnapshot.astro';
 
 const pathname = Astro.url.pathname;
 const heroEntry = await getEntry('home', 'hero');
@@ -35,6 +40,7 @@ const { data: heroData } = heroEntry;
 const qa = quickAccessEntry.data;
 
 const stripData = announcementsStrip as HomeAnnouncementsStripData;
+const mandateData = mandateSnapshot as HomeMandateSnapshotData;
 ---
 
 <BaseLayout>
@@ -65,5 +71,6 @@ const stripData = announcementsStrip as HomeAnnouncementsStripData;
 		</div>
 	</section>
 	<HomeAnnouncementsStrip data={stripData} />
+	<HomeMandateSnapshot data={mandateData} />
 	<SiteFooter slot="footer" currentPath={pathname} />
 </BaseLayout>
