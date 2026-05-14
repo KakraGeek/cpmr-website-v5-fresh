@@ -2,13 +2,17 @@
 /**
  * E3-S01 — Home route: `BaseLayout` + governed hero from `src/content/home/hero.md`.
  * E3-S02 — Quick access grid from `src/content/home/quick-access.md`.
+ * E3-S03 — Announcements strip from `src/content/home/announcements-strip.json` (interim; E8-S01 may rewire source).
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import HomeHero from '../components/content/HomeHero.astro';
+import HomeAnnouncementsStrip from '../components/content/HomeAnnouncementsStrip.astro';
 import QuickAccessCard from '../components/content/QuickAccessCard.astro';
+import announcementsStrip from '../content/home/announcements-strip.json';
 import { getEntry } from 'astro:content';
+import type { HomeAnnouncementsStripData } from '../components/content/HomeAnnouncementsStrip.astro';
 
 const pathname = Astro.url.pathname;
 const heroEntry = await getEntry('home', 'hero');
@@ -29,6 +33,8 @@ if (quickAccessEntry.data.kind !== 'quick_access') {
 
 const { data: heroData } = heroEntry;
 const qa = quickAccessEntry.data;
+
+const stripData = announcementsStrip as HomeAnnouncementsStripData;
 ---
 
 <BaseLayout>
@@ -58,5 +64,6 @@ const qa = quickAccessEntry.data;
 			</div>
 		</div>
 	</section>
+	<HomeAnnouncementsStrip data={stripData} />
 	<SiteFooter slot="footer" currentPath={pathname} />
 </BaseLayout>

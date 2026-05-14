@@ -1,0 +1,27 @@
+{
+  "editorial_status": "approved",
+  "content_owner_role": "content_admin",
+  "last_reviewed": "2026-05-14",
+  "last_updated": "2026-05-14",
+  "section_title": "Important notices",
+  "items": [
+    {
+      "id": "e3-s03-stub-1",
+      "priority": "warning",
+      "headline": "Clinic schedule",
+      "message": "Same-day appointments may be limited during peak hours. Plan ahead or call reception.",
+      "link": { "label": "Clinic services", "href": "/services/clinic/" },
+      "editorial_status": "approved",
+      "content_owner_role": "content_admin"
+    },
+    {
+      "id": "e3-s03-stub-2",
+      "priority": "info",
+      "headline": "DAU enquiries",
+      "message": "Herbal medicine unit enquiries are triaged by appointment. Use the contact route for non-urgent questions.",
+      "link": { "label": "Contact CPMR", "href": "/contact/" },
+      "editorial_status": "approved",
+      "content_owner_role": "content_admin"
+    }
+  ]
+}
