@@ -27,6 +27,8 @@ context_files:
   - docs/02_design/03_ux_blueprint.md
   - docs/02_design/DESIGN.md
   - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/05_content_architecture_and_cms_strategy.md
+  - docs/03_architecture/07_navigation_compiler_vs_nav_collection_decision.md
   - docs/03_architecture/06_project_context.md
 execution:
   files_allowed:
@@ -51,6 +53,7 @@ qa_checklist:
   - Confirm every acceptance criterion is satisfied.
   - Confirm no forbidden files were changed.
   - Confirm implementation follows DESIGN.md.
+  - Confirm REM-CARCH-007 is satisfied — navigation compiler vs optional `nav` collection decision recorded in docs/03_architecture/07_navigation_compiler_vs_nav_collection_decision.md and aligned with docs/03_architecture/05_content_architecture_and_cms_strategy.md §2.3 and Appendix B.4.
   - Confirm implementation follows docs/03_architecture/04_architecture.md and docs/03_architecture/06_project_context.md.
   - Confirm static build passes via npm run build.
   - Confirm forbidden-path validation against execution.files_forbidden.

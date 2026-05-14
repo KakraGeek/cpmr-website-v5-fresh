@@ -1,12 +1,13 @@
 ---
 /**
  * E2-S06 — Deep footer (DESIGN.md §13.5; UX blueprint §23).
- * Columns + meta + contact are data-driven from `src/data/footer.ts`.
+ * Column IA + meta compile from `src/data/footer.ts`; institution contact lines load from
+ * `settings` → `contact` per REM-CARCH-004 / doc 05 §3–§4.1.
  * lg+: multi-column grid; <lg: single-column `<details>` accordions per DESIGN.md §13.5.
  */
 import {
 	footerColumns,
-	footerContact,
+	getFooterContactFromSettings,
 	footerCopyrightLegalName,
 	footerCopyrightYear,
 	footerMetaLinks,
@@ -18,6 +19,8 @@ interface Props {
 }
 
 const { currentPath = '/' } = Astro.props;
+
+const footerContact = await getFooterContactFromSettings();
 
 function normalizePath(path: string): string {
 	if (!path || path === '/') return '/';

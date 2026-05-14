@@ -6,6 +6,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   output: 'static',
+  // 05 §12.2 / 06_project_context — trailing slash on; canonical in BaseLayout matches this policy.
+  trailingSlash: 'always',
   vite: {
     plugins: [tailwindcss()],
   },

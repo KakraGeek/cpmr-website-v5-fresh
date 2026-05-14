@@ -15,11 +15,9 @@ if (!heroEntry) {
 }
 
 const { data } = heroEntry;
-const pageTitle = 'CPMR';
-const pageDescription = data.lede ?? data.title;
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription}>
+<BaseLayout>
 	<SiteHeader slot="header" currentPath={pathname} />
 	<HomeHero data={data} />
 	<SiteFooter slot="footer" currentPath={pathname} />

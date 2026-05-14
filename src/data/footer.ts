@@ -1,7 +1,12 @@
 /**
  * E2-S06 — Footer IA (UX blueprint §23; DESIGN.md §13.5).
  * Column link sets mirror approved mega-nav seeds (`navigation.ts`); no link IDs outside that graph.
+ *
+ * REM-CARCH-004 / docs/03_architecture/05_content_architecture_and_cms_strategy.md §3–§4.1 —
+ * institution contact lines are read from the `settings` → `contact` singleton at build time;
+ * this module remains the compiler/aggregator for footer chrome.
  */
+import { getEntry } from 'astro:content';
 import { megaNavSections, type MegaNavLinkSeed } from './navigation';
 
 export type FooterLink = {
@@ -103,13 +108,29 @@ function buildFooterColumns(): FooterColumn[] {
 
 export const footerColumns: FooterColumn[] = buildFooterColumns();
 
-/** Institution framing only; no unverified phone/email (PRD / architecture §19). */
-export const footerContact: FooterContact = {
-	address: [
-		'Centre for Plant Medicine Research',
-		'Full postal address and departmental phone listings will be published once editorial sign-off is complete.',
-	],
-};
+/**
+ * Institution contact block from `src/content/settings/contact.md` (05 §4.1 `contact` singleton).
+ * Optional phone/email render only when present in settings (PRD / architecture §19).
+ */
+export async function getFooterContactFromSettings(): Promise<FooterContact> {
+	const entry = await getEntry('settings', 'contact');
+	if (!entry || entry.data.settings_kind !== 'contact') {
+		throw new Error(
+			'footer: missing or invalid settings entry `contact` (expected src/content/settings/contact.md with settings_kind: contact)',
+		);
+	}
+	const { postal_address_lines: lines, primary_phone, primary_email } = entry.data;
+	if (!lines?.length) {
+		throw new Error(
+			'footer: `contact` settings must define postal_address_lines (≥1 line) per docs/03_architecture/05_content_architecture_and_cms_strategy.md §4.1',
+		);
+	}
+	return {
+		address: lines,
+		phone: primary_phone,
+		email: primary_email,
+	};
+}
 
 export const footerCopyrightYear = 2026;
 

@@ -1,17 +1,67 @@
 ---
 /**
  * E2-S01 — Base layout shell (DESIGN.md §15, §14.2; docs/03_architecture/04_architecture.md §8).
- * Skip link is the first focusable control; primary page content belongs in the default slot inside <main id="main">.
+ * REM-CARCH-005 — Canonical URL + default document meta / OG / Twitter from `settings` (`site`, `seo_defaults`)
+ * per docs/03_architecture/05_content_architecture_and_cms_strategy.md §12.2; hero body remains page-owned (05 §4.15).
+ *
  * Optional named slots: `header`, `footer` (chrome outside main), `head` (extra SEO/meta/link tags).
  */
 import '../styles/global.css';
+import { getEntry } from 'astro:content';
 
 interface Props {
+	/** When omitted, title comes from `seo_defaults` (+ suffix) in `settings`. */
 	title?: string;
+	/** When omitted, description comes from `seo_defaults` in `settings`. */
 	description?: string;
+	/** Optional path override for `<link rel="canonical">` / `og:url` (must start with `/`). */
+	seoCanonicalPath?: string;
 }
 
-const { title = 'CPMR Website Rebuild', description } = Astro.props;
+const { title: titleProp, description: descriptionProp, seoCanonicalPath } = Astro.props;
+
+const siteEntry = await getEntry('settings', 'site');
+const seoDefaultsEntry = await getEntry('settings', 'seo_defaults');
+
+if (!siteEntry || siteEntry.data.settings_kind !== 'site') {
+	throw new Error('REM-CARCH-005: expected settings/site entry (src/content/settings/site.md)');
+}
+if (!seoDefaultsEntry || seoDefaultsEntry.data.settings_kind !== 'seo_defaults') {
+	throw new Error('REM-CARCH-005: expected settings/seo_defaults entry (src/content/settings/seo_defaults.md)');
+}
+
+const site = siteEntry.data;
+const seoDefaults = seoDefaultsEntry.data;
+
+const suffix = seoDefaults.seo_title_suffix.trim();
+const baseTitle = seoDefaults.seo_title.trim();
+const defaultTitle = [baseTitle, suffix].filter(Boolean).join(' ').trim();
+
+const resolvedTitle = (titleProp?.trim() || defaultTitle).trim();
+const resolvedDescription = (descriptionProp?.trim() || seoDefaults.seo_description).trim();
+
+/** 05 §12.2 + 06_project_context — trailing slash on (except bare root). */
+function normalizeCanonicalPath(pathname: string): string {
+	let p = pathname || '/';
+	if (!p.startsWith('/')) p = `/${p}`;
+	if (p !== '/' && !p.endsWith('/')) p = `${p}/`;
+	return p;
+}
+
+const rawPath = seoCanonicalPath ?? Astro.url.pathname;
+const canonicalPath = normalizeCanonicalPath(rawPath);
+const originBase = site.public_site_url.replace(/\/+$/, '');
+const canonicalHref = `${originBase}${canonicalPath}`;
+
+function resolveOgImageUrl(imageRef: string): string {
+	const ref = imageRef.trim();
+	if (ref.startsWith('http://') || ref.startsWith('https://')) return ref;
+	const origin = new URL(site.public_site_url).origin;
+	if (ref.startsWith('/')) return `${origin}${ref}`;
+	return `${originBase}/${ref.replace(/^\/+/, '')}`;
+}
+
+const ogImageAbsolute = site.og_image?.trim() ? resolveOgImageUrl(site.og_image) : null;
 ---
 
 <!doctype html>
@@ -19,6 +69,7 @@ const { title = 'CPMR Website Rebuild', description } = Astro.props;
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="canonical" href={canonicalHref} />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
@@ -28,8 +79,17 @@ const { title = 'CPMR Website Rebuild', description } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
-		{description ? <meta name="description" content={description} /> : null}
-		<title>{title}</title>
+		<meta name="description" content={resolvedDescription} />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={resolvedTitle} />
+		<meta property="og:description" content={resolvedDescription} />
+		<meta property="og:url" content={canonicalHref} />
+		{ogImageAbsolute ? <meta property="og:image" content={ogImageAbsolute} /> : null}
+		<meta name="twitter:card" content={ogImageAbsolute ? 'summary_large_image' : 'summary'} />
+		<meta name="twitter:title" content={resolvedTitle} />
+		<meta name="twitter:description" content={resolvedDescription} />
+		{ogImageAbsolute ? <meta name="twitter:image" content={ogImageAbsolute} /> : null}
+		<title>{resolvedTitle}</title>
 		<slot name="head" />
 	</head>
 	<body class="relative min-h-full bg-surface-page antialiased">

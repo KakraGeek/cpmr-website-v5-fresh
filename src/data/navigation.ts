@@ -2,6 +2,10 @@
  * Aggregated navigation seeds (E2-S03 utility; E2-S04 mega).
  * Utility IA + labels: docs/02_design/03_ux_blueprint.md §4.1; mega clusters §5.2; route roots: `04_architecture.md` §4.2.
  *
+ * Nav source-of-truth boundary (REM-CARCH-007): this module is the build-time **navigation compiler** for `routeLive`
+ * and public `href`s. Any future `nav` collection or CMS export must compile into this typed surface — see
+ * `docs/03_architecture/07_navigation_compiler_vs_nav_collection_decision.md` and **05** §2.3 / Appendix B.4.
+ *
  * `routeLive`: when true, navigation components emit a real `<a href>`. Set false until the route exists under
  * `src/pages/` and is stakeholder-approved (PRD §30; architecture §19).
  */

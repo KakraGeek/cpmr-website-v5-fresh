@@ -1,8 +1,16 @@
 # CPMR website (static rebuild)
 
-Institutional site for the Centre for Plant Medicine Research (CPMR), built with [Astro](https://astro.build/) as a **static** site (`output: 'static'`). Governed copy and structured data live in the repo and are compiled at build time—see `docs/03_architecture/04_architecture.md` and `docs/03_architecture/06_project_context.md` for the full picture.
+Institutional site for the Centre for Plant Medicine Research (CPMR), built with [Astro](https://astro.build/) as a **static** site (`output: 'static'`). Governed copy and structured data live in the repo and are compiled at build time. **Editorial placement and CMS-facing contracts** are governed by **`docs/03_architecture/05_content_architecture_and_cms_strategy.md`** (**05**, baseline v1.0.0). **How the Astro codebase wires routes, build output, and data rules** is in **`docs/03_architecture/04_architecture.md`**. **Day-to-day engineering constraints** (stack, merge gates, agent workflow) are in **`docs/03_architecture/06_project_context.md`**.
 
 ## Where content lives (for editors)
+
+**Architecture docs (roles distinguished):**
+
+| Document | Role |
+| --- | --- |
+| `docs/03_architecture/05_content_architecture_and_cms_strategy.md` | **Authoritative** content architecture and CMS/static alignment (**05**). |
+| `docs/03_architecture/04_architecture.md` | Technical solution architecture for this repo, including **§9 — Data and content source rules** aligned to **05**. |
+| `docs/03_architecture/06_project_context.md` | Implementation constitution for contributors and automation (versions, `validate`, quality bars). |
 
 | Area | Purpose |
 | --- | --- |
@@ -10,7 +18,7 @@ Institutional site for the Centre for Plant Medicine Research (CPMR), built with
 | **`src/data/`** | Structured aggregates (JSON/YAML/TS) such as navigation, footer links, and similar site-wide data consumed at build time. |
 | **`src/components/`**, **`src/layouts/`**, **`src/pages/`** | Presentation: layout, UI behaviour, and route shells. They should not be the long-term sole home for “final” institutional truth strings; prefer `src/content/` or `src/data/` when adding new governed material. |
 
-What belongs in collections versus data modules (and what must not be embedded only in components long-term) is spelled out in **`docs/03_architecture/04_architecture.md` §9 — Data and content source rules**.
+What belongs in collections versus data modules (and what must not be embedded only in components long-term) is **specified in `docs/03_architecture/05_content_architecture_and_cms_strategy.md`**, with builder-facing restatement in **`docs/03_architecture/04_architecture.md` §9 — Data and content source rules**.
 
 Ownership and workflow expectations align with **PRD §29** (`docs/01_planning/02_prd.md` — CMS / content editing requirements): **CM1** keeps editorial truth under `src/content/` and `src/data/` at build time; **CM3** states there is **no runtime preview server** on MVP hosting—local work uses **`npm run dev`** and preview of the static build uses **`npm run preview`** (this repo’s script for `astro preview`).
 

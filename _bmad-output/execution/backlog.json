@@ -1,0 +1,125 @@
+{
+  "meta": {
+    "schema_version": 1,
+    "last_updated": "2026-05-14",
+    "source_audit": "docs/05_qa/retroactive_content_architecture_validation_report.md",
+    "remediation_plan": "docs/06_delivery/content_architecture_remediation_execution_plan.md",
+    "architecture_baseline": "docs/03_architecture/05_content_architecture_and_cms_strategy.md",
+    "architecture_baseline_version": "1.0.0"
+  },
+  "programme_gates": [
+    {
+      "id": "B-PROG-009",
+      "defect": "CONTENT-ARCH-RETRO-009",
+      "classification": "IMMEDIATE_BLOCKER",
+      "statement": "No epic E4-E11 may be marked complete without 05-aligned schemas, routes, and validation discipline."
+    }
+  ],
+  "story_corrections": [
+    {
+      "id": "E1-S05",
+      "previous_status": "DONE",
+      "recommended_status": "PROCESS_FIX_REQUIRED",
+      "reason": "CONTENT-ARCH-RETRO-007: CONTRIBUTING.md missing; acceptance criteria unmet.",
+      "linked_remediation": ["REM-CARCH-008"]
+    },
+    {
+      "id": "E2-S08",
+      "previous_status": "DONE",
+      "recommended_status": "ARCHITECT_REVIEW",
+      "reason": "Retro audit section 19: architect gate evidence must cite 05; risk of uncommitted story YAML drift.",
+      "linked_remediation": ["REM-CARCH-007"]
+    },
+    {
+      "id": "E3",
+      "kind": "epic",
+      "recommended_reporting_status": "PARTIAL",
+      "reason": "Only E3-S01 delivered versus story map E3 scope."
+    }
+  ],
+  "remediation_stories": [
+    {
+      "id": "REM-CARCH-001",
+      "title": "Execution artefact restoration or ADR",
+      "parent": null,
+      "defects": ["CONTENT-ARCH-RETRO-001"],
+      "classification": "REQUIRED_BEFORE_RELATED_FEATURE_CONTINUES",
+      "dependencies": []
+    },
+    {
+      "id": "REM-CARCH-002",
+      "title": "README cites 05 content architecture",
+      "parent": "E0-S07",
+      "defects": ["CONTENT-ARCH-RETRO-002"],
+      "classification": "REQUIRED_BEFORE_RELATED_FEATURE_CONTINUES",
+      "dependencies": []
+    },
+    {
+      "id": "REM-CARCH-003",
+      "title": "settings singleton collection bootstrap",
+      "parent": "E0-S04",
+      "defects": ["CONTENT-ARCH-RETRO-003"],
+      "classification": "IMMEDIATE_BLOCKER",
+      "dependencies": []
+    },
+    {
+      "id": "REM-CARCH-004",
+      "title": "Footer contact lines sourced from settings",
+      "parent": "E2-S06",
+      "defects": ["CONTENT-ARCH-RETRO-004"],
+      "classification": "REQUIRED_BEFORE_RELATED_FEATURE_CONTINUES",
+      "dependencies": ["REM-CARCH-003"]
+    },
+    {
+      "id": "REM-CARCH-005",
+      "title": "Canonical URLs and default SEO meta from settings",
+      "parent": "E12-S02",
+      "defects": ["CONTENT-ARCH-RETRO-006"],
+      "classification": "REQUIRED_BEFORE_RELATED_FEATURE_CONTINUES",
+      "note": "Schedule with E12-S02; depends on REM-CARCH-003.",
+      "dependencies": ["REM-CARCH-003"]
+    },
+    {
+      "id": "REM-CARCH-006",
+      "title": "refs.ts build-time integrity utilities",
+      "parent": "E5-S09",
+      "defects": ["CONTENT-ARCH-RETRO-008"],
+      "classification": "REQUIRED_BEFORE_FIRST_BULK_CROSS_COLLECTION_IMPORT",
+      "dependencies": ["REM-CARCH-003"]
+    },
+    {
+      "id": "REM-CARCH-007",
+      "title": "Navigation compiler versus nav collection decision record",
+      "parent": "E2-S08",
+      "defects": ["05-APPENDIX-B-ITEM-4-NAV-DRIFT"],
+      "classification": "REQUIRED_BEFORE_RELATED_FEATURE_CONTINUES",
+      "dependencies": []
+    },
+    {
+      "id": "REM-CARCH-008",
+      "title": "Add CONTRIBUTING.md token checklist",
+      "parent": "E1-S05",
+      "defects": ["CONTENT-ARCH-RETRO-007"],
+      "classification": "IMMEDIATE_BLOCKER",
+      "dependencies": []
+    }
+  ],
+  "deferred_to_epic_stories": [
+    {
+      "defect": "CONTENT-ARCH-RETRO-005",
+      "target_story": "E11-S02",
+      "classification": "SAFE_TO_DEFER"
+    }
+  ],
+  "safe_order": [
+    "REM-CARCH-001",
+    "REM-CARCH-008",
+    "REM-CARCH-002",
+    "REM-CARCH-003",
+    "REM-CARCH-004",
+    "REM-CARCH-005",
+    "REM-CARCH-007",
+    "REM-CARCH-006",
+    "E11-S02"
+  ]
+}
