@@ -1,0 +1,154 @@
+---
+/**
+ * E3-S09 — Homepage module H11 (DESIGN.md §14.1 `home.partners`, PRD H11).
+ * Governed partner rows + outbound copy: `src/content/home/partners-band.json`.
+ * Logos resolve from `src/assets/partners/*` at build time via `import.meta.glob`.
+ */
+import type { ImageMetadata } from 'astro';
+
+export type HomePartnersBandPartner = {
+	/** Visible organisation name (also used for link accessible names). */
+	name: string;
+	logo_file: string;
+	/** Alt text for the logo image; should name the organisation (UX blueprint H11). */
+	image_alt: string;
+	/** Optional destination; external http(s) links get outbound treatment + policy surfacing. */
+	href?: string;
+};
+
+export type HomePartnersBandData = {
+	editorial_status?: 'draft' | 'in_review' | 'approved' | 'archived';
+	content_owner_role?: 'super_admin' | 'content_admin';
+	last_reviewed?: string;
+	last_updated?: string;
+	section_eyebrow?: string;
+	section_title: string;
+	/** Shown when non-empty and at least one partner uses an external http(s) `href`. */
+	outbound_policy_text?: string;
+	partners: HomePartnersBandPartner[];
+};
+
+interface Props {
+	data: HomePartnersBandData;
+}
+
+const { data } = Astro.props;
+
+const approved = !data.editorial_status || data.editorial_status === 'approved';
+const partners = data.partners ?? [];
+
+const logoModules = import.meta.glob<{ default: ImageMetadata | string }>(
+	'../../assets/partners/*.{svg,png,jpg,jpeg,webp,gif,avif}',
+	{ eager: true },
+);
+
+function basenameFromGlobKey(key: string): string {
+	const parts = key.split(/[/\\]/);
+	return parts[parts.length - 1] ?? key;
+}
+
+const srcByLogoFile = new Map<string, string>();
+for (const [key, mod] of Object.entries(logoModules)) {
+	const file = basenameFromGlobKey(key);
+	const def = mod.default;
+	const src = typeof def === 'string' ? def : def.src;
+	srcByLogoFile.set(file, src);
+}
+
+function isExternalHttp(href: string): boolean {
+	const t = href.trim();
+	return t.startsWith('http://') || t.startsWith('https://');
+}
+
+const hasExternalPartner = partners.some((p) => {
+	const h = p.href?.trim();
+	return Boolean(h && isExternalHttp(h));
+});
+
+const policyRaw = data.outbound_policy_text?.trim() ?? '';
+const showOutboundPolicy = hasExternalPartner && policyRaw.length > 0;
+---
+
+{
+	approved && partners.length > 0 ? (
+		<section
+			class="border-t border-border-subtle bg-surface-page"
+			aria-labelledby="home-partners-heading"
+		>
+			<div class="mx-auto w-full max-w-content px-4 py-10 md:py-12">
+				{data.section_eyebrow ? (
+					<p class="font-sans text-sm font-semibold uppercase tracking-wide text-text-secondary">
+						{data.section_eyebrow}
+					</p>
+				) : null}
+				<h2
+					id="home-partners-heading"
+					class:list={[
+						'font-serif text-2xl font-bold tracking-tight text-text-primary md:text-3xl',
+						data.section_eyebrow ? 'mt-1' : '',
+					]}
+				>
+					{data.section_title}
+				</h2>
+
+				<div class="mt-8 text-text-secondary">
+					<ul class="flex flex-wrap items-center justify-start gap-6 md:gap-10" role="list">
+						{partners.map((partner) => {
+							const href = partner.href?.trim() ?? '';
+							const logoSrc = srcByLogoFile.get(partner.logo_file);
+							const nameAlt = partner.image_alt.trim() || partner.name.trim();
+							const external = href.length > 0 && isExternalHttp(href);
+							const linkLabel = `Visit ${partner.name} (opens external site)`;
+							const imgAlt = external && href.length > 0 ? '' : nameAlt;
+
+							const inner = logoSrc ? (
+								<img
+									src={logoSrc}
+									alt={imgAlt}
+									width={200}
+									height={56}
+									loading="lazy"
+									decoding="async"
+									class="h-10 w-auto max-w-40 object-contain md:h-12"
+								/>
+							) : (
+								<span class="inline-flex min-h-11 max-w-xs items-center font-sans text-sm font-semibold text-text-primary">
+									{partner.name}
+									{external ? (
+										<span class="sr-only"> (opens external site)</span>
+									) : null}
+								</span>
+							);
+
+							return (
+								<li class="min-h-11 min-w-11">
+									{href.length > 0 ? (
+										<a
+											href={href}
+											class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md p-2 focus-visible:outline-none focus-visible:shadow-ring-focus"
+											rel={external ? 'noopener noreferrer' : undefined}
+											target={external ? '_blank' : undefined}
+											aria-label={external && logoSrc ? linkLabel : undefined}
+										>
+											{inner}
+										</a>
+									) : (
+										<span class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md p-2">
+											{inner}
+										</span>
+									)}
+								</li>
+							);
+						})}
+					</ul>
+				</div>
+
+				{showOutboundPolicy ? (
+					<p class="mt-6 max-w-prose font-sans text-sm leading-relaxed text-text-secondary">
+						{policyRaw}
+					</p>
+				) : null}
+			</div>
+		</section>
+	) : null
+}

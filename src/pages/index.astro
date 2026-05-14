@@ -14,6 +14,8 @@
  * E3-S08 — Publications / resources teaser (H10) from `src/content/home/publications-resources-teaser.json`;
  * `teaser_focus` switches publications vs priority-download copy; `publicationPreviewItems` fills from
  * `getCollection('publications')` once E6-S04 ships (currently []).
+ * E3-S09 — Partners band (H11) from `src/content/home/partners-band.json`; logos from `src/assets/partners/`
+ * resolved inside `HomePartnersBand.astro`; outbound policy copy renders when external partner links exist.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
@@ -25,6 +27,7 @@ import HomeResearchDepartmentPreviews from '../components/content/HomeResearchDe
 import HomeServicesProductsPreviews from '../components/content/HomeServicesProductsPreviews.astro';
 import HomeNewsEventsRow from '../components/content/HomeNewsEventsRow.astro';
 import HomePublicationsResourcesTeaser from '../components/content/HomePublicationsResourcesTeaser.astro';
+import HomePartnersBand from '../components/content/HomePartnersBand.astro';
 import QuickAccessCard from '../components/content/QuickAccessCard.astro';
 import announcementsStrip from '../content/home/announcements-strip.json';
 import mandateSnapshot from '../content/home/mandate-snapshot.json';
@@ -32,6 +35,7 @@ import researchDepartmentPreviews from '../content/home/research-department-prev
 import servicesProductsPreviews from '../content/home/services-products-previews.json';
 import newsEventsRow from '../content/home/news-events-row.json';
 import publicationsResourcesTeaser from '../content/home/publications-resources-teaser.json';
+import partnersBand from '../content/home/partners-band.json';
 import { getEntry } from 'astro:content';
 import type { HomeAnnouncementsStripData } from '../components/content/HomeAnnouncementsStrip.astro';
 import type { HomeMandateSnapshotData } from '../components/content/HomeMandateSnapshot.astro';
@@ -42,6 +46,7 @@ import type {
 	HomePublicationsResourcesTeaserData,
 	HomePublicationsResourcesTeaserPublicationItem,
 } from '../components/content/HomePublicationsResourcesTeaser.astro';
+import type { HomePartnersBandData } from '../components/content/HomePartnersBand.astro';
 
 const pathname = Astro.url.pathname;
 const heroEntry = await getEntry('home', 'hero');
@@ -69,6 +74,7 @@ const researchDeptPreviewsData = researchDepartmentPreviews as HomeResearchDepar
 const servicesProductsData = servicesProductsPreviews as HomeServicesProductsPreviewsData;
 const newsEventsData = newsEventsRow as HomeNewsEventsRowData;
 const publicationsResourcesData = publicationsResourcesTeaser as HomePublicationsResourcesTeaserData;
+const partnersBandData = partnersBand as HomePartnersBandData;
 
 /** E8-S02: replace with `getCollection('news')` (sort, slice) once the `news` collection and `/news/` routes ship. */
 const newsPreviewItems: HomeNewsEventsRowNewsItem[] = [];
@@ -113,5 +119,6 @@ const publicationPreviewItems: HomePublicationsResourcesTeaserPublicationItem[] 
 		data={publicationsResourcesData}
 		publicationItems={publicationPreviewItems}
 	/>
+	<HomePartnersBand data={partnersBandData} />
 	<SiteFooter slot="footer" currentPath={pathname} />
 </BaseLayout>

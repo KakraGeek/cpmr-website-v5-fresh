@@ -1,0 +1,27 @@
+{
+	"editorial_status": "approved",
+	"content_owner_role": "content_admin",
+	"section_eyebrow": "Partnerships",
+	"section_title": "Partners and affiliations",
+	"outbound_policy_text": "External links open in a new browser tab. CPMR is not responsible for third-party websites.",
+	"partners": [
+		{
+			"name": "National medicines regulator (example)",
+			"logo_file": "government-partner.svg",
+			"image_alt": "National medicines regulator (example) — partner mark",
+			"href": "https://example.org/partners/regulator"
+		},
+		{
+			"name": "University research collaborator (example)",
+			"logo_file": "university-partner.svg",
+			"image_alt": "University research collaborator (example) — partner mark",
+			"href": "https://example.org/partners/university"
+		},
+		{
+			"name": "International health NGO (example)",
+			"logo_file": "ngo-partner.svg",
+			"image_alt": "International health NGO (example) — partner mark",
+			"href": "https://example.org/partners/ngo"
+		}
+	]
+}
