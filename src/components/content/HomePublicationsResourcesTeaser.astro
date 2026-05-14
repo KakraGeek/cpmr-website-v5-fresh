@@ -1,0 +1,182 @@
+---
+/**
+ * E3-S08 — Homepage module H10: publications vs priority-download teaser.
+ * Governed copy + editorial switch: `src/content/home/publications-resources-teaser.json`.
+ * `publicationItems` is filled from `getCollection('publications')` in `index.astro` once
+ * E6-S04 registers the library; until then callers pass `[]` so only JSON fields render.
+ */
+import ButtonLink from '../ui/ButtonLink.astro';
+
+export type HomePublicationsResourcesTeaserPublicationItem = {
+	title: string;
+	href: string;
+	summary?: string;
+};
+
+export type HomePublicationsResourcesTeaserData = {
+	editorial_status?: 'draft' | 'in_review' | 'approved' | 'archived';
+	content_owner_role?: 'super_admin' | 'content_admin';
+	last_reviewed?: string;
+	last_updated?: string;
+	/** Editorial flag: which teaser branch renders (AC E3-S08). */
+	teaser_focus: 'publications' | 'priority_download';
+	section_eyebrow?: string;
+	section_title: string;
+	publications: {
+		headline: string;
+		body: string;
+		primary_cta: { label: string; href: string };
+		library_link?: { label: string; href: string };
+	};
+	priority_download: {
+		headline: string;
+		body: string;
+		primary_cta: { label: string; href: string };
+	};
+};
+
+interface Props {
+	data: HomePublicationsResourcesTeaserData;
+	publicationItems: HomePublicationsResourcesTeaserPublicationItem[];
+}
+
+const { data, publicationItems } = Astro.props;
+const approved = !data.editorial_status || data.editorial_status === 'approved';
+const isPublications = data.teaser_focus === 'publications';
+
+const pub = data.publications;
+const pubHref = pub.primary_cta.href.trim();
+const showPubCta = pub.primary_cta.label.trim().length > 0 && pubHref.length > 0;
+const lib = pub.library_link;
+const libHref = lib?.href?.trim() ?? '';
+const libLabel = lib?.label?.trim() ?? '';
+const showLibraryLink = libHref.length > 0 && libLabel.length > 0;
+
+const dl = data.priority_download;
+const dlHref = dl.primary_cta.href.trim();
+const showDlCta = dl.primary_cta.label.trim().length > 0 && dlHref.length > 0;
+
+const showPublicationList = isPublications && publicationItems.length > 0;
+
+const pubExternal =
+	showPubCta &&
+	(pubHref.startsWith('http://') || pubHref.startsWith('https://'));
+const libExternal =
+	showLibraryLink &&
+	(libHref.startsWith('http://') || libHref.startsWith('https://'));
+const dlExternal =
+	showDlCta && (dlHref.startsWith('http://') || dlHref.startsWith('https://'));
+---
+
+{
+	approved ? (
+		<section
+			class="border-t border-border-subtle bg-surface-page"
+			aria-labelledby="home-publications-resources-heading"
+		>
+			<div class="mx-auto w-full max-w-content px-4 py-10 md:py-12">
+				{data.section_eyebrow ? (
+					<p class="font-sans text-sm font-semibold uppercase tracking-wide text-text-secondary">
+						{data.section_eyebrow}
+					</p>
+				) : null}
+				<h2
+					id="home-publications-resources-heading"
+					class:list={[
+						'font-serif text-2xl font-bold tracking-tight text-text-primary md:text-3xl',
+						data.section_eyebrow ? 'mt-1' : '',
+					]}
+				>
+					{data.section_title}
+				</h2>
+
+				<div class="mt-8 rounded-lg border border-border-subtle bg-surface-card p-6 shadow-e0">
+					{isPublications ? (
+						<>
+							<h3 class="font-serif text-xl font-bold text-text-primary md:text-2xl">
+								{pub.headline}
+							</h3>
+							{showPublicationList ? (
+								<>
+									<ul class="mt-4 space-y-4" role="list">
+										{publicationItems.map((item) => (
+											<li class="border-b border-border-subtle pb-4 last:border-b-0 last:pb-0">
+												<a
+													href={item.href}
+													class="block font-sans text-base font-semibold text-text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:shadow-ring-focus"
+												>
+													{item.title}
+												</a>
+												{item.summary ? (
+													<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+														{item.summary}
+													</p>
+												) : null}
+											</li>
+										))}
+									</ul>
+									{showLibraryLink ? (
+										<p class="mt-6">
+											<a
+												href={libHref}
+												class="font-sans text-sm font-semibold text-brand-700 underline-offset-4 hover:underline focus-visible:outline-none focus-visible:shadow-ring-focus"
+												rel={libExternal ? 'noopener noreferrer' : undefined}
+												target={libExternal ? '_blank' : undefined}
+											>
+												{libLabel}
+											</a>
+										</p>
+									) : null}
+									{showPubCta ? (
+										<div class="mt-6">
+											<ButtonLink
+												href={pubHref}
+												label={pub.primary_cta.label}
+												variant="secondary"
+												size="md"
+												external={pubExternal}
+											/>
+										</div>
+									) : null}
+								</>
+							) : (
+								<>
+									<p class="mt-4 font-sans text-base leading-relaxed text-text-secondary">{pub.body}</p>
+									{showPubCta ? (
+										<div class="mt-8">
+											<ButtonLink
+												href={pubHref}
+												label={pub.primary_cta.label}
+												variant="secondary"
+												size="md"
+												external={pubExternal}
+											/>
+										</div>
+									) : null}
+								</>
+							)}
+						</>
+					) : (
+						<>
+							<h3 class="font-serif text-xl font-bold text-text-primary md:text-2xl">
+								{dl.headline}
+							</h3>
+							<p class="mt-4 font-sans text-base leading-relaxed text-text-secondary">{dl.body}</p>
+							{showDlCta ? (
+								<div class="mt-8">
+									<ButtonLink
+										href={dlHref}
+										label={dl.primary_cta.label}
+										variant="secondary"
+										size="md"
+										external={dlExternal}
+									/>
+								</div>
+							) : null}
+						</>
+					)}
+				</div>
+			</div>
+		</section>
+	) : null
+}

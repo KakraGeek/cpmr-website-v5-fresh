@@ -383,3 +383,12 @@ events:
 - timestamp: '2026-05-14 16:46:27'
   story_id: E3-S07
   event: status -> DONE
+- timestamp: '2026-05-14 16:48:55'
+  story_id: E3-S08
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-14 17:25:32'
+  story_id: E3-S08
+  event: status -> VERIFIED
+- timestamp: '2026-05-14 17:25:49'
+  story_id: E3-S08
+  event: status -> DONE

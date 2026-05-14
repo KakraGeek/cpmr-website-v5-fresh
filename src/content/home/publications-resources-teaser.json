@@ -1,0 +1,29 @@
+{
+  "editorial_status": "approved",
+  "content_owner_role": "content_admin",
+  "last_reviewed": "2026-05-14",
+  "last_updated": "2026-05-14",
+  "teaser_focus": "publications",
+  "section_eyebrow": "Evidence",
+  "section_title": "Publications and resources",
+  "publications": {
+    "headline": "Publications library",
+    "body": "When the publications collection from epic E6-S04 is merged, recent titles will preview in this band. Until then the static build lists only governed preview text—no invented citation rows.",
+    "primary_cta": {
+      "label": "Open publications library",
+      "href": "/research/publications/"
+    },
+    "library_link": {
+      "label": "Browse full archive",
+      "href": ""
+    }
+  },
+  "priority_download": {
+    "headline": "Priority downloads",
+    "body": "Authoritative datasets and briefing PDFs will surface here once the downloads vertical from epic E10 is wired. Switch `teaser_focus` to `priority_download` in this file when editors want this band to foreground resources instead of publications.",
+    "primary_cta": {
+      "label": "Go to downloads",
+      "href": ""
+    }
+  }
+}

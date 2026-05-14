@@ -11,6 +11,9 @@
  * disclaimers and hrefs are governed; empty `href` omits anchors per PRD link policy.
  * E3-S07 — News + events row (H9) from `src/content/home/news-events-row.json`; `newsItems` is filled
  * from `getCollection('news')` once E8-S02 registers the collection and news routes exist (currently []).
+ * E3-S08 — Publications / resources teaser (H10) from `src/content/home/publications-resources-teaser.json`;
+ * `teaser_focus` switches publications vs priority-download copy; `publicationPreviewItems` fills from
+ * `getCollection('publications')` once E6-S04 ships (currently []).
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
@@ -21,18 +24,24 @@ import HomeMandateSnapshot from '../components/content/HomeMandateSnapshot.astro
 import HomeResearchDepartmentPreviews from '../components/content/HomeResearchDepartmentPreviews.astro';
 import HomeServicesProductsPreviews from '../components/content/HomeServicesProductsPreviews.astro';
 import HomeNewsEventsRow from '../components/content/HomeNewsEventsRow.astro';
+import HomePublicationsResourcesTeaser from '../components/content/HomePublicationsResourcesTeaser.astro';
 import QuickAccessCard from '../components/content/QuickAccessCard.astro';
 import announcementsStrip from '../content/home/announcements-strip.json';
 import mandateSnapshot from '../content/home/mandate-snapshot.json';
 import researchDepartmentPreviews from '../content/home/research-department-previews.json';
 import servicesProductsPreviews from '../content/home/services-products-previews.json';
 import newsEventsRow from '../content/home/news-events-row.json';
+import publicationsResourcesTeaser from '../content/home/publications-resources-teaser.json';
 import { getEntry } from 'astro:content';
 import type { HomeAnnouncementsStripData } from '../components/content/HomeAnnouncementsStrip.astro';
 import type { HomeMandateSnapshotData } from '../components/content/HomeMandateSnapshot.astro';
 import type { HomeResearchDepartmentPreviewsData } from '../components/content/HomeResearchDepartmentPreviews.astro';
 import type { HomeServicesProductsPreviewsData } from '../components/content/HomeServicesProductsPreviews.astro';
 import type { HomeNewsEventsRowData, HomeNewsEventsRowNewsItem } from '../components/content/HomeNewsEventsRow.astro';
+import type {
+	HomePublicationsResourcesTeaserData,
+	HomePublicationsResourcesTeaserPublicationItem,
+} from '../components/content/HomePublicationsResourcesTeaser.astro';
 
 const pathname = Astro.url.pathname;
 const heroEntry = await getEntry('home', 'hero');
@@ -59,9 +68,13 @@ const mandateData = mandateSnapshot as HomeMandateSnapshotData;
 const researchDeptPreviewsData = researchDepartmentPreviews as HomeResearchDepartmentPreviewsData;
 const servicesProductsData = servicesProductsPreviews as HomeServicesProductsPreviewsData;
 const newsEventsData = newsEventsRow as HomeNewsEventsRowData;
+const publicationsResourcesData = publicationsResourcesTeaser as HomePublicationsResourcesTeaserData;
 
 /** E8-S02: replace with `getCollection('news')` (sort, slice) once the `news` collection and `/news/` routes ship. */
 const newsPreviewItems: HomeNewsEventsRowNewsItem[] = [];
+
+/** E6-S04: replace with sorted slice from `getCollection('publications')` once the publications library collection ships. */
+const publicationPreviewItems: HomePublicationsResourcesTeaserPublicationItem[] = [];
 ---
 
 <BaseLayout>
@@ -96,5 +109,9 @@ const newsPreviewItems: HomeNewsEventsRowNewsItem[] = [];
 	<HomeResearchDepartmentPreviews data={researchDeptPreviewsData} />
 	<HomeServicesProductsPreviews data={servicesProductsData} />
 	<HomeNewsEventsRow data={newsEventsData} newsItems={newsPreviewItems} />
+	<HomePublicationsResourcesTeaser
+		data={publicationsResourcesData}
+		publicationItems={publicationPreviewItems}
+	/>
 	<SiteFooter slot="footer" currentPath={pathname} />
 </BaseLayout>

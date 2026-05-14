@@ -2,49 +2,70 @@ id: E3-S08
 epic: E3
 sprint_order: 308
 title: Publications and resources teaser
-status: TODO
-architect_gate_required: No
-user_story: >
-  As an academic, I find evidence entry points.
+status: DONE
+architect_gate_required: false
+user_story: 'As an academic, I find evidence entry points.
+
+  '
 acceptance_criteria:
-  - Teaser chooses publications or priority download editorially via a content flag.
+- Teaser chooses publications or priority download editorially via a content flag.
 tasks:
-  - Implement module H10 on src/pages/index.astro driven by governed home content fields.
-  - Respect the editorial flag for publications versus priority download without hard-coding copy.
-  - When the publications library from story map E6-S04 exists, wire teaser links or previews to that implementation; until then use governed home fields only without inventing publication rows.
+- '[x] Implement module H10 on src/pages/index.astro driven by governed home content
+  fields.'
+- '[x] Respect the editorial flag for publications versus priority download without
+  hard-coding copy.'
+- '[x] When the publications library from story map E6-S04 exists, wire teaser links
+  or previews to that implementation; until then use governed home fields only without
+  inventing publication rows.'
 dependencies:
-  - E3-S01
+- E3-S01
 context_files:
-  - docs/04_stories/05_story_map.md
-  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
-  - docs/01_planning/01_analysis.md
-  - docs/01_planning/02_prd.md
-  - docs/02_design/03_ux_blueprint.md
-  - docs/02_design/DESIGN.md
-  - docs/03_architecture/04_architecture.md
-  - docs/03_architecture/06_project_context.md
+- docs/04_stories/05_story_map.md
+- docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+- docs/01_planning/01_analysis.md
+- docs/01_planning/02_prd.md
+- docs/02_design/03_ux_blueprint.md
+- docs/02_design/DESIGN.md
+- docs/03_architecture/04_architecture.md
+- docs/03_architecture/06_project_context.md
 execution:
   files_allowed:
-    - src/pages/index.astro
-    - src/components/content/**
-    - src/content/home/**
+  - src/pages/index.astro
+  - src/components/content/**
+  - src/content/home/**
   files_forbidden:
-    - astro.config.mjs
-    - package.json
-    - docs/02_design/DESIGN.md
-    - src/layouts/**
-    - src/components/layout/**
-    - src/data/**
-    - src/pages/research/publications/**
-    - src/content/publications/**
-    - src/content/downloads/**
-    - src/pages/resources/**
+  - astro.config.mjs
+  - package.json
+  - docs/02_design/DESIGN.md
+  - src/layouts/**
+  - src/components/layout/**
+  - src/data/**
+  - src/pages/research/publications/**
+  - src/content/publications/**
+  - src/content/downloads/**
+  - src/pages/resources/**
   verification_commands:
-    - npm run build
-    - npm run validate
+  - npm run build
+  - npm run validate
 qa_checklist:
-  - Confirm every acceptance criterion is satisfied.
-  - Confirm implementation follows DESIGN.md.
-  - Confirm implementation follows docs/03_architecture/04_architecture.md.
-  - Confirm static build passes (npm run build / npm run validate).
-  - Confirm no forbidden files were changed.
+- Confirm every acceptance criterion is satisfied.
+- Confirm implementation follows DESIGN.md.
+- Confirm implementation follows docs/03_architecture/04_architecture.md.
+- Confirm static build passes (npm run build / npm run validate).
+- Confirm no forbidden files were changed.
+last_updated: '2026-05-14 17:25:49'
+dev_agent_record:
+  completion_notes: H10 after news/events row. Added `publications-resources-teaser.json`
+    with `teaser_focus` (`publications` | `priority_download`) and parallel governed
+    copy objects. `HomePublicationsResourcesTeaser.astro` renders one branch from
+    the flag; publications mode lists `publicationItems` when non-empty (E6-S04 hook),
+    otherwise JSON body + CTA only—no fabricated rows. `index.astro` imports JSON,
+    passes `publicationPreviewItems = []` with E6-S04 comment for future `getCollection`.
+    `npm run validate` passes.
+  file_list:
+  - src/content/home/publications-resources-teaser.json
+  - src/components/content/HomePublicationsResourcesTeaser.astro
+  - src/pages/index.astro
+  change_log:
+  - '2026-05-14: E3-S08 publications/resources teaser — governed JSON + editorial
+    flag, forward-compat for E6-S04 publication previews.'
