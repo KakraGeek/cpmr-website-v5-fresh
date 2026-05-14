@@ -1,0 +1,44 @@
+---
+/**
+ * E3-S06 — Homepage modules H7 (services) and H8 (products). Governed copy:
+ * `src/content/home/services-products-previews.json`. Optional `href` on hub or preview
+ * tiles omits anchors (PRD / blueprint: valid links or hidden).
+ */
+import HomeSciencePathwaySection from './HomeSciencePathwaySection.astro';
+import type { PathwaySectionContent } from './HomeSciencePathwaySection.astro';
+
+export type HomeServicesProductsPreviewsData = {
+	editorial_status?: 'draft' | 'in_review' | 'approved' | 'archived';
+	content_owner_role?: 'super_admin' | 'content_admin';
+	last_reviewed?: string;
+	last_updated?: string;
+	services: PathwaySectionContent;
+	products: PathwaySectionContent;
+};
+
+interface Props {
+	data: HomeServicesProductsPreviewsData;
+}
+
+const { data } = Astro.props;
+const approved = !data.editorial_status || data.editorial_status === 'approved';
+---
+
+{
+	approved ? (
+		<>
+			<HomeSciencePathwaySection
+				section={data.services}
+				headingId="home-services-previews-heading"
+				surface="page"
+				hubVisual="services"
+			/>
+			<HomeSciencePathwaySection
+				section={data.products}
+				headingId="home-products-previews-heading"
+				surface="sunken"
+				hubVisual="products"
+			/>
+		</>
+	) : null
+}

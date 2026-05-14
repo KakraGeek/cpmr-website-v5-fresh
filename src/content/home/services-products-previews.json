@@ -1,0 +1,70 @@
+{
+  "editorial_status": "approved",
+  "content_owner_role": "content_admin",
+  "last_reviewed": "2026-05-14",
+  "last_updated": "2026-05-14",
+  "services": {
+    "eyebrow": "Operations",
+    "title": "Services preview",
+    "lede": "Priority entry points for clinic care, Drug Analysis Unit submissions, and supporting scientific services.",
+    "disclaimer": "This overview is for general orientation only. It does not replace personalised medical or regulatory advice. Fees, hours, eligibility, and turnaround times are confirmed on each approved service page when published.",
+    "hub_card": {
+      "title": "Services hub",
+      "description": "The full services index will use the canonical `/services/` path when the Services epic ships. Service hub HTML is not in this build, so this card is shown without a link.",
+      "href": ""
+    },
+    "preview_cards": [
+      {
+        "title": "Herbal Medicine Clinic",
+        "description": "Outpatient consultations and follow-up care pathways. The clinic detail route is not published in this build, so this tile omits a link until the page exists.",
+        "href": ""
+      },
+      {
+        "title": "Drug Analysis Unit",
+        "description": "Quality testing, analytical submissions, and reporting. The DAU detail route is not published in this build, so this tile omits a link until the page exists.",
+        "href": ""
+      },
+      {
+        "title": "Scientific and technical services",
+        "description": "Laboratory and technical support for research partners. A dedicated listing URL is not published in this build, so this tile is shown without a link until editorial approval.",
+        "href": ""
+      }
+    ],
+    "empty_state": {
+      "title": "Service previews are not published",
+      "body": "When the services collection and hub routes are available, this band will surface governed preview cards. Until then, we are not inventing destinations."
+    }
+  },
+  "products": {
+    "eyebrow": "Products",
+    "title": "Product categories preview",
+    "lede": "Representative categories for institutional formulations and consumer lines.",
+    "disclaimer": "Product availability, formulations, and claims vary by batch and regulatory context. Use official channels for procurement and do not treat this strip as a catalogue commitment.",
+    "hub_card": {
+      "title": "Products section",
+      "description": "Category browsing will live under `/products/` once the Products epic ships. Product hub HTML is not in this build, so this card is shown without a link.",
+      "href": ""
+    },
+    "preview_cards": [
+      {
+        "title": "Capsules and tablets",
+        "description": "Solid dosage herbal formulations. Category routes are not published in this build, so this tile omits a link until governed product URLs exist.",
+        "href": ""
+      },
+      {
+        "title": "Teas and infusions",
+        "description": "Loose and packaged botanical beverages. Category routes are not published in this build, so this tile omits a link until governed product URLs exist.",
+        "href": ""
+      },
+      {
+        "title": "Certificates and batch documentation",
+        "description": "Supporting documents for approved partners only. No public URL is published yet, so this tile omits a link.",
+        "href": ""
+      }
+    ],
+    "empty_state": {
+      "title": "Product categories are not published",
+      "body": "Category tiles will link to governed product routes when the Products vertical is merged. This build does not fabricate category slugs."
+    }
+  }
+}

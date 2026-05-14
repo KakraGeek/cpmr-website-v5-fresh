@@ -1,18 +1,23 @@
 ---
+import PathwayHubCardBody from './PathwayHubCardBody.astro';
+
 /**
  * E3-S05 — Single homepage pathway band (PRD/blueprint modules H5 or H6): one hub card plus
  * optional preview cards or an honest empty state (no fabricated collection rows).
+ * E3-S06 — Optional hub/preview hrefs, disclaimer note, services/products hub visuals.
  */
 export type PathwayHubCard = {
 	title: string;
 	description?: string;
-	href: string;
+	/** Omit or leave empty to render a non-link hub (E3-S06 “valid or hidden” policy). */
+	href?: string;
 };
 
 export type PathwayPreviewCard = {
 	title: string;
 	description?: string;
-	href: string;
+	/** Omit or leave empty to show the tile without a destination link. */
+	href?: string;
 };
 
 export type PathwayEmptyState = {
@@ -24,6 +29,8 @@ export type PathwaySectionContent = {
 	eyebrow?: string;
 	title: string;
 	lede?: string;
+	/** Regulatory / editorial microcopy (e.g. services and products previews). */
+	disclaimer?: string;
 	hub_card: PathwayHubCard;
 	preview_cards: PathwayPreviewCard[];
 	empty_state: PathwayEmptyState;
@@ -34,16 +41,26 @@ interface Props {
 	headingId: string;
 	surface: 'page' | 'sunken';
 	/** Decorative icon key for the hub tile */
-	hubVisual: 'research' | 'departments';
+	hubVisual: 'research' | 'departments' | 'services' | 'products';
 }
 
 const { section, headingId, surface, hubVisual } = Astro.props;
 
 const surfaceClass = surface === 'page' ? 'bg-surface-page' : 'bg-surface-sunken';
 
+const hubHref = section.hub_card.href?.trim() ?? '';
+const hubHasLink = hubHref.length > 0;
 const hubExternal =
-	section.hub_card.href.startsWith('http://') || section.hub_card.href.startsWith('https://');
+	hubHasLink && (hubHref.startsWith('http://') || hubHref.startsWith('https://'));
 const hubAria = hubExternal ? `${section.hub_card.title} (opens external site)` : undefined;
+
+const hubCardClass = [
+	'group relative flex min-h-[11rem] flex-1 flex-col justify-between rounded-lg border border-border-subtle bg-surface-card p-6 shadow-e0 transition-shadow duration-base ease-standard',
+	'lg:max-w-md',
+	hubHasLink
+		? 'hover:z-raised hover:shadow-e2 focus-visible:relative focus-visible:z-raised focus-visible:outline-none focus-visible:shadow-ring-focus'
+		: 'cursor-default',
+];
 
 const iconClass = 'size-md shrink-0 text-brand-700';
 ---
@@ -76,103 +93,94 @@ const iconClass = 'size-md shrink-0 text-brand-700';
 				</p>
 			) : null
 		}
+		{
+			section.disclaimer ? (
+				<p
+					class="mt-4 max-w-3xl border-l-2 border-brand-700 pl-4 font-sans text-sm leading-relaxed text-text-secondary"
+					role="note"
+				>
+					{section.disclaimer}
+				</p>
+			) : null
+		}
 
 		<div
 			class="mt-8 flex flex-col gap-6 lg:flex-row lg:items-stretch lg:gap-8"
 		>
-			<a
-				href={section.hub_card.href}
-				rel={hubExternal ? 'noopener noreferrer' : undefined}
-				target={hubExternal ? '_blank' : undefined}
-				aria-label={hubAria}
-				class:list={[
-					'group relative flex min-h-[11rem] flex-1 flex-col justify-between rounded-lg border border-border-subtle bg-surface-card p-6 shadow-e0 transition-shadow duration-base ease-standard',
-					'hover:z-raised hover:shadow-e2 focus-visible:relative focus-visible:z-raised focus-visible:outline-none focus-visible:shadow-ring-focus',
-					'lg:max-w-md',
-				]}
-			>
-				<div class="flex items-start gap-3">
-					{
-						hubVisual === 'research' ? (
-							<svg class={iconClass} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-								<path
-									d="M9 3h6v3H9V3ZM7 8h10v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V8Zm5 4v4m-2-2h4"
-									stroke="currentColor"
-									stroke-width="1.75"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								/>
-							</svg>
-						) : (
-							<svg class={iconClass} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-								<path
-									d="M4 21V8l8-5 8 5v13M9 21v-8h6v8"
-									stroke="currentColor"
-									stroke-width="1.75"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								/>
-							</svg>
-						)
-					}
-					<div class="min-w-0 flex-1">
-						<h3 class="font-sans text-lg font-semibold leading-snug text-text-primary">
-							{section.hub_card.title}
-						</h3>
-						{
-							section.hub_card.description ? (
-								<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
-									{section.hub_card.description}
-								</p>
-							) : null
-						}
-					</div>
-				</div>
-				<span class="mt-6 inline-flex items-center gap-2 font-sans text-sm font-semibold text-brand-700">
-					<span>Continue</span>
-					<svg
-						class="size-sm transition-transform duration-base ease-standard group-hover:translate-x-0.5"
-						viewBox="0 0 16 16"
-						fill="none"
-						aria-hidden="true"
+			{
+				hubHasLink ? (
+					<a
+						href={hubHref}
+						rel={hubExternal ? 'noopener noreferrer' : undefined}
+						target={hubExternal ? '_blank' : undefined}
+						aria-label={hubAria}
+						class:list={hubCardClass}
 					>
-						<path
-							d="M6 3h7v7M13 3 3 13"
-							stroke="currentColor"
-							stroke-width="1.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
+						<PathwayHubCardBody
+							hub_card={section.hub_card}
+							hubVisual={hubVisual}
+							iconClass={iconClass}
+							showContinue
 						/>
-					</svg>
-				</span>
-			</a>
+					</a>
+				) : (
+					<div class:list={hubCardClass}>
+						<PathwayHubCardBody
+							hub_card={section.hub_card}
+							hubVisual={hubVisual}
+							iconClass={iconClass}
+							showContinue={false}
+						/>
+					</div>
+				)
+			}
 
 			<div class="min-w-0 flex-1">
 				{
 					section.preview_cards.length > 0 ? (
 						<ul class="grid list-none gap-4 p-0 sm:grid-cols-2">
 							{section.preview_cards.map((card) => {
+								const cardHref = card.href?.trim() ?? '';
+								const cardHasLink = cardHref.length > 0;
 								const ext =
-									card.href.startsWith('http://') || card.href.startsWith('https://');
+									cardHasLink &&
+									(cardHref.startsWith('http://') || cardHref.startsWith('https://'));
 								const aria = ext ? `${card.title} (opens external site)` : undefined;
+								const tileClass =
+									'flex h-full min-h-[8rem] flex-col rounded-lg border border-border-subtle bg-surface-card p-5 shadow-e0';
+								const linkExtra =
+									'group transition-shadow duration-base ease-standard hover:shadow-e2 focus-visible:outline-none focus-visible:shadow-ring-focus';
 								return (
 									<li class="min-w-0">
-										<a
-											href={card.href}
-											rel={ext ? 'noopener noreferrer' : undefined}
-											target={ext ? '_blank' : undefined}
-											aria-label={aria}
-											class="group flex h-full min-h-[8rem] flex-col rounded-lg border border-border-subtle bg-surface-card p-5 shadow-e0 transition-shadow duration-base ease-standard hover:shadow-e2 focus-visible:outline-none focus-visible:shadow-ring-focus"
-										>
-											<h4 class="font-sans text-base font-semibold text-text-primary">
-												{card.title}
-											</h4>
-											{card.description ? (
-												<p class="mt-2 flex-1 font-sans text-sm leading-relaxed text-text-secondary">
-													{card.description}
-												</p>
-											) : null}
-										</a>
+										{cardHasLink ? (
+											<a
+												href={cardHref}
+												rel={ext ? 'noopener noreferrer' : undefined}
+												target={ext ? '_blank' : undefined}
+												aria-label={aria}
+												class:list={[tileClass, linkExtra]}
+											>
+												<h4 class="font-sans text-base font-semibold text-text-primary">
+													{card.title}
+												</h4>
+												{card.description ? (
+													<p class="mt-2 flex-1 font-sans text-sm leading-relaxed text-text-secondary">
+														{card.description}
+													</p>
+												) : null}
+											</a>
+										) : (
+											<div class:list={[tileClass, 'cursor-default']}>
+												<h4 class="font-sans text-base font-semibold text-text-primary">
+													{card.title}
+												</h4>
+												{card.description ? (
+													<p class="mt-2 flex-1 font-sans text-sm leading-relaxed text-text-secondary">
+														{card.description}
+													</p>
+												) : null}
+											</div>
+										)}
 									</li>
 								);
 							})}

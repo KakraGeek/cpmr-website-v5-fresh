@@ -1,0 +1,97 @@
+---
+interface HubCardFields {
+	title: string;
+	description?: string;
+}
+
+interface Props {
+	hub_card: HubCardFields;
+	hubVisual: 'research' | 'departments' | 'services' | 'products';
+	iconClass: string;
+	showContinue: boolean;
+}
+
+const { hub_card, hubVisual, iconClass, showContinue } = Astro.props;
+---
+
+<div class="flex items-start gap-3">
+	{
+		hubVisual === 'research' ? (
+			<svg class={iconClass} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+				<path
+					d="M9 3h6v3H9V3ZM7 8h10v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V8Zm5 4v4m-2-2h4"
+					stroke="currentColor"
+					stroke-width="1.75"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+			</svg>
+		) : hubVisual === 'departments' ? (
+			<svg class={iconClass} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+				<path
+					d="M4 21V8l8-5 8 5v13M9 21v-8h6v8"
+					stroke="currentColor"
+					stroke-width="1.75"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+			</svg>
+		) : hubVisual === 'services' ? (
+			<svg class={iconClass} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+				<path
+					d="M12 3v4M8 21h8M6 9h12l-1 10H7L6 9Zm0 0 2-4h8l2 4"
+					stroke="currentColor"
+					stroke-width="1.75"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+			</svg>
+		) : (
+			<svg class={iconClass} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+				<path
+					d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+					stroke="currentColor"
+					stroke-width="1.75"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+				<path
+					d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"
+					stroke="currentColor"
+					stroke-width="1.75"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+			</svg>
+		)
+	}
+	<div class="min-w-0 flex-1">
+		<h3 class="font-sans text-lg font-semibold leading-snug text-text-primary">{hub_card.title}</h3>
+		{
+			hub_card.description ? (
+				<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">{hub_card.description}</p>
+			) : null
+		}
+	</div>
+</div>
+{
+	showContinue ? (
+		<span class="mt-6 inline-flex items-center gap-2 font-sans text-sm font-semibold text-brand-700">
+			<span>Continue</span>
+			<svg
+				class="size-sm transition-transform duration-base ease-standard group-hover:translate-x-0.5"
+				viewBox="0 0 16 16"
+				fill="none"
+				aria-hidden="true"
+			>
+				<path
+					d="M6 3h7v7M13 3 3 13"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+			</svg>
+		</span>
+	) : null
+}

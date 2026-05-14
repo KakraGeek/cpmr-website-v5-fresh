@@ -7,6 +7,8 @@
  * JSON envelope matches E3-S03 interim pattern until collection schema can include `kind: mandate`).
  * E3-S05 — Research + department preview bands (H5/H6) from `src/content/home/research-department-previews.json`;
  * hub cards target `/research/` and `/departments/`; optional preview rows stay empty until routes/collections exist.
+ * E3-S06 — Services + products preview bands (H7/H8) from `src/content/home/services-products-previews.json`;
+ * disclaimers and hrefs are governed; empty `href` omits anchors per PRD link policy.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
@@ -15,14 +17,17 @@ import HomeHero from '../components/content/HomeHero.astro';
 import HomeAnnouncementsStrip from '../components/content/HomeAnnouncementsStrip.astro';
 import HomeMandateSnapshot from '../components/content/HomeMandateSnapshot.astro';
 import HomeResearchDepartmentPreviews from '../components/content/HomeResearchDepartmentPreviews.astro';
+import HomeServicesProductsPreviews from '../components/content/HomeServicesProductsPreviews.astro';
 import QuickAccessCard from '../components/content/QuickAccessCard.astro';
 import announcementsStrip from '../content/home/announcements-strip.json';
 import mandateSnapshot from '../content/home/mandate-snapshot.json';
 import researchDepartmentPreviews from '../content/home/research-department-previews.json';
+import servicesProductsPreviews from '../content/home/services-products-previews.json';
 import { getEntry } from 'astro:content';
 import type { HomeAnnouncementsStripData } from '../components/content/HomeAnnouncementsStrip.astro';
 import type { HomeMandateSnapshotData } from '../components/content/HomeMandateSnapshot.astro';
 import type { HomeResearchDepartmentPreviewsData } from '../components/content/HomeResearchDepartmentPreviews.astro';
+import type { HomeServicesProductsPreviewsData } from '../components/content/HomeServicesProductsPreviews.astro';
 
 const pathname = Astro.url.pathname;
 const heroEntry = await getEntry('home', 'hero');
@@ -47,6 +52,7 @@ const qa = quickAccessEntry.data;
 const stripData = announcementsStrip as HomeAnnouncementsStripData;
 const mandateData = mandateSnapshot as HomeMandateSnapshotData;
 const researchDeptPreviewsData = researchDepartmentPreviews as HomeResearchDepartmentPreviewsData;
+const servicesProductsData = servicesProductsPreviews as HomeServicesProductsPreviewsData;
 ---
 
 <BaseLayout>
@@ -79,5 +85,6 @@ const researchDeptPreviewsData = researchDepartmentPreviews as HomeResearchDepar
 	<HomeAnnouncementsStrip data={stripData} />
 	<HomeMandateSnapshot data={mandateData} />
 	<HomeResearchDepartmentPreviews data={researchDeptPreviewsData} />
+	<HomeServicesProductsPreviews data={servicesProductsData} />
 	<SiteFooter slot="footer" currentPath={pathname} />
 </BaseLayout>
