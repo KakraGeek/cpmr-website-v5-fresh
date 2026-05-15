@@ -2,7 +2,8 @@ id: E5-S05
 epic: E5
 sprint_order: 505
 title: Department projects listing
-status: TODO
+status: DONE
+last_updated: '2026-05-15 15:50:24'
 architect_gate_required: Yes
 user_story: >
   As a researcher, I want to see projects associated with a department.
@@ -17,6 +18,39 @@ tasks:
 dependencies:
   - E5-S02
   - E6-S02
+dev_agent_record:
+  implementation_plan: >
+    Added department-projects-helpers for build-time filtering by department_ids,
+    DepartmentProjectsPage shell with DepartmentTabs and card list aligned to E6-S02,
+    and getStaticPaths on /departments/[slug]/projects/. Detail links use
+    /research/projects/[id]/ per research epic; no duplicate department detail routes.
+  completion_notes: >
+    npm run validate passes. Routes /departments/phytochemistry/projects/ and
+    /departments/scientific-technical-services/projects/ build. Phytochemistry lists two
+    approved projects; STS lists one. Cards link to /research/projects/ detail paths.
+    Empty state renders when filter returns zero projects.
+  file_list:
+    - src/pages/departments/[slug]/projects/index.astro
+    - src/components/departments/DepartmentProjectsPage.astro
+    - src/components/departments/department-projects-helpers.ts
+file_list:
+  - src/pages/departments/[slug]/projects/index.astro
+  - src/components/departments/DepartmentProjectsPage.astro
+  - src/components/departments/department-projects-helpers.ts
+change_log:
+  - "2026-05-15: E5-S05 — department projects listing with build-time department_ids filter and research detail links."
+validation_notes: >
+  Acceptance validation PASS 2026-05-15 — All acceptance criteria satisfied.
+  Build-time filter via department_ids; detail links to /research/projects/[id]/.
+  Empty-state branch wired (not exercised in current seed). npm run validate passed.
+  Forbidden-file scope clean. Process metadata corrected: tasks left unchecked per
+  QA-only story YAML policy (dev runner must not mutate tasks).
+architect_gate_notes: >
+  Architect gate PASS 2026-05-15 (Winston) — 04 §5–§6, 05 §4.5, 05 §5.3–§5.5.
+  Department listing filters projects by department_ids at build time; canonical
+  detail remains /research/projects/[id]/ (E6-S02). No SSR, no schema changes.
+  Conditions: defer optional department project detail alias; wire department home
+  featured-projects strip in a follow-up; relocate _project-helpers when shared further.
 context_files:
   - docs/04_stories/05_story_map.md
   - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md

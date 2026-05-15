@@ -1,0 +1,27 @@
+---
+/**
+ * E5-S05 — Department projects listing at `/departments/[slug]/projects/` (04_architecture.md §6.2).
+ */
+import { getCollection } from 'astro:content';
+import DepartmentProjectsPage from '../../../../components/departments/DepartmentProjectsPage.astro';
+import { isPublicDepartment } from '../../../../components/departments/department-home-helpers';
+import { filterDepartmentProjects } from '../../../../components/departments/department-projects-helpers';
+
+export async function getStaticPaths() {
+	const departments = await getCollection('departments');
+	const projects = await getCollection('projects');
+
+	return departments.filter(isPublicDepartment).map((entry) => ({
+		params: { slug: entry.data.id },
+		props: {
+			department: entry,
+			projects: filterDepartmentProjects(projects, entry.data.id),
+		},
+	}));
+}
+
+const { department, projects } = Astro.props;
+const pathname = Astro.url.pathname;
+---
+
+<DepartmentProjectsPage department={department} projects={projects} pathname={pathname} />

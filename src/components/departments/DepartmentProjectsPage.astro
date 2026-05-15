@@ -1,0 +1,115 @@
+---
+/**
+ * E5-S05 — Department projects listing (04_architecture.md §6.2; aligns with E6-S02 list patterns).
+ */
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../layout/SiteHeader.astro';
+import SiteFooter from '../layout/SiteFooter.astro';
+import Breadcrumbs from '../layout/Breadcrumbs.astro';
+import Card from '../ui/Card.astro';
+import DepartmentTabs from './DepartmentTabs.astro';
+import DepartmentSectionEmpty from './DepartmentSectionEmpty.astro';
+import {
+	departmentBasePath,
+	resolveMiniSiteNav,
+} from './department-home-helpers';
+import { departmentProjectsPageCopy } from './department-projects-helpers';
+import {
+	projectDetailPath,
+	projectStatusLabels,
+	type PublicProjectEntry,
+} from '../../pages/research/projects/_project-helpers';
+
+interface Props {
+	department: CollectionEntry<'departments'> & { data: { entry_type: 'department' } };
+	projects: PublicProjectEntry[];
+	pathname: string;
+}
+
+const { department, projects, pathname } = Astro.props;
+const dept = department.data;
+const base = departmentBasePath(dept.id);
+const copy = departmentProjectsPageCopy;
+const navItems = resolveMiniSiteNav(dept.id, dept.mini_site_nav);
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Departments', href: '/departments/' },
+	{ label: dept.name, href: base },
+	{ label: 'Projects' },
+];
+
+const pageTitle = `Projects — ${dept.name}`;
+const seoTitle = `${dept.name} — Projects | CPMR`;
+const seoDescription =
+	dept.seo_description ??
+	`Research projects associated with ${dept.name} at the Centre for Plant Medicine Research.`;
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const cardLinkClass =
+	`group block h-full no-underline text-inherit transition-shadow ${focusRing}`;
+---
+
+<BaseLayout title={seoTitle} description={seoDescription} seoCanonicalPath={pathname}>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<DepartmentTabs items={navItems} currentPath={pathname} />
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			<h1 class="font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+				{pageTitle}
+			</h1>
+			<p class="mt-4 max-w-prose font-sans text-lg leading-relaxed text-text-secondary">
+				{copy.lede}
+			</p>
+
+			<section class="mt-10 border-t border-border-subtle pt-10" aria-labelledby="dept-projects-list-heading">
+				<h2
+					id="dept-projects-list-heading"
+					class="font-serif text-xl font-bold tracking-tight text-text-primary md:text-2xl"
+				>
+					{copy.sectionTitle}
+				</h2>
+
+				{
+					projects.length === 0 ? (
+						<div class="mt-6">
+							<DepartmentSectionEmpty title={copy.emptyTitle} body={copy.emptyBody} />
+						</div>
+					) : (
+						<ul class="m-0 mt-6 grid list-none gap-4 p-0 md:grid-cols-2" role="list">
+							{projects.map((entry) => (
+								<li>
+									<a href={projectDetailPath(entry.data.id)} class={cardLinkClass}>
+										<Card elevation="hover-lift" padding="5" class="h-full">
+											<p class="font-sans text-xs font-semibold uppercase tracking-wide text-text-secondary">
+												{entry.data.research_area}
+											</p>
+											<h3 class="mt-2 font-serif text-lg font-bold text-text-primary group-hover:text-brand-700">
+												{entry.data.title}
+											</h3>
+											<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+												{entry.data.summary}
+											</p>
+											<p class="mt-4 font-sans text-xs font-medium text-text-muted">
+												Status: {projectStatusLabels[entry.data.status]}
+											</p>
+										</Card>
+									</a>
+								</li>
+							))}
+						</ul>
+					)
+				}
+			</section>
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>
