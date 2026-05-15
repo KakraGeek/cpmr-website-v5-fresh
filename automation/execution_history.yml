@@ -680,3 +680,21 @@ events:
 - timestamp: '2026-05-15 16:27:09'
   story_id: E5-S04
   event: status -> DONE
+- timestamp: '2026-05-15 16:30:12'
+  story_id: E6-S04
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-15 16:35:42'
+  story_id: E6-S04
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-15 16:41:38'
+  story_id: E6-S04
+  event: architect gate PASS
+- timestamp: '2026-05-15 16:42:31'
+  story_id: E6-S04
+  event: architect gate PASS
+- timestamp: '2026-05-15 16:42:42'
+  story_id: E6-S04
+  event: status -> VERIFIED
+- timestamp: '2026-05-15 16:42:52'
+  story_id: E6-S04
+  event: status -> DONE

@@ -405,6 +405,66 @@ const staff = defineCollection({
   schema: z.discriminatedUnion('entry_type', [staffEntrySchema, staffIndexShellSchema]),
 });
 
+const publicationIdSchema = z
+  .string()
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'publication id must be kebab-case');
+
+/** E6-S04 — `publications` collection (02_prd.md §12 P1–P4; 05 §4.6). */
+const publicationEntrySchema = authoredEditorialEnvelopeSchema
+  .merge(authoredSeoEnvelopeSchema)
+  .merge(
+    z.object({
+      entry_type: z.literal('publication'),
+      id: publicationIdSchema,
+      title: z.string().min(1),
+      year: z.number().int().min(1900).max(2100),
+      authors: z.array(z.string().min(1)).min(1),
+      author_display_mode: z.enum(['free_text', 'staff_ids']).default('free_text'),
+      abstract: z.string().min(1),
+      research_area: z.string().min(1).optional(),
+      doi_url: z.string().url().optional(),
+      /** PRD P4 — resolved when `downloads` collection ships; must not surface without rights verification. */
+      pdf_download_id: z.string().optional(),
+      journal: z.string().optional(),
+      volume_issue: z.string().optional(),
+      keywords: z.array(z.string().min(1)).default([]),
+      department_ids: z.array(departmentIdSchema).default([]),
+      project_ids: z.array(projectIdSchema).default([]),
+      archived: z.boolean().default(false),
+      featured: z.boolean().default(false),
+    }),
+  );
+
+const publicationsIndexShellSchema = authoredEditorialEnvelopeSchema
+  .merge(authoredSeoEnvelopeSchema)
+  .merge(
+    z.object({
+      entry_type: z.literal('index_shell'),
+      page_title: z.string().min(1),
+      lede: z.string().min(1),
+      intro_paragraphs: z.array(z.string().min(1)).min(1),
+      listing_section_title: z.string().min(1).default('All publications'),
+      empty_state_title: z.string().min(1),
+      empty_state_body: z.string().min(1),
+      filter_year_label: z.string().min(1).default('Year'),
+      filter_year_all: z.string().min(1).default('All years'),
+      filter_department_label: z.string().min(1).default('Department'),
+      filter_department_all: z.string().min(1).default('All departments'),
+      filter_research_area_label: z.string().min(1).default('Research area'),
+      filter_research_area_all: z.string().min(1).default('All areas'),
+      filter_author_label: z.string().min(1).default('Author'),
+      filter_author_placeholder: z.string().min(1).default('Search authors…'),
+    }),
+  );
+
+const publications = defineCollection({
+  loader: glob({ base: './src/content/publications', pattern: '**/*.{md,mdx}' }),
+  schema: z.discriminatedUnion('entry_type', [
+    publicationEntrySchema,
+    publicationsIndexShellSchema,
+  ]),
+});
+
 export const collections = {
   _bootstrap,
   home,
@@ -412,6 +472,7 @@ export const collections = {
   departments,
   projects,
   staff,
+  publications,
 };
 
 function mergeRefIntegrityResults(results: readonly RefIntegrityResult[]): RefIntegrityResult {
@@ -609,3 +670,98 @@ function assertStaffRelationshipIntegrity(): void {
 }
 
 assertStaffRelationshipIntegrity();
+
+/** E6-S04 — publication FKs + featured cap (05 §6.6). */
+function assertPublicationRelationshipIntegrity(): void {
+  const publicationDir = join(process.cwd(), 'src/content/publications');
+  if (!existsSync(publicationDir)) return;
+
+  const departmentIndex = indexDepartmentIdsFromContentDir();
+  const projectIndex = indexIdsFromContentDir('projects', 'project');
+  const staffIndex = indexIdsFromContentDir('staff', 'staff');
+  const parts: RefIntegrityResult[] = [];
+  let featuredApprovedCount = 0;
+
+  for (const name of readdirSync(publicationDir, { withFileTypes: true })) {
+    if (!name.isFile()) continue;
+    const ext = extname(name.name);
+    if (ext !== '.md' && ext !== '.mdx') continue;
+
+    const sourceFile = join('src/content/publications', name.name);
+    const fm = readFrontmatterBlock(join(publicationDir, name.name));
+    if (readEntryType(fm) !== 'publication') continue;
+
+    const publicationId = readScalarField(fm, 'id');
+    const stem = basename(name.name, ext);
+    if (publicationId && stem !== publicationId) {
+      throw new Error(
+        `[cpmr-publication-integrity] Publication id "${publicationId}" must match file stem "${stem}" (${name.name})`,
+      );
+    }
+
+    const editorialStatus = readScalarField(fm, 'editorial_status');
+    const featured = readScalarField(fm, 'featured') === 'true';
+    if (featured && editorialStatus === 'approved') {
+      featuredApprovedCount += 1;
+    }
+
+    const pdfDownloadId = readScalarField(fm, 'pdf_download_id');
+    if (pdfDownloadId) {
+      const downloadsDir = join(process.cwd(), 'src/content/downloads');
+      if (!existsSync(downloadsDir)) {
+        throw new Error(
+          `[cpmr-publication-integrity] ${sourceFile} sets pdf_download_id but downloads collection is not present — remove pdf_download_id or add governed downloads with rights_verified.`,
+        );
+      }
+    }
+
+    const departmentIds = readInlineStringArray(fm, 'department_ids');
+    if (departmentIds.length > 0) {
+      parts.push(
+        validatePlainIdsExist({
+          ids: departmentIds,
+          index: departmentIndex,
+          relationship: `${sourceFile} department_ids → departments.id`,
+          surface: 'scholarly_general',
+        }),
+      );
+    }
+
+    const projectIds = readInlineStringArray(fm, 'project_ids');
+    if (projectIds.length > 0) {
+      parts.push(
+        validatePlainIdsExist({
+          ids: projectIds,
+          index: projectIndex,
+          relationship: `${sourceFile} project_ids → projects.id`,
+          surface: 'scholarly_general',
+        }),
+      );
+    }
+
+    const authorMode = readScalarField(fm, 'author_display_mode');
+    if (authorMode === 'staff_ids') {
+      const authorStaffIds = readInlineStringArray(fm, 'authors');
+      if (authorStaffIds.length > 0) {
+        parts.push(
+          validatePlainIdsExist({
+            ids: authorStaffIds,
+            index: staffIndex,
+            relationship: `${sourceFile} authors → staff.id`,
+            surface: 'scholarly_general',
+          }),
+        );
+      }
+    }
+  }
+
+  if (featuredApprovedCount > 3) {
+    throw new Error(
+      `[cpmr-publication-integrity] At most 3 approved publications may have featured: true (found ${featuredApprovedCount}).`,
+    );
+  }
+
+  applyRefIntegrityResult(mergeRefIntegrityResults(parts));
+}
+
+assertPublicationRelationshipIntegrity();

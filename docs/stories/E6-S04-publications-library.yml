@@ -2,7 +2,8 @@ id: E6-S04
 epic: E6
 sprint_order: 604
 title: Publications library
-status: TODO
+status: DONE
+last_updated: '2026-05-15 16:42:52'
 architect_gate_required: Yes
 user_story: >
   As an academic, I search and filter publications.
@@ -15,6 +16,41 @@ tasks:
   - Implement static-compatible discovery aids (e.g. client-side filtering of a build-generated index or paginated static lists) per docs/01_planning/02_prd.md §12 P2.
 dependencies:
   - E6-S01
+dev_agent_record:
+  implementation_plan: >
+    Added publications collection per 05 §4.6 with index shell and three seed records.
+    Registered build-time FK checks (departments, projects, staff authors), featured cap (max 3),
+    and pdf_download_id guard until downloads collection exists. Shipped PublicationItem
+    (DESIGN.md §13.18), publication-library-helpers, /research/publications/ index with
+    client-side year/department/research-area/author filters, and detail routes with
+    DOI links and reciprocal project/department links.
+  completion_notes: >
+    npm run validate passes. Routes /research/publications/ and three publication detail
+    pages build. PDF links are suppressed unless pdf_download_id resolves through governed
+    downloads (P4). Follow-on outside allowed paths: hub.json routeLive, index.astro teaser
+    slice, project detail publication_ids links, department /publications/ child routes.
+  file_list:
+    - src/content.config.ts
+    - src/content/publications/index-shell.md
+    - src/content/publications/moringa-phytochemical-methods-brief.md
+    - src/content/publications/sts-lab-quality-framework.md
+    - src/content/publications/plant-medicine-conservation-review.md
+    - src/components/content/PublicationItem.astro
+    - src/components/content/publication-library-helpers.ts
+    - src/pages/research/publications/index.astro
+    - src/pages/research/publications/[slug]/index.astro
+file_list:
+  - src/content.config.ts
+  - src/content/publications/index-shell.md
+  - src/content/publications/moringa-phytochemical-methods-brief.md
+  - src/content/publications/sts-lab-quality-framework.md
+  - src/content/publications/plant-medicine-conservation-review.md
+  - src/components/content/PublicationItem.astro
+  - src/components/content/publication-library-helpers.ts
+  - src/pages/research/publications/index.astro
+  - src/pages/research/publications/[slug]/index.astro
+change_log:
+  - '2026-05-15: E6-S04 — publications collection, library index with static-compatible filters, detail routes, PublicationItem component.'
 context_files:
   - docs/04_stories/05_story_map.md
   - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md

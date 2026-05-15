@@ -1,0 +1,237 @@
+---
+/**
+ * E6-S04 — Publication detail at `/research/publications/[slug]/` (PRD §12 P1, P3–P4).
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import SiteHeader from '../../../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../../../components/layout/SiteFooter.astro';
+import Breadcrumbs from '../../../../components/layout/Breadcrumbs.astro';
+import ButtonLink from '../../../../components/ui/ButtonLink.astro';
+import {
+	isPublicPublication,
+	publicationDoiHref,
+	publicationPdfHref,
+	resolveDepartmentLinks,
+	resolveProjectLinks,
+	resolvePublicationAuthors,
+} from '../../../../components/content/publication-library-helpers';
+
+export async function getStaticPaths() {
+	const entries = await getCollection('publications');
+	return entries.filter(isPublicPublication).map((entry) => ({
+		params: { slug: entry.data.id },
+		props: { entry },
+	}));
+}
+
+const { entry } = Astro.props;
+const pathname = Astro.url.pathname;
+const departments = await getCollection('departments');
+const projects = await getCollection('projects');
+const staff = await getCollection('staff');
+
+const authors = resolvePublicationAuthors(entry, staff);
+const departmentLinks = resolveDepartmentLinks(entry.data.department_ids, departments);
+const projectLinks = resolveProjectLinks(entry.data.project_ids, projects);
+const doiHref = publicationDoiHref(entry.data.doi_url);
+const pdfHref = publicationPdfHref(entry);
+const seoCanonicalPath = entry.data.seo_canonical_path ?? pathname;
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Research', href: '/research/' },
+	{ label: 'Publications', href: '/research/publications/' },
+	{ label: entry.data.title },
+];
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const sectionHeadingClass =
+	'font-serif text-xl font-bold tracking-tight text-text-primary md:text-2xl';
+
+const listClass =
+	'm-0 list-disc space-y-2 pl-5 font-sans text-base leading-relaxed text-text-secondary';
+---
+
+<BaseLayout
+	title={entry.data.seo_title}
+	description={entry.data.seo_description}
+	seoCanonicalPath={seoCanonicalPath}
+>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			<p class="font-mono text-sm font-medium tabular-nums text-text-muted">{entry.data.year}</p>
+			<h1 class="mt-2 font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+				{entry.data.title}
+			</h1>
+
+			<p class="mt-4 font-sans text-base text-text-secondary">
+				<span class="font-medium text-text-primary">Authors:</span>{' '}
+				{
+					authors.map((author, index) => (
+						<>
+							{index > 0 ? ', ' : null}
+							{author.href ? (
+								<a
+									href={author.href}
+									class:list={[
+										'font-medium text-brand-700 no-underline hover:text-brand-800',
+										focusRing,
+									]}
+								>
+									{author.label}
+								</a>
+							) : (
+								<span>{author.label}</span>
+							)}
+						</>
+					))
+				}
+			</p>
+
+			<dl class="mt-6 flex flex-wrap gap-x-8 gap-y-3 font-sans text-sm text-text-secondary">
+				{
+					entry.data.research_area ? (
+						<div>
+							<dt class="font-medium text-text-primary">Research area</dt>
+							<dd class="mt-1">{entry.data.research_area}</dd>
+						</div>
+					) : null
+				}
+				{
+					entry.data.journal ? (
+						<div>
+							<dt class="font-medium text-text-primary">Journal</dt>
+							<dd class="mt-1">{entry.data.journal}</dd>
+						</div>
+					) : null
+				}
+				{
+					entry.data.volume_issue ? (
+						<div>
+							<dt class="font-medium text-text-primary">Volume / issue</dt>
+							<dd class="mt-1">{entry.data.volume_issue}</dd>
+						</div>
+					) : null
+				}
+			</dl>
+
+			{
+				doiHref || pdfHref ? (
+					<div class="mt-6 flex flex-wrap gap-3">
+						{
+							doiHref ? (
+								<ButtonLink
+									href={doiHref}
+									label="View DOI"
+									variant="secondary"
+									size="md"
+									external
+								/>
+							) : null
+						}
+						{
+							pdfHref ? (
+								<ButtonLink
+									href={pdfHref}
+									label="Download PDF"
+									variant="ghost"
+									size="md"
+									external
+								/>
+							) : null
+						}
+					</div>
+				) : null
+			}
+
+			<section class="mt-10 border-t border-border-subtle pt-10" aria-labelledby="publication-abstract-heading">
+				<h2 id="publication-abstract-heading" class={sectionHeadingClass}>
+					Abstract
+				</h2>
+				<p class="mt-4 max-w-prose font-sans text-base leading-relaxed text-text-secondary">
+					{entry.data.abstract}
+				</p>
+			</section>
+
+			{
+				entry.data.keywords.length > 0 ? (
+					<section class="mt-10" aria-labelledby="publication-keywords-heading">
+						<h2 id="publication-keywords-heading" class={sectionHeadingClass}>
+							Keywords
+						</h2>
+						<ul class="m-0 mt-4 flex flex-wrap gap-2 p-0 list-none" role="list">
+							{entry.data.keywords.map((keyword) => (
+								<li>
+									<span class="inline-flex rounded-pill border border-border-subtle bg-surface-sunken px-3 py-1 font-sans text-xs font-medium text-text-secondary">
+										{keyword}
+									</span>
+								</li>
+							))}
+						</ul>
+					</section>
+				) : null
+			}
+
+			{
+				projectLinks.length > 0 ? (
+					<section class="mt-10" aria-labelledby="publication-projects-heading">
+						<h2 id="publication-projects-heading" class={sectionHeadingClass}>
+							Related projects
+						</h2>
+						<ul class:list={['mt-4', listClass]}>
+							{projectLinks.map((link) => (
+								<li>
+									<a
+										href={link.href}
+										class:list={[
+											'font-medium text-brand-700 no-underline hover:text-brand-800',
+											focusRing,
+										]}
+									>
+										{link.title}
+									</a>
+								</li>
+							))}
+						</ul>
+					</section>
+				) : null
+			}
+
+			{
+				departmentLinks.length > 0 ? (
+					<section class="mt-10" aria-labelledby="publication-departments-heading">
+						<h2 id="publication-departments-heading" class={sectionHeadingClass}>
+							Hosting departments
+						</h2>
+						<ul class="m-0 mt-4 flex flex-wrap gap-3 p-0 list-none" role="list">
+							{departmentLinks.map((link) => (
+								<li>
+									<a
+										href={link.href}
+										class:list={[
+											'inline-flex min-h-11 items-center rounded-md border border-border-subtle bg-surface-card px-4 py-2 font-sans text-sm font-semibold text-brand-700 no-underline transition-colors hover:border-brand-200 hover:bg-surface-sunken',
+											focusRing,
+										]}
+									>
+										{link.name}
+									</a>
+								</li>
+							))}
+						</ul>
+					</section>
+				) : null
+			}
+
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>

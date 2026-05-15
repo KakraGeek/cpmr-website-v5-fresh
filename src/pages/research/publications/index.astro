@@ -1,0 +1,311 @@
+---
+/**
+ * E6-S04 — Publications library at `/research/publications/` (PRD §12 P1–P2).
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SiteHeader from '../../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../../components/layout/SiteFooter.astro';
+import Breadcrumbs from '../../../components/layout/Breadcrumbs.astro';
+import PublicationItem from '../../../components/content/PublicationItem.astro';
+import { isPublicDepartment } from '../../../components/departments/department-home-helpers';
+import {
+	distinctResearchAreas,
+	distinctYears,
+	formatAuthorList,
+	isPublicPublication,
+	publicationDetailPath,
+	publicationDoiHref,
+	publicationPdfHref,
+	resolveDepartmentLinks,
+	resolvePublicationAuthors,
+	sortPublicPublications,
+} from '../../../components/content/publication-library-helpers';
+
+const pathname = Astro.url.pathname;
+
+const allEntries = await getCollection('publications');
+const shell = allEntries.find((entry) => entry.data.entry_type === 'index_shell');
+if (!shell || shell.data.entry_type !== 'index_shell') {
+	throw new Error(
+		'E6-S04: expected publications index_shell entry (src/content/publications/index-shell.md)',
+	);
+}
+
+const departments = await getCollection('departments');
+const staff = await getCollection('staff');
+const publicDepartments = departments
+	.filter(isPublicDepartment)
+	.sort((a, b) => (a.data.sort_order ?? 999) - (b.data.sort_order ?? 999));
+
+const publicPublications = sortPublicPublications(allEntries.filter(isPublicPublication));
+const yearOptions = distinctYears(publicPublications);
+const researchAreaOptions = distinctResearchAreas(publicPublications);
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Research', href: '/research/' },
+	{ label: shell.data.page_title },
+];
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const filterInputClass =
+	'min-h-11 w-full rounded-md border border-border-subtle bg-surface-card px-3 py-2 font-sans text-base text-text-primary shadow-e1 focus-visible:shadow-ring-focus focus-visible:outline-none';
+---
+
+<BaseLayout
+	title={shell.data.seo_title}
+	description={shell.data.seo_description}
+	seoCanonicalPath={shell.data.seo_canonical_path ?? '/research/publications/'}
+>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			<h1 class="font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+				{shell.data.page_title}
+			</h1>
+			<p class="mt-4 max-w-prose font-sans text-lg leading-relaxed text-text-secondary">
+				{shell.data.lede}
+			</p>
+			<div class="mt-6 max-w-prose font-sans text-base leading-relaxed text-text-secondary [&>p+p]:mt-4">
+				{shell.data.intro_paragraphs.map((paragraph) => (
+					<p>{paragraph}</p>
+				))}
+			</div>
+
+			<section
+				class="mt-10 border-t border-border-subtle pt-10"
+				aria-labelledby="publications-list-heading"
+			>
+				<h2
+					id="publications-list-heading"
+					class="font-serif text-xl font-bold tracking-tight text-text-primary md:text-2xl"
+				>
+					{shell.data.listing_section_title}
+				</h2>
+
+				{
+					publicPublications.length > 0 ? (
+						<form
+							id="publications-library-filters"
+							class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+							aria-label="Filter publications"
+						>
+							<div>
+								<label
+									for="publication-filter-year"
+									class="block font-sans text-sm font-medium text-text-primary"
+								>
+									{shell.data.filter_year_label}
+								</label>
+								<select
+									id="publication-filter-year"
+									name="year"
+									class:list={['mt-2', filterInputClass]}
+								>
+									<option value="">{shell.data.filter_year_all}</option>
+									{yearOptions.map((year) => (
+										<option value={String(year)}>{year}</option>
+									))}
+								</select>
+							</div>
+							<div>
+								<label
+									for="publication-filter-department"
+									class="block font-sans text-sm font-medium text-text-primary"
+								>
+									{shell.data.filter_department_label}
+								</label>
+								<select
+									id="publication-filter-department"
+									name="department"
+									class:list={['mt-2', filterInputClass]}
+								>
+									<option value="">{shell.data.filter_department_all}</option>
+									{publicDepartments.map((dept) => (
+										<option value={dept.data.id}>{dept.data.name}</option>
+									))}
+								</select>
+							</div>
+							<div>
+								<label
+									for="publication-filter-research-area"
+									class="block font-sans text-sm font-medium text-text-primary"
+								>
+									{shell.data.filter_research_area_label}
+								</label>
+								<select
+									id="publication-filter-research-area"
+									name="research_area"
+									class:list={['mt-2', filterInputClass]}
+								>
+									<option value="">{shell.data.filter_research_area_all}</option>
+									{researchAreaOptions.map((area) => (
+										<option value={area}>{area}</option>
+									))}
+								</select>
+							</div>
+							<div>
+								<label
+									for="publication-filter-author"
+									class="block font-sans text-sm font-medium text-text-primary"
+								>
+									{shell.data.filter_author_label}
+								</label>
+								<input
+									type="search"
+									id="publication-filter-author"
+									name="author"
+									class:list={['mt-2', filterInputClass]}
+									placeholder={shell.data.filter_author_placeholder}
+									autocomplete="off"
+								/>
+							</div>
+						</form>
+					) : null
+				}
+
+				<p
+					id="publications-library-results-status"
+					class="mt-4 font-sans text-sm text-text-secondary"
+					role="status"
+					aria-live="polite"
+					hidden
+				/>
+
+				{
+					publicPublications.length === 0 ? (
+						<div
+							class="mt-6 rounded-lg border border-border-subtle bg-surface-sunken p-6"
+							role="status"
+						>
+							<p class="font-sans text-base font-semibold text-text-primary">
+								{shell.data.empty_state_title}
+							</p>
+							<p class="mt-2 max-w-prose font-sans text-sm leading-relaxed text-text-secondary">
+								{shell.data.empty_state_body}
+							</p>
+						</div>
+					) : (
+						<ul
+							id="publications-library-list"
+							class="m-0 mt-6 list-none p-0"
+							role="list"
+						>
+							{publicPublications.map((entry) => {
+								const authors = resolvePublicationAuthors(entry, staff);
+								const authorText = formatAuthorList(authors);
+								const deptLinks = resolveDepartmentLinks(
+									entry.data.department_ids,
+									departments,
+								);
+								const primaryDept = deptLinks[0];
+								const researchArea = entry.data.research_area?.trim() ?? '';
+								const pdfHref = publicationPdfHref(entry);
+								const doiHref = publicationDoiHref(entry.data.doi_url);
+								const departmentIdsAttr = entry.data.department_ids.join(' ');
+
+								return (
+									<li
+										data-publication-card
+										data-year={String(entry.data.year)}
+										data-department-ids={departmentIdsAttr}
+										data-research-area={researchArea}
+										data-authors={authorText.toLowerCase()}
+									>
+										<PublicationItem
+											title={entry.data.title}
+											authors={authorText}
+											year={entry.data.year}
+											href={publicationDetailPath(entry.data.id)}
+											excerpt={entry.data.abstract}
+											doiHref={doiHref}
+											pdfHref={pdfHref}
+											departmentLabel={primaryDept?.name}
+											departmentHref={primaryDept?.href}
+										/>
+									</li>
+								);
+							})}
+						</ul>
+					)
+				}
+			</section>
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>
+
+{
+	publicPublications.length > 0 ? (
+		<script is:inline>
+			(function () {
+				const form = document.getElementById('publications-library-filters');
+				const list = document.getElementById('publications-library-list');
+				const status = document.getElementById('publications-library-results-status');
+				if (!form || !list || !status) return;
+
+				const yearSelect = document.getElementById('publication-filter-year');
+				const departmentSelect = document.getElementById('publication-filter-department');
+				const areaSelect = document.getElementById('publication-filter-research-area');
+				const authorInput = document.getElementById('publication-filter-author');
+				const cards = list.querySelectorAll('[data-publication-card]');
+				const total = cards.length;
+
+				function applyFilters() {
+					const yearValue =
+						yearSelect instanceof HTMLSelectElement ? yearSelect.value : '';
+					const departmentValue =
+						departmentSelect instanceof HTMLSelectElement ? departmentSelect.value : '';
+					const areaValue = areaSelect instanceof HTMLSelectElement ? areaSelect.value : '';
+					const authorValue =
+						authorInput instanceof HTMLInputElement
+							? authorInput.value.trim().toLowerCase()
+							: '';
+
+					let visible = 0;
+					cards.forEach((card) => {
+						const year = card.getAttribute('data-year') || '';
+						const deptIds = (card.getAttribute('data-department-ids') || '')
+							.split(' ')
+							.filter(Boolean);
+						const area = card.getAttribute('data-research-area') || '';
+						const authors = card.getAttribute('data-authors') || '';
+
+						const matchesYear = !yearValue || year === yearValue;
+						const matchesDepartment =
+							!departmentValue || deptIds.includes(departmentValue);
+						const matchesArea = !areaValue || area === areaValue;
+						const matchesAuthor = !authorValue || authors.includes(authorValue);
+
+						const show =
+							matchesYear && matchesDepartment && matchesArea && matchesAuthor;
+						card.hidden = !show;
+						if (show) visible += 1;
+					});
+
+					if (visible === total) {
+						status.hidden = true;
+						status.textContent = '';
+					} else {
+						status.hidden = false;
+						status.textContent =
+							visible === 0
+								? 'No publications match the current filters.'
+								: 'Showing ' + visible + ' of ' + total + ' publications.';
+					}
+				}
+
+				form.addEventListener('input', applyFilters);
+				form.addEventListener('change', applyFilters);
+			})();
+		</script>
+	) : null
+}
