@@ -1,0 +1,22 @@
+---
+/**
+ * E4-S01 — Desktop side navigation for About hub (UX Blueprint §8.1; DESIGN.md §14.2 `SidebarNav`).
+ */
+import type { AboutHubNavGroup } from '../../../data/about-hub';
+import AboutHubNavList from './AboutHubNavList.astro';
+
+interface Props {
+	groups: AboutHubNavGroup[];
+	pathname: string;
+	heading: string;
+}
+
+const { groups, pathname, heading } = Astro.props;
+---
+
+<nav class="hidden lg:block" aria-label={heading}>
+	<p class="font-sans text-sm font-semibold text-text-primary">{heading}</p>
+	<div class="mt-4">
+		<AboutHubNavList groups={groups} pathname={pathname} variant="sidebar" />
+	</div>
+</nav>

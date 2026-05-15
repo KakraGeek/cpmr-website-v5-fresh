@@ -1,0 +1,88 @@
+---
+/**
+ * E4-S01 — About hub at `/about/` (UX Blueprint §8.1; DESIGN.md §14.2).
+ * Governed copy and IA: `src/content/about/hub.json` via `src/data/about-hub.ts`.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../components/layout/SiteFooter.astro';
+import Breadcrumbs from '../../components/layout/Breadcrumbs.astro';
+import AboutHubSideNav from '../../components/content/about/AboutHubSideNav.astro';
+import AboutHubInThisSection from '../../components/content/about/AboutHubInThisSection.astro';
+import AboutHubSubpageListing from '../../components/content/about/AboutHubSubpageListing.astro';
+import { getAboutHubData } from '../../data/about-hub';
+
+const pathname = Astro.url.pathname;
+const hub = getAboutHubData();
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: hub.pageTitle },
+];
+---
+
+<BaseLayout title={hub.seoTitle} description={hub.seoDescription} seoCanonicalPath="/about/">
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<AboutHubInThisSection
+		groups={hub.navGroups}
+		pathname={pathname}
+		label={hub.inThisSectionLabel}
+	/>
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			<div class="lg:grid lg:grid-cols-[minmax(12rem,16rem)_minmax(0,1fr)] lg:gap-10 xl:gap-12">
+				<AboutHubSideNav
+					groups={hub.navGroups}
+					pathname={pathname}
+					heading={hub.inThisSectionLabel}
+				/>
+				<div class="min-w-0">
+					{
+						hub.eyebrow ? (
+							<p class="font-sans text-sm font-semibold uppercase tracking-wide text-text-secondary">
+								{hub.eyebrow}
+							</p>
+						) : null
+					}
+					<h1
+						class:list={[
+							'font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl',
+							hub.eyebrow ? 'mt-2' : '',
+						]}
+					>
+						{hub.pageTitle}
+					</h1>
+					{
+						hub.introHeading ? (
+							<h2 class="mt-8 font-serif text-xl font-bold text-text-primary md:text-2xl">
+								{hub.introHeading}
+							</h2>
+						) : null
+					}
+					<div
+						class:list={[
+							'max-w-prose font-sans text-base leading-relaxed text-text-secondary',
+							hub.introHeading ? 'mt-4' : 'mt-6',
+							'[&>p+p]:mt-4',
+						]}
+					>
+						{hub.introParagraphs.map((paragraph) => (
+							<p>{paragraph}</p>
+						))}
+					</div>
+					<AboutHubSubpageListing
+						groups={hub.navGroups}
+						pathname={pathname}
+						sectionTitle={hub.subpagesSectionTitle}
+					/>
+				</div>
+			</div>
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>

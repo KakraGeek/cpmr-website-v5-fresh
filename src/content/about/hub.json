@@ -1,0 +1,97 @@
+{
+	"pageTitle": "About CPMR",
+	"seoTitle": "About CPMR",
+	"seoDescription": "Governance, history, leadership, and institutional structure of the Centre for Plant Medicine Research.",
+	"eyebrow": "Institutional profile",
+	"introHeading": "Who we are",
+	"introParagraphs": [
+		"The Centre for Plant Medicine Research (CPMR) is Ghana's national institution for scientific inquiry into plant-based medicine, bridging traditional knowledge with contemporary research practice.",
+		"Use the links below to explore our mandate, leadership, governance bodies, and partnerships. Each section is maintained as verified institutional content for government, research, and public audiences."
+	],
+	"inThisSectionLabel": "In this section",
+	"subpagesSectionTitle": "Explore About CPMR",
+	"navGroups": [
+		{
+			"id": "about-identity",
+			"title": "At a glance",
+			"links": [
+				{
+					"id": "about-overview",
+					"label": "Overview",
+					"href": "/about/",
+					"description": "Institutional introduction and how this section is organised.",
+					"routeLive": true
+				},
+				{
+					"id": "about-history",
+					"label": "History",
+					"href": "/about/history/",
+					"description": "Milestones and the evolution of the Centre.",
+					"routeLive": false
+				},
+				{
+					"id": "about-mandate",
+					"label": "Mandate",
+					"href": "/about/mandate/",
+					"description": "Legal and institutional framing of our work.",
+					"routeLive": false
+				},
+				{
+					"id": "about-vision",
+					"label": "Vision & Mission",
+					"href": "/about/vision-mission/",
+					"description": "Our direction and purpose as a national research centre.",
+					"routeLive": false
+				},
+				{
+					"id": "about-leadership",
+					"label": "Leadership",
+					"href": "/about/leadership/",
+					"description": "Executive leadership profiles and responsibilities.",
+					"routeLive": false
+				}
+			]
+		},
+		{
+			"id": "about-governance",
+			"title": "Governance & recognition",
+			"links": [
+				{
+					"id": "about-board",
+					"label": "Board Members",
+					"href": "/about/board/",
+					"description": "Governing board membership and roles.",
+					"routeLive": false
+				},
+				{
+					"id": "about-management",
+					"label": "Management Team",
+					"href": "/about/management/",
+					"description": "Senior management structure and accountability.",
+					"routeLive": false
+				},
+				{
+					"id": "about-structure",
+					"label": "Organisational Structure",
+					"href": "/about/organisation-structure/",
+					"description": "How departments and functions fit together.",
+					"routeLive": false
+				},
+				{
+					"id": "about-awards",
+					"label": "Awards & Recognition",
+					"href": "/about/awards/",
+					"description": "Honours received by the Centre and its people.",
+					"routeLive": false
+				},
+				{
+					"id": "about-partners",
+					"label": "Partners & Affiliations",
+					"href": "/about/partners/",
+					"description": "Collaborating institutions and affiliations.",
+					"routeLive": false
+				}
+			]
+		}
+	]
+}

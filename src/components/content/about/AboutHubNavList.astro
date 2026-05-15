@@ -1,0 +1,75 @@
+---
+/**
+ * E4-S01 — Shared About section nav link list (desktop side nav + mobile accordion panel).
+ */
+import type { AboutHubNavGroup } from '../../../data/about-hub';
+import { isAboutHubLinkCurrent } from '../../../data/about-hub';
+
+interface Props {
+	groups: AboutHubNavGroup[];
+	pathname: string;
+	variant: 'sidebar' | 'panel';
+}
+
+const { groups, pathname, variant } = Astro.props;
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const sidebarLinkClass =
+	`block min-h-11 rounded-md px-3 py-2 font-sans text-sm font-medium text-text-link no-underline ` +
+	`hover:bg-brand-50 hover:underline ${focusRing}`;
+
+const sidebarCurrentClass =
+	`block min-h-11 rounded-md border-l-4 border-brand-600 bg-brand-50 px-3 py-2 font-sans text-sm font-semibold text-text-primary`;
+
+const sidebarPendingClass =
+	'block min-h-11 rounded-md px-3 py-2 font-sans text-sm font-medium text-text-muted';
+
+const panelLinkClass =
+	`block min-h-11 rounded-md px-3 py-2 font-sans text-base text-text-link no-underline ` +
+	`hover:bg-brand-50 hover:underline ${focusRing}`;
+
+const panelCurrentClass =
+	`block min-h-11 rounded-md border-l-4 border-brand-600 bg-brand-50 px-3 py-2 font-sans text-base font-semibold text-text-primary`;
+
+const panelPendingClass = 'block min-h-11 px-3 py-2 font-sans text-base text-text-muted';
+
+const groupTitleSidebar = 'mt-6 font-sans text-xs font-semibold uppercase tracking-wide text-text-muted first:mt-0';
+const groupTitlePanel = 'mt-4 font-sans text-sm font-semibold text-text-secondary first:mt-0';
+---
+
+{
+	groups.map((group) => (
+		<div>
+			<p class={variant === 'sidebar' ? groupTitleSidebar : groupTitlePanel}>{group.title}</p>
+			<ul class="m-0 list-none p-0" role="list">
+				{group.links.map((link) => {
+					const isCurrent = isAboutHubLinkCurrent(link.href, pathname);
+					const canNavigate = link.routeLive && !isCurrent;
+					const linkClass = variant === 'sidebar' ? sidebarLinkClass : panelLinkClass;
+					const currentClass = variant === 'sidebar' ? sidebarCurrentClass : panelCurrentClass;
+					const pendingClass = variant === 'sidebar' ? sidebarPendingClass : panelPendingClass;
+					return (
+						<li class="mt-1">
+							{isCurrent ? (
+								<span class={currentClass} aria-current="page">
+									{link.label}
+								</span>
+							) : canNavigate ? (
+								<a href={link.href} class={linkClass}>
+									{link.label}
+								</a>
+							) : (
+								<span class={pendingClass}>
+									{link.label}
+									<span class="sr-only"> (page not yet available)</span>
+								</span>
+							)}
+						</li>
+					);
+				})}
+			</ul>
+		</div>
+	))
+}

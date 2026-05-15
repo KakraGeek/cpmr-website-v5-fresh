@@ -1,0 +1,85 @@
+---
+/**
+ * E4-S01 — Main-column grouped subpage discovery list (hub behaviour §8.1).
+ */
+import type { AboutHubNavGroup } from '../../../data/about-hub';
+import { isAboutHubLinkCurrent } from '../../../data/about-hub';
+
+interface Props {
+	groups: AboutHubNavGroup[];
+	pathname: string;
+	sectionTitle: string;
+}
+
+const { groups, pathname, sectionTitle } = Astro.props;
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const cardLinkClass =
+	`group block rounded-lg border border-border-subtle bg-surface-card p-4 shadow-e1 transition-shadow ` +
+	`hover:border-brand-200 hover:shadow-e2 ${focusRing}`;
+
+const cardPendingClass =
+	'block rounded-lg border border-border-subtle bg-surface-sunken p-4';
+---
+
+<section aria-labelledby="about-hub-subpages-heading" class="mt-10 border-t border-border-subtle pt-10">
+	<h2
+		id="about-hub-subpages-heading"
+		class="font-serif text-xl font-bold tracking-tight text-text-primary md:text-2xl"
+	>
+		{sectionTitle}
+	</h2>
+	{
+		groups.map((group) => (
+			<div class="mt-8">
+				<h3 class="font-sans text-sm font-semibold uppercase tracking-wide text-text-secondary">
+					{group.title}
+				</h3>
+				<ul class="m-0 mt-4 grid list-none gap-3 p-0 sm:grid-cols-2" role="list">
+					{group.links.map((link) => {
+						const isCurrent = isAboutHubLinkCurrent(link.href, pathname);
+						const canNavigate = link.routeLive && !isCurrent;
+						return (
+							<li>
+								{isCurrent ? (
+									<div class={cardPendingClass} aria-current="page">
+										<p class="font-sans text-base font-semibold text-text-primary">{link.label}</p>
+										{link.description ? (
+											<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+												{link.description}
+											</p>
+										) : null}
+										<p class="mt-2 font-sans text-xs font-medium text-text-muted">You are here</p>
+									</div>
+								) : canNavigate ? (
+									<a href={link.href} class={cardLinkClass}>
+										<p class="font-sans text-base font-semibold text-text-primary group-hover:text-brand-700">
+											{link.label}
+										</p>
+										{link.description ? (
+											<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+												{link.description}
+											</p>
+										) : null}
+									</a>
+								) : (
+									<div class={cardPendingClass}>
+										<p class="font-sans text-base font-semibold text-text-primary">{link.label}</p>
+										{link.description ? (
+											<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+												{link.description}
+											</p>
+										) : null}
+										<p class="mt-2 font-sans text-xs font-medium text-text-muted">Coming soon</p>
+									</div>
+								)}
+							</li>
+						);
+					})}
+				</ul>
+			</div>
+		))
+	}
+</section>

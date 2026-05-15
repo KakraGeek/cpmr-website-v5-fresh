@@ -2,57 +2,65 @@ id: E4-S01
 epic: E4
 sprint_order: 401
 title: About hub
-status: TODO
-architect_gate_required: No
-user_story: >
-  As a government reader, I find institutional depth from a single hub.
+status: DONE
+architect_gate_required: false
+user_story: 'As a government reader, I find institutional depth from a single hub.
+
+  '
 acceptance_criteria:
-  - The /about/ route lists About subpages and matches the hub behaviour described in docs/02_design/03_ux_blueprint.md §8.1.
-  - Desktop shows side navigation listing About subpages.
-  - Mobile uses the “In this section” pattern (accordion at top or bottom) per docs/02_design/03_ux_blueprint.md §8.1.
+- The /about/ route lists About subpages and matches the hub behaviour described in
+  docs/02_design/03_ux_blueprint.md §8.1.
+- Desktop shows side navigation listing About subpages.
+- Mobile uses the “In this section” pattern (accordion at top or bottom) per docs/02_design/03_ux_blueprint.md
+  §8.1.
 tasks:
-  - Implement src/pages/about/index.astro using BaseLayout and Breadcrumbs from prior epics.
-  - Add intro copy and subpage listing from governed src/content (or src/data) so the hub stays build-time data-driven and CMS-compatible.
-  - Implement desktop side navigation and the mobile “In this section” pattern per the UX blueprint.
+- Implement src/pages/about/index.astro using BaseLayout and Breadcrumbs from prior
+  epics.
+- Add intro copy and subpage listing from governed src/content (or src/data) so the
+  hub stays build-time data-driven and CMS-compatible.
+- Implement desktop side navigation and the mobile “In this section” pattern per the
+  UX blueprint.
 dependencies:
-  - E2-S07
+- E2-S07
 context_files:
-  - docs/04_stories/05_story_map.md
-  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
-  - docs/01_planning/01_analysis.md
-  - docs/01_planning/02_prd.md
-  - docs/02_design/03_ux_blueprint.md
-  - docs/02_design/DESIGN.md
-  - docs/03_architecture/04_architecture.md
-  - docs/03_architecture/06_project_context.md
+- docs/04_stories/05_story_map.md
+- docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+- docs/01_planning/01_analysis.md
+- docs/01_planning/02_prd.md
+- docs/02_design/03_ux_blueprint.md
+- docs/02_design/DESIGN.md
+- docs/03_architecture/04_architecture.md
+- docs/03_architecture/06_project_context.md
 execution:
   files_allowed:
-    - src/pages/about/index.astro
-    - src/components/content/about/**
-    - src/content/about/**
-    - src/data/about-hub.*
+  - src/pages/about/index.astro
+  - src/components/content/about/**
+  - src/content/about/**
+  - src/data/about-hub.*
   files_forbidden:
-    - astro.config.mjs
-    - package.json
-    - docs/02_design/DESIGN.md
-    - src/layouts/**
-    - src/components/layout/**
-    - src/pages/index.astro
-    - src/pages/departments/**
-    - src/pages/research/**
-    - src/pages/services/**
-    - src/pages/news/**
-    - src/pages/events/**
-    - src/pages/products/**
-    - src/content/pages/**
-    - src/content/staff/**
+  - astro.config.mjs
+  - package.json
+  - docs/02_design/DESIGN.md
+  - src/layouts/**
+  - src/components/layout/**
+  - src/pages/index.astro
+  - src/pages/departments/**
+  - src/pages/research/**
+  - src/pages/services/**
+  - src/pages/news/**
+  - src/pages/events/**
+  - src/pages/products/**
+  - src/content/pages/**
+  - src/content/staff/**
   verification_commands:
-    - npm run build
-    - npm run validate
+  - npm run build
+  - npm run validate
 qa_checklist:
-  - Confirm every acceptance criterion is satisfied.
-  - Confirm implementation follows DESIGN.md.
-  - Confirm implementation follows docs/03_architecture/04_architecture.md.
-  - Confirm static build passes (npm run build / npm run validate).
-  - Confirm no forbidden files were changed.
-  - Confirm hub copy and IA lists are governed in src/content or src/data for future CMS compatibility.
+- Confirm every acceptance criterion is satisfied.
+- Confirm implementation follows DESIGN.md.
+- Confirm implementation follows docs/03_architecture/04_architecture.md.
+- Confirm static build passes (npm run build / npm run validate).
+- Confirm no forbidden files were changed.
+- Confirm hub copy and IA lists are governed in src/content or src/data for future
+  CMS compatibility.
+last_updated: '2026-05-15 12:40:31'

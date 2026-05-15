@@ -1,0 +1,51 @@
+---
+/**
+ * E4-S01 — Mobile “In this section” accordion (UX Blueprint §8.1; native `<details>` per DESIGN.md §13.27).
+ */
+import type { AboutHubNavGroup } from '../../../data/about-hub';
+import AboutHubNavList from './AboutHubNavList.astro';
+
+interface Props {
+	groups: AboutHubNavGroup[];
+	pathname: string;
+	label: string;
+}
+
+const { groups, pathname, label } = Astro.props;
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const summaryClass =
+	`flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-md border border-border-subtle ` +
+	`bg-surface-sunken px-3 py-2 font-sans text-base font-semibold text-text-primary shadow-e0 hover:bg-brand-50 ${focusRing}`;
+---
+
+<details class="lg:hidden border-b border-border-subtle bg-surface-page">
+	<summary class={summaryClass}>
+		<span>{label}</span>
+		<svg
+			class="size-sm shrink-0 text-text-muted"
+			viewBox="0 0 16 16"
+			fill="none"
+			aria-hidden="true"
+		>
+			<path
+				d="M4 6l4 4 4-4"
+				stroke="currentColor"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+		</svg>
+	</summary>
+	<nav class="border-t border-border-subtle px-3 py-4" aria-label={label}>
+		<AboutHubNavList groups={groups} pathname={pathname} variant="panel" />
+	</nav>
+</details>
+
+<style>
+	summary::-webkit-details-marker {
+		display: none;
+	}
+</style>

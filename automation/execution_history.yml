@@ -416,3 +416,18 @@ events:
 - timestamp: '2026-05-14 17:48:59'
   story_id: E3-S10
   event: status -> DONE
+- timestamp: '2026-05-14 17:51:06'
+  story_id: E4-S01
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-15 12:31:19'
+  story_id: E4-S01
+  event: recovery regenerated prompts
+- timestamp: '2026-05-15 12:37:43'
+  story_id: E4-S01
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-15 12:40:18'
+  story_id: E4-S01
+  event: status -> VERIFIED
+- timestamp: '2026-05-15 12:40:31'
+  story_id: E4-S01
+  event: status -> DONE
