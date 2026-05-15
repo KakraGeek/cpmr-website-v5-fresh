@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import subprocess
 import sys
 from datetime import datetime
@@ -74,6 +75,18 @@ REQUIRED_EXECUTION_FIELDS = [
     "verification_commands",
 ]
 
+# Top-level story YAML keys the sprint runner may update without rewriting the file.
+STORY_BOOKKEEPING_KEYS = frozenset({
+    "status",
+    "last_updated",
+    "qa_notes",
+    "validation_notes",
+})
+
+BOOKKEEPING_LINE_RE = re.compile(
+    r"^(status|last_updated|qa_notes|validation_notes):"
+)
+
 
 def now() -> str:
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -99,6 +112,76 @@ def write_yaml(path: Path, data: Dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as f:
         yaml.safe_dump(data, f, sort_keys=False, allow_unicode=True)
+
+
+def _line_ending(line: str) -> str:
+    if line.endswith("\r\n"):
+        return "\r\n"
+    if line.endswith("\n"):
+        return "\n"
+    return "\n"
+
+
+def _format_bookkeeping_scalar(key: str, value: str) -> str:
+    if "\n" in value:
+        raise ValueError(f"{key} bookkeeping value must be a single line")
+    if key == "status" and re.fullmatch(r"[A-Z_]+", value):
+        return value
+    escaped = value.replace("'", "''")
+    return f"'{escaped}'"
+
+
+def patch_story_metadata(path: Path, **updates: str) -> None:
+    """
+    Update runner bookkeeping fields in a story file without safe_dump reformatting.
+
+    Preserves original YAML layout (block scalars, indentation, list style) so QA
+    process-metadata review only sees intentional scope edits.
+    """
+    if not updates:
+        return
+    unknown = set(updates.keys()) - STORY_BOOKKEEPING_KEYS
+    if unknown:
+        raise ValueError(
+            f"Refusing to patch non-bookkeeping story keys via runner: {sorted(unknown)}"
+        )
+
+    raw = path.read_text(encoding="utf-8")
+    lines = raw.splitlines(keepends=True)
+    if not lines and raw:
+        lines = [raw]
+
+    found = {key: False for key in updates}
+    result: List[str] = []
+    status_result_index: Optional[int] = None
+
+    for line in lines:
+        stripped = line.rstrip("\r\n")
+        match = BOOKKEEPING_LINE_RE.match(stripped)
+        if match and match.group(1) in updates:
+            key = match.group(1)
+            eol = _line_ending(line)
+            result.append(f"{key}: {_format_bookkeeping_scalar(key, updates[key])}{eol}")
+            found[key] = True
+            if key == "status":
+                status_result_index = len(result) - 1
+        else:
+            result.append(line)
+
+    missing = [key for key in updates if not found[key]]
+    if missing:
+        insert_at = (status_result_index + 1) if status_result_index is not None else len(result)
+        for key in missing:
+            result.insert(
+                insert_at,
+                f"{key}: {_format_bookkeeping_scalar(key, updates[key])}\n",
+            )
+            insert_at += 1
+
+    out = "".join(result)
+    if raw.endswith("\n") and not out.endswith("\n"):
+        out += "\n"
+    path.write_text(out, encoding="utf-8")
 
 
 def story_files() -> List[Path]:
@@ -191,10 +274,8 @@ def find_next_story() -> Optional[Path]:
 
 
 def set_status(path: Path, status: str) -> None:
+    patch_story_metadata(path, status=status, last_updated=now())
     story = read_yaml(path)
-    story["status"] = status
-    story["last_updated"] = now()
-    write_yaml(path, story)
     append_event(f"status -> {status}", str(story.get("id")))
     print(f"Updated {story.get('id')} to {status}")
 

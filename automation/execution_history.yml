@@ -572,3 +572,24 @@ events:
 - timestamp: '2026-05-15 15:09:55'
   story_id: E5-S09
   event: status -> DONE
+- timestamp: '2026-05-15 15:12:17'
+  story_id: E6-S01
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-15 15:16:11'
+  story_id: E6-S01
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-15 15:21:01'
+  story_id: E6-S01
+  event: status -> VERIFIED
+- timestamp: '2026-05-15 15:21:25'
+  story_id: E6-S01
+  event: recovery regenerated prompts
+- timestamp: '2026-05-15 15:21:34'
+  story_id: E6-S01
+  event: recovery regenerated prompts
+- timestamp: '2026-05-15 15:22:02'
+  story_id: E6-S01
+  event: status -> VERIFIED
+- timestamp: '2026-05-15 15:22:11'
+  story_id: E6-S01
+  event: status -> DONE

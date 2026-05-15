@@ -1,0 +1,258 @@
+---
+/**
+ * E6-S01 — Research hub at `/research/` (UX Blueprint §9.1; DESIGN.md tokens).
+ * Governed copy and IA: `src/content/research/hub.json`.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../components/layout/SiteFooter.astro';
+import Breadcrumbs from '../../components/layout/Breadcrumbs.astro';
+import hub from '../../content/research/hub.json';
+
+type HubLink = {
+	id: string;
+	label: string;
+	href: string;
+	description?: string;
+	routeLive: boolean;
+};
+
+type HubNavGroup = {
+	id: string;
+	title: string;
+	links: HubLink[];
+};
+
+type HubPrimaryAction = {
+	id: string;
+	label: string;
+	href: string;
+	routeLive: boolean;
+};
+
+const pathname = Astro.url.pathname;
+
+function normalizePath(path: string): string {
+	if (!path || path === '/') return '/';
+	const trimmed = path.endsWith('/') && path.length > 1 ? path.slice(0, -1) : path;
+	return trimmed === '' ? '/' : trimmed;
+}
+
+function pathsEqual(a: string, b: string): boolean {
+	return normalizePath(a) === normalizePath(b);
+}
+
+function isHubLinkCurrent(href: string): boolean {
+	return pathsEqual(href, pathname);
+}
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: hub.pageTitle },
+];
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const cardLinkClass =
+	`group inline-flex min-h-11 items-center justify-center rounded-md border border-brand-700 bg-brand-700 px-5 py-2.5 ` +
+	`font-sans text-sm font-semibold text-text-on-brand no-underline transition-colors ` +
+	`hover:border-brand-800 hover:bg-brand-800 ${focusRing}`;
+
+const cardLinkSecondaryClass =
+	`group inline-flex min-h-11 items-center justify-center rounded-md border border-border-subtle bg-surface-card px-5 py-2.5 ` +
+	`font-sans text-sm font-semibold text-text-primary no-underline transition-colors ` +
+	`hover:border-brand-200 hover:bg-surface-sunken ${focusRing}`;
+
+const discoveryCardLinkClass =
+	`group block rounded-lg border border-border-subtle bg-surface-card p-4 shadow-e1 transition-shadow ` +
+	`hover:border-brand-200 hover:shadow-e2 ${focusRing}`;
+
+const discoveryCardPendingClass =
+	'block rounded-lg border border-border-subtle bg-surface-sunken p-4';
+
+const navGroups = hub.navGroups as HubNavGroup[];
+const primaryActions = hub.primaryActions as HubPrimaryAction[];
+---
+
+<BaseLayout title={hub.seoTitle} description={hub.seoDescription} seoCanonicalPath="/research/">
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			{
+				hub.eyebrow ? (
+					<p class="font-sans text-sm font-semibold uppercase tracking-wide text-text-secondary">
+						{hub.eyebrow}
+					</p>
+				) : null
+			}
+			<h1
+				class:list={[
+					'font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl',
+					hub.eyebrow ? 'mt-2' : '',
+				]}
+			>
+				{hub.pageTitle}
+			</h1>
+			{
+				hub.introHeading ? (
+					<h2 class="mt-8 font-serif text-xl font-bold text-text-primary md:text-2xl">
+						{hub.introHeading}
+					</h2>
+				) : null
+			}
+			<div
+				class:list={[
+					'max-w-prose font-sans text-base leading-relaxed text-text-secondary',
+					hub.introHeading ? 'mt-4' : 'mt-6',
+					'[&>p+p]:mt-4',
+				]}
+			>
+				{hub.introParagraphs.map((paragraph) => (
+					<p>{paragraph}</p>
+				))}
+			</div>
+
+			{
+				primaryActions.length > 0 ? (
+					<nav
+						class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
+						aria-label="Research hub actions"
+					>
+						{primaryActions.map((action, index) =>
+							action.routeLive ? (
+								<a
+									href={action.href}
+									class:list={[index === 0 ? cardLinkClass : cardLinkSecondaryClass]}
+								>
+									{action.label}
+								</a>
+							) : (
+								<span
+									class:list={[
+										index === 0 ? cardLinkClass : cardLinkSecondaryClass,
+										'cursor-not-allowed opacity-60',
+									]}
+									aria-disabled="true"
+								>
+									{action.label}
+									<span class="sr-only"> (coming soon)</span>
+								</span>
+							),
+						)}
+					</nav>
+				) : null
+			}
+
+			{
+				hub.facilitiesTeaser ? (
+					<section
+						class="mt-10 rounded-lg border border-border-subtle bg-surface-sunken p-6"
+						aria-labelledby="research-facilities-teaser-heading"
+					>
+						<h2
+							id="research-facilities-teaser-heading"
+							class="font-serif text-lg font-bold text-text-primary"
+						>
+							{hub.facilitiesTeaser.title}
+						</h2>
+						<p class="mt-2 max-w-prose font-sans text-sm leading-relaxed text-text-secondary">
+							{hub.facilitiesTeaser.body}
+						</p>
+						{
+							hub.facilitiesTeaser.routeLive ? (
+								<p class="mt-4">
+									<a
+										href={hub.facilitiesTeaser.href}
+										class="font-sans text-sm font-medium text-brand-700 no-underline hover:text-brand-800 focus-visible:shadow-ring-focus focus-visible:outline-none"
+									>
+										View facilities
+									</a>
+								</p>
+							) : (
+								<p class="mt-4 font-sans text-xs font-medium text-text-muted">Coming soon</p>
+							)
+						}
+					</section>
+				) : null
+			}
+
+			<section
+				aria-labelledby="research-discovery-heading"
+				class="mt-10 border-t border-border-subtle pt-10"
+			>
+				<h2
+					id="research-discovery-heading"
+					class="font-serif text-xl font-bold tracking-tight text-text-primary md:text-2xl"
+				>
+					{hub.discoverySectionTitle}
+				</h2>
+				{
+					navGroups.map((group) => (
+						<div class="mt-8">
+							<h3 class="font-sans text-sm font-semibold uppercase tracking-wide text-text-secondary">
+								{group.title}
+							</h3>
+							<ul class="m-0 mt-4 grid list-none gap-3 p-0 sm:grid-cols-2" role="list">
+								{group.links.map((link) => {
+									const isCurrent = isHubLinkCurrent(link.href);
+									const canNavigate = link.routeLive && !isCurrent;
+									return (
+										<li>
+											{isCurrent ? (
+												<div class={discoveryCardPendingClass} aria-current="page">
+													<p class="font-sans text-base font-semibold text-text-primary">
+														{link.label}
+													</p>
+													{link.description ? (
+														<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+															{link.description}
+														</p>
+													) : null}
+													<p class="mt-2 font-sans text-xs font-medium text-text-muted">
+														You are here
+													</p>
+												</div>
+											) : canNavigate ? (
+												<a href={link.href} class={discoveryCardLinkClass}>
+													<p class="font-sans text-base font-semibold text-text-primary group-hover:text-brand-700">
+														{link.label}
+													</p>
+													{link.description ? (
+														<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+															{link.description}
+														</p>
+													) : null}
+												</a>
+											) : (
+												<div class={discoveryCardPendingClass}>
+													<p class="font-sans text-base font-semibold text-text-primary">
+														{link.label}
+													</p>
+													{link.description ? (
+														<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+															{link.description}
+														</p>
+													) : null}
+													<p class="mt-2 font-sans text-xs font-medium text-text-muted">
+														Coming soon
+													</p>
+												</div>
+											)}
+										</li>
+									);
+								})}
+							</ul>
+						</div>
+					))
+				}
+			</section>
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>

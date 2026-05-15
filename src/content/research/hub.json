@@ -1,0 +1,80 @@
+{
+	"pageTitle": "Research",
+	"seoTitle": "Research at CPMR",
+	"seoDescription": "Discover CPMR's national plant medicine research programme — thematic areas, projects, publications, and researcher expertise.",
+	"eyebrow": "Research programme",
+	"introHeading": "Institutional research overview",
+	"introParagraphs": [
+		"The Centre for Plant Medicine Research conducts nationally significant scientific inquiry across conservation, cultivation, phytochemistry, laboratory analysis, and evidence-based product development.",
+		"Use the pathways below to move from this institutional overview to thematic areas, active projects, scholarly publications, and researcher profiles. Department mini-sites provide additional depth where programmes are hosted."
+	],
+	"primaryActions": [
+		{
+			"id": "cta-departments",
+			"label": "Explore departments",
+			"href": "/departments/",
+			"routeLive": true
+		},
+		{
+			"id": "cta-publications",
+			"label": "Browse publications",
+			"href": "/research/publications/",
+			"routeLive": false
+		},
+		{
+			"id": "cta-researchers",
+			"label": "Meet researchers",
+			"href": "/research/staff/",
+			"routeLive": false
+		}
+	],
+	"facilitiesTeaser": {
+		"title": "Research facilities",
+		"body": "Laboratories, herbaria, and specialist units that underpin CPMR's scientific work will be profiled here as verified facility content is approved.",
+		"href": "/research/facilities/",
+		"routeLive": false
+	},
+	"discoverySectionTitle": "Research discovery",
+	"navGroups": [
+		{
+			"id": "research-programme",
+			"title": "Programme",
+			"links": [
+				{
+					"id": "research-themes",
+					"label": "Research themes",
+					"href": "/research/themes/",
+					"description": "Thematic entry points for projects and publications when collections are populated.",
+					"routeLive": false
+				},
+				{
+					"id": "research-projects",
+					"label": "Research projects",
+					"href": "/research/projects/",
+					"description": "Structured project stories with objectives, teams, and linked outputs.",
+					"routeLive": false
+				},
+				{
+					"id": "research-publications",
+					"label": "Publications",
+					"href": "/research/publications/",
+					"description": "Scholarly publications and reports from CPMR research programmes.",
+					"routeLive": false
+				}
+			]
+		},
+		{
+			"id": "research-people",
+			"title": "People",
+			"links": [
+				{
+					"id": "research-profiles",
+					"label": "Researcher profiles",
+					"href": "/research/staff/",
+					"description": "Directory of researchers and scientific staff with department context.",
+					"routeLive": false
+				}
+			]
+		}
+	]
+}

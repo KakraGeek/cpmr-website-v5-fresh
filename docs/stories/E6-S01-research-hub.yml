@@ -2,7 +2,7 @@ id: E6-S01
 epic: E6
 sprint_order: 601
 title: Research hub
-status: TODO
+status: DONE
 architect_gate_required: No
 user_story: >
   As a researcher, I start discovery from an institutional overview.
@@ -45,3 +45,4 @@ qa_checklist:
   - Confirm implementation follows architecture.
   - Confirm static build passes.
   - Confirm hub copy and links remain governed in src/content for future CMS compatibility.
+last_updated: '2026-05-15 15:22:11'
