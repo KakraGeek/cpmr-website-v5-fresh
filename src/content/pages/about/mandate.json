@@ -1,0 +1,19 @@
+{
+	"title": "Mandate",
+	"seoTitle": "Mandate | About CPMR",
+	"seoDescription": "The legal and institutional mandate of the Centre for Plant Medicine Research — research, services, and public accountability for plant-based medicine in Ghana.",
+	"editorialStatus": "approved",
+	"contentOwnerRole": "content_admin",
+	"template": "generic",
+	"eyebrow": "About CPMR",
+	"lede": "How CPMR is positioned within national policy to advance safe, evidence-informed plant medicine.",
+	"bodyParagraphs": [
+		"The Centre for Plant Medicine Research operates within Ghana's policy framework for traditional and herbal medicines. Its mandate is to strengthen scientific understanding of medicinal plants and to support regulators, health facilities, manufacturers, and communities with evidence, training, and quality-oriented services.",
+		"CPMR's institutional responsibilities span laboratory and field research, clinical and technical services, regulatory support for herbal products, and public education. Work is carried out with attention to safety, national health priorities, and accountable use of public resources.",
+		"This mandate connects research discovery to practical outcomes — from quality assurance and drug analysis to capacity building — so that plant-based medicines are developed and used with appropriate safeguards and transparency."
+	],
+	"relatedLink": {
+		"label": "Read our vision and mission",
+		"href": "/about/vision-mission/"
+	}
+}

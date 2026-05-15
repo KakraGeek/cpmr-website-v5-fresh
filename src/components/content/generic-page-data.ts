@@ -4,6 +4,7 @@
  */
 import overviewPage from '../../content/pages/about/overview.json';
 import historyPage from '../../content/pages/about/history.json';
+import mandatePage from '../../content/pages/about/mandate.json';
 
 export type GenericPageMilestone = {
 	id: string;
@@ -34,6 +35,7 @@ export type GenericPageData = {
 const pages: Record<string, GenericPageData> = {
 	'about/overview': overviewPage as GenericPageData,
 	'about/history': historyPage as GenericPageData,
+	'about/mandate': mandatePage as GenericPageData,
 };
 
 export function getGenericPageData(pageId: keyof typeof pages): GenericPageData {

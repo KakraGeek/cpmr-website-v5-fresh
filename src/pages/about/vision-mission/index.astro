@@ -1,0 +1,12 @@
+---
+/**
+ * E4-S03 — Vision & Mission at `/about/vision-mission/` (paired layout; governed `src/content/pages/about/vision-mission.json`).
+ */
+import VisionMissionContentPage from '../../../components/content/VisionMissionContentPage.astro';
+import { getVisionMissionPageData } from '../../../components/content/vision-mission-page-data';
+
+const pathname = Astro.url.pathname;
+const page = getVisionMissionPageData();
+---
+
+<VisionMissionContentPage page={page} pathname={pathname} seoCanonicalPath="/about/vision-mission/" />

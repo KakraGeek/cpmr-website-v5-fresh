@@ -1,0 +1,25 @@
+{
+	"title": "Vision & Mission",
+	"seoTitle": "Vision & Mission | About CPMR",
+	"seoDescription": "The vision and mission of the Centre for Plant Medicine Research — national leadership in plant-based medicine science, services, and public value.",
+	"editorialStatus": "approved",
+	"contentOwnerRole": "content_admin",
+	"eyebrow": "About CPMR",
+	"lede": "Our direction and purpose as Ghana's centre of excellence for plant medicine research.",
+	"vision": {
+		"title": "Vision",
+		"paragraphs": [
+			"A Ghana where plant-based medicine is understood through rigorous science, practised with quality and safety, and valued as a sustainable contribution to national health and wellbeing."
+		]
+	},
+	"mission": {
+		"title": "Mission",
+		"paragraphs": [
+			"To advance research, technical services, and education on medicinal plants; to support regulation and industry with evidence-based analysis; and to translate knowledge responsibly for clinicians, communities, and policymakers."
+		]
+	},
+	"relatedLink": {
+		"label": "Explore our institutional mandate",
+		"href": "/about/mandate/"
+	}
+}

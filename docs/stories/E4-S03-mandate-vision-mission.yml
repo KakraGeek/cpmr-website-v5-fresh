@@ -2,57 +2,83 @@ id: E4-S03
 epic: E4
 sprint_order: 403
 title: Mandate and Vision/Mission
-status: TODO
-architect_gate_required: No
-user_story: >
-  As a stakeholder, I see formal mandate statements.
+status: DONE
+architect_gate_required: false
+user_story: 'As a stakeholder, I see formal mandate statements.
+
+  '
 acceptance_criteria:
-  - Mandate and Vision/Mission each have their own routes under /about/.
-  - Vision and Mission use a paired layout side-by-side on desktop and stack on smaller breakpoints per docs/04_stories/05_story_map.md.
-  - Copy is verified editorial content only (no placeholder mandate text at launch readiness) per docs/01_planning/02_prd.md governance expectations.
+- Mandate and Vision/Mission each have their own routes under /about/.
+- Vision and Mission use a paired layout side-by-side on desktop and stack on smaller
+  breakpoints per docs/04_stories/05_story_map.md.
+- Copy is verified editorial content only (no placeholder mandate text at launch readiness)
+  per docs/01_planning/02_prd.md governance expectations.
 tasks:
-  - Implement separate Astro routes for Mandate and for Vision & Mission under src/pages/about/.
-  - Implement the paired Vision/Mission layout responsive behaviour per DESIGN.md and the story map.
-  - Source durable copy from governed src/content/pages (or equivalent) consistent with docs/03_architecture/06_project_context.md.
+- Implement separate Astro routes for Mandate and for Vision & Mission under src/pages/about/.
+- Implement the paired Vision/Mission layout responsive behaviour per DESIGN.md and
+  the story map.
+- Source durable copy from governed src/content/pages (or equivalent) consistent with
+  docs/03_architecture/06_project_context.md.
 dependencies:
-  - E4-S01
+- E4-S01
 context_files:
-  - docs/04_stories/05_story_map.md
-  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
-  - docs/01_planning/01_analysis.md
-  - docs/01_planning/02_prd.md
-  - docs/02_design/03_ux_blueprint.md
-  - docs/02_design/DESIGN.md
-  - docs/03_architecture/04_architecture.md
-  - docs/03_architecture/06_project_context.md
+- docs/04_stories/05_story_map.md
+- docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+- docs/01_planning/01_analysis.md
+- docs/01_planning/02_prd.md
+- docs/02_design/03_ux_blueprint.md
+- docs/02_design/DESIGN.md
+- docs/03_architecture/04_architecture.md
+- docs/03_architecture/06_project_context.md
 execution:
   files_allowed:
-    - src/pages/about/mandate/**
-    - src/pages/about/vision-mission/**
-    - src/content/pages/**
-    - src/components/content/**
+  - src/pages/about/mandate/**
+  - src/pages/about/vision-mission/**
+  - src/content/pages/**
+  - src/components/content/**
   files_forbidden:
-    - astro.config.mjs
-    - package.json
-    - docs/02_design/DESIGN.md
-    - src/layouts/**
-    - src/components/layout/**
-    - src/pages/index.astro
-    - src/pages/about/index.astro
-    - src/pages/departments/**
-    - src/pages/research/**
-    - src/pages/services/**
-    - src/pages/news/**
-    - src/pages/events/**
-    - src/pages/products/**
-    - src/content/staff/**
+  - astro.config.mjs
+  - package.json
+  - docs/02_design/DESIGN.md
+  - src/layouts/**
+  - src/components/layout/**
+  - src/pages/index.astro
+  - src/pages/about/index.astro
+  - src/pages/departments/**
+  - src/pages/research/**
+  - src/pages/services/**
+  - src/pages/news/**
+  - src/pages/events/**
+  - src/pages/products/**
+  - src/content/staff/**
   verification_commands:
-    - npm run build
-    - npm run validate
+  - npm run build
+  - npm run validate
 qa_checklist:
-  - Confirm every acceptance criterion is satisfied.
-  - Confirm implementation follows DESIGN.md.
-  - Confirm implementation follows docs/03_architecture/04_architecture.md.
-  - Confirm static build passes (npm run build / npm run validate).
-  - Confirm no forbidden files were changed.
-  - Confirm mandate and vision/mission copy are governed in src/content for future CMS compatibility.
+- Confirm every acceptance criterion is satisfied.
+- Confirm implementation follows DESIGN.md.
+- Confirm implementation follows docs/03_architecture/04_architecture.md.
+- Confirm static build passes (npm run build / npm run validate).
+- Confirm no forbidden files were changed.
+- Confirm mandate and vision/mission copy are governed in src/content for future CMS
+  compatibility.
+last_updated: '2026-05-15 13:09:56'
+dev_agent_record:
+  completion_notes: 'Implemented /about/mandate/ (T_GENERIC_CONTENT via GenericContentPage)
+    and /about/vision-mission/ (VisionMissionContentPage + VisionMissionPaired md:grid-cols-2).
+
+    Governed copy in src/content/pages/about/mandate.json and vision-mission.json
+    (editorialStatus approved).
+
+    npm run validate passed.
+
+    '
+file_list:
+- src/content/pages/about/mandate.json
+- src/content/pages/about/vision-mission.json
+- src/components/content/generic-page-data.ts
+- src/components/content/vision-mission-page-data.ts
+- src/components/content/VisionMissionPaired.astro
+- src/components/content/VisionMissionContentPage.astro
+- src/pages/about/mandate/index.astro
+- src/pages/about/vision-mission/index.astro

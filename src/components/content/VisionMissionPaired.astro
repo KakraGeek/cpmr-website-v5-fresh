@@ -1,0 +1,48 @@
+---
+/**
+ * E4-S03 — Paired Vision/Mission layout (UX Blueprint §8.2; side-by-side lg+, stacked below).
+ */
+import type { VisionMissionStatement } from './vision-mission-page-data';
+
+interface Props {
+	vision: VisionMissionStatement;
+	mission: VisionMissionStatement;
+}
+
+const { vision, mission } = Astro.props;
+
+const blocks = [
+	{ id: 'vision', data: vision },
+	{ id: 'mission', data: mission },
+] as const;
+---
+
+<section class="mt-8" aria-label="Vision and mission statements">
+	<div class="grid gap-8 md:grid-cols-2 md:gap-10">
+		{
+			blocks.map(({ id, data }) => (
+				<article
+					class="rounded-lg border border-border-subtle bg-surface-card p-6 md:p-8"
+					aria-labelledby={`${id}-heading`}
+				>
+					<h2
+						id={`${id}-heading`}
+						class="font-serif text-2xl font-bold tracking-tight text-text-primary"
+					>
+						{data.title}
+					</h2>
+					<div
+						class:list={[
+							'mt-4 font-sans text-base leading-relaxed text-text-secondary',
+							'[&>p+p]:mt-4',
+						]}
+					>
+						{data.paragraphs.map((paragraph) => (
+							<p>{paragraph}</p>
+						))}
+					</div>
+				</article>
+			))
+		}
+	</div>
+</section>
