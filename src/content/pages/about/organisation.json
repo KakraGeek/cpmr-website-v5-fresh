@@ -1,0 +1,88 @@
+{
+	"title": "Organisational Structure",
+	"seoTitle": "Organisational Structure | About CPMR",
+	"seoDescription": "How the Centre for Plant Medicine Research is organised — governing oversight, executive leadership, research departments, services, and corporate functions.",
+	"editorialStatus": "approved",
+	"contentOwnerRole": "content_admin",
+	"eyebrow": "About CPMR",
+	"lede": "CPMR connects governing oversight, executive leadership, and departmental delivery so research, services, and administration work as one national institution.",
+	"diagram": {
+		"src": "/images/about/organisation/cpmr-organisation-structure.svg",
+		"width": 720,
+		"height": 420,
+		"alt": "Overview diagram: Governing Board oversees the Director; research departments, service units, corporate administration, and support functions report through executive leadership.",
+		"caption": "High-level organisational chart — illustrative structure pending final verified chart from governance."
+	},
+	"linearisedOutline": {
+		"heading": "Structure outline (text version)",
+		"intro": "The following outline follows the diagram top to bottom and left to right for screen readers and users who prefer a text hierarchy.",
+		"nodes": [
+			{
+				"id": "governing-board",
+				"label": "Governing Board",
+				"note": "Strategic oversight and accountability to stakeholders",
+				"children": [
+					{
+						"id": "director",
+						"label": "Director",
+						"note": "Executive leadership of the Centre",
+						"children": [
+							{
+								"id": "research-departments",
+								"label": "Research departments",
+								"note": "Scientific programmes, laboratories, and field research",
+								"children": [
+									{
+										"id": "research-mini-sites",
+										"label": "Department mini-sites",
+										"note": "Structured public sections per research department"
+									}
+								]
+							},
+							{
+								"id": "service-units",
+								"label": "Service units",
+								"note": "Clinic, Drug Analysis Unit, and related public services",
+								"children": [
+									{
+										"id": "service-delivery",
+										"label": "Public-facing services",
+										"note": "Client-facing clinical and technical services"
+									}
+								]
+							},
+							{
+								"id": "corporate-admin",
+								"label": "Corporate administration",
+								"note": "Governance, policy, and institutional coordination",
+								"children": [
+									{
+										"id": "governance-policy",
+										"label": "Governance and policy",
+										"note": "Board secretariat, compliance, and planning support"
+									}
+								]
+							},
+							{
+								"id": "support-functions",
+								"label": "Support functions",
+								"note": "Finance, human resources, ICT, and facilities",
+								"children": [
+									{
+										"id": "shared-services",
+										"label": "Shared services",
+										"note": "Enabling functions for research and service delivery"
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	"relatedLink": {
+		"label": "View management team",
+		"href": "/about/management/"
+	}
+}

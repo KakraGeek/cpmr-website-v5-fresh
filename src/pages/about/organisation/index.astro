@@ -1,0 +1,16 @@
+---
+/**
+ * E4-S06 — Organisational structure at `/about/organisation/` (UX Blueprint §8.2; governed `organisation.json`).
+ */
+import OrganisationStructureContentPage from '../../../components/content/OrganisationStructureContentPage.astro';
+import { getOrganisationStructurePageData } from '../../../components/content/organisation-structure-page-data';
+
+const pathname = Astro.url.pathname;
+const page = getOrganisationStructurePageData();
+---
+
+<OrganisationStructureContentPage
+	page={page}
+	pathname={pathname}
+	seoCanonicalPath="/about/organisation/"
+/>

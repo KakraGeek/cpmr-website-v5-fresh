@@ -2,56 +2,62 @@ id: E4-S06
 epic: E4
 sprint_order: 406
 title: Organisation structure
-status: TODO
-architect_gate_required: No
-user_story: >
-  As a visitor, I understand institutional structure.
+status: DONE
+architect_gate_required: false
+user_story: 'As a visitor, I understand institutional structure.
+
+  '
 acceptance_criteria:
-  - Organisational structure page presents the diagram (or image) agreed in content.
-  - A linearised text alternative for the structure is available for screen readers per docs/02_design/03_ux_blueprint.md §8.2 (Organisational structure).
+- Organisational structure page presents the diagram (or image) agreed in content.
+- A linearised text alternative for the structure is available for screen readers
+  per docs/02_design/03_ux_blueprint.md §8.2 (Organisational structure).
 tasks:
-  - Implement src/pages/about/organisation/ (or equivalent single route) for the organisational structure page.
-  - Add diagram asset under public/ or src/assets per project conventions and reference it from governed content.
-  - Provide linearised outline copy in content alongside the visual per the UX blueprint.
+- Implement src/pages/about/organisation/ (or equivalent single route) for the organisational
+  structure page.
+- Add diagram asset under public/ or src/assets per project conventions and reference
+  it from governed content.
+- Provide linearised outline copy in content alongside the visual per the UX blueprint.
 dependencies:
-  - E4-S01
+- E4-S01
 context_files:
-  - docs/04_stories/05_story_map.md
-  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
-  - docs/01_planning/01_analysis.md
-  - docs/01_planning/02_prd.md
-  - docs/02_design/03_ux_blueprint.md
-  - docs/02_design/DESIGN.md
-  - docs/03_architecture/04_architecture.md
-  - docs/03_architecture/06_project_context.md
+- docs/04_stories/05_story_map.md
+- docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+- docs/01_planning/01_analysis.md
+- docs/01_planning/02_prd.md
+- docs/02_design/03_ux_blueprint.md
+- docs/02_design/DESIGN.md
+- docs/03_architecture/04_architecture.md
+- docs/03_architecture/06_project_context.md
 execution:
   files_allowed:
-    - src/pages/about/organisation/**
-    - src/content/pages/**
-    - src/components/content/**
-    - public/images/about/organisation/**
+  - src/pages/about/organisation/**
+  - src/content/pages/**
+  - src/components/content/**
+  - public/images/about/organisation/**
   files_forbidden:
-    - astro.config.mjs
-    - package.json
-    - docs/02_design/DESIGN.md
-    - src/layouts/**
-    - src/components/layout/**
-    - src/pages/index.astro
-    - src/pages/about/index.astro
-    - src/pages/departments/**
-    - src/pages/research/**
-    - src/pages/services/**
-    - src/pages/news/**
-    - src/pages/events/**
-    - src/pages/products/**
-    - src/content/staff/**
+  - astro.config.mjs
+  - package.json
+  - docs/02_design/DESIGN.md
+  - src/layouts/**
+  - src/components/layout/**
+  - src/pages/index.astro
+  - src/pages/about/index.astro
+  - src/pages/departments/**
+  - src/pages/research/**
+  - src/pages/services/**
+  - src/pages/news/**
+  - src/pages/events/**
+  - src/pages/products/**
+  - src/content/staff/**
   verification_commands:
-    - npm run build
-    - npm run validate
+  - npm run build
+  - npm run validate
 qa_checklist:
-  - Confirm every acceptance criterion is satisfied.
-  - Confirm implementation follows DESIGN.md.
-  - Confirm implementation follows docs/03_architecture/04_architecture.md.
-  - Confirm static build passes (npm run build / npm run validate).
-  - Confirm no forbidden files were changed.
-  - Confirm structure narrative and alt outline live in governed content for future CMS compatibility.
+- Confirm every acceptance criterion is satisfied.
+- Confirm implementation follows DESIGN.md.
+- Confirm implementation follows docs/03_architecture/04_architecture.md.
+- Confirm static build passes (npm run build / npm run validate).
+- Confirm no forbidden files were changed.
+- Confirm structure narrative and alt outline live in governed content for future
+  CMS compatibility.
+last_updated: '2026-05-15 13:51:21'

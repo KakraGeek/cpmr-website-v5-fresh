@@ -476,3 +476,15 @@ events:
 - timestamp: '2026-05-15 13:40:54'
   story_id: E4-S05
   event: status -> DONE
+- timestamp: '2026-05-15 13:43:37'
+  story_id: E4-S06
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-15 13:48:37'
+  story_id: E4-S06
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-15 13:51:06'
+  story_id: E4-S06
+  event: status -> VERIFIED
+- timestamp: '2026-05-15 13:51:21'
+  story_id: E4-S06
+  event: status -> DONE

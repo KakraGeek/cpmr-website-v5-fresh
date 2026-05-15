@@ -1,0 +1,133 @@
+---
+/**
+ * E4-S06 — Organisational structure (`T_GENERIC_CONTENT` + diagram + linearised outline; UX Blueprint §8.2).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../layout/SiteHeader.astro';
+import SiteFooter from '../layout/SiteFooter.astro';
+import Breadcrumbs from '../layout/Breadcrumbs.astro';
+import AboutHubSideNav from './about/AboutHubSideNav.astro';
+import AboutHubInThisSection from './about/AboutHubInThisSection.astro';
+import OrganisationStructureOutline from './OrganisationStructureOutline.astro';
+import ButtonLink from '../ui/ButtonLink.astro';
+import { getAboutHubData } from '../../data/about-hub';
+import type { OrganisationStructurePageData } from './organisation-structure-page-data';
+
+interface Props {
+	page: OrganisationStructurePageData;
+	pathname: string;
+	seoCanonicalPath: string;
+}
+
+const { page, pathname, seoCanonicalPath } = Astro.props;
+
+const hub = getAboutHubData();
+const outlineId = 'organisation-structure-outline';
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: hub.pageTitle, href: '/about/' },
+	{ label: page.title },
+];
+---
+
+<BaseLayout title={page.seoTitle} description={page.seoDescription} seoCanonicalPath={seoCanonicalPath}>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<AboutHubInThisSection
+		groups={hub.navGroups}
+		pathname={pathname}
+		label={hub.inThisSectionLabel}
+	/>
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			<div class="lg:grid lg:grid-cols-[minmax(12rem,16rem)_minmax(0,1fr)] lg:gap-10 xl:gap-12">
+				<AboutHubSideNav
+					groups={hub.navGroups}
+					pathname={pathname}
+					heading={hub.inThisSectionLabel}
+				/>
+				<div class="min-w-0">
+					{
+						page.eyebrow ? (
+							<p class="font-sans text-sm font-semibold uppercase tracking-wide text-text-secondary">
+								{page.eyebrow}
+							</p>
+						) : null
+					}
+					<h1
+						class:list={[
+							'font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl',
+							page.eyebrow ? 'mt-2' : '',
+						]}
+					>
+						{page.title}
+					</h1>
+					{
+						page.lede ? (
+							<p class="mt-4 max-w-prose font-sans text-lg leading-relaxed text-text-secondary">
+								{page.lede}
+							</p>
+						) : null
+					}
+					<figure class="mt-8 max-w-full overflow-x-auto rounded-lg border border-border-subtle bg-surface-card p-4">
+						<img
+							src={page.diagram.src}
+							alt={page.diagram.alt}
+							width={page.diagram.width}
+							height={page.diagram.height}
+							loading="lazy"
+							decoding="async"
+							class="mx-auto h-auto w-full max-w-3xl text-text-primary"
+							aria-describedby={outlineId}
+						/>
+						<figcaption class="mt-3 max-w-prose font-sans text-sm leading-relaxed text-text-secondary">
+							{page.diagram.caption}
+						</figcaption>
+					</figure>
+					<section
+						id={outlineId}
+						class="mt-10 max-w-prose scroll-mt-24"
+						aria-labelledby={`${outlineId}-heading`}
+					>
+						<h2
+							id={`${outlineId}-heading`}
+							class="font-serif text-2xl font-bold tracking-tight text-text-primary"
+						>
+							{page.linearisedOutline.heading}
+						</h2>
+						{
+							page.linearisedOutline.intro ? (
+								<p class="mt-3 font-sans text-base leading-relaxed text-text-secondary">
+									{page.linearisedOutline.intro}
+								</p>
+							) : null
+						}
+						<div class="mt-6">
+							<OrganisationStructureOutline
+								nodes={page.linearisedOutline.nodes}
+								isRoot={true}
+							/>
+						</div>
+					</section>
+					{
+						page.relatedLink ? (
+							<p class="mt-8 max-w-prose">
+								<ButtonLink
+									href={page.relatedLink.href}
+									label={page.relatedLink.label}
+									variant="secondary"
+								/>
+							</p>
+						) : null
+					}
+				</div>
+			</div>
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>

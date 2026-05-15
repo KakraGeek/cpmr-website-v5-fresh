@@ -1,0 +1,44 @@
+---
+/**
+ * E4-S06 — Nested outline for organisational structure (UX Blueprint §8.2 linearised alternative).
+ */
+import Self from './OrganisationStructureOutline.astro';
+import type { OrganisationOutlineNode } from './organisation-structure-page-data';
+
+interface Props {
+	nodes: OrganisationOutlineNode[];
+	isRoot?: boolean;
+}
+
+const { nodes, isRoot = false } = Astro.props;
+---
+
+{
+	isRoot ? (
+		<ol class="list-none space-y-4 p-0">
+			{nodes.map((node) => (
+				<li>
+					<Self nodes={[node]} />
+				</li>
+			))}
+		</ol>
+	) : (
+		<div>
+			<span class="font-sans text-base font-semibold text-text-primary">{nodes[0].label}</span>
+			{nodes[0].note ? (
+				<span class="mt-1 block font-sans text-sm leading-relaxed text-text-secondary">
+					{nodes[0].note}
+				</span>
+			) : null}
+			{nodes[0].children && nodes[0].children.length > 0 ? (
+				<ol class="mt-3 list-decimal space-y-3 border-l border-border-subtle ps-5">
+					{nodes[0].children.map((child) => (
+						<li class="ps-1">
+							<Self nodes={[child]} />
+						</li>
+					))}
+				</ol>
+			) : null}
+		</div>
+	)
+}
