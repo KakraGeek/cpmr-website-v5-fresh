@@ -1,0 +1,27 @@
+---
+/**
+ * E5-S04 — Department staff listing at `/departments/[slug]/staff/` (04_architecture.md §6.2).
+ */
+import { getCollection } from 'astro:content';
+import DepartmentStaffPage from '../../../../components/departments/DepartmentStaffPage.astro';
+import { isPublicDepartment } from '../../../../components/departments/department-home-helpers';
+import { filterDepartmentStaff } from '../../../../components/departments/department-staff-helpers';
+
+export async function getStaticPaths() {
+	const departments = await getCollection('departments');
+	const staff = await getCollection('staff');
+
+	return departments.filter(isPublicDepartment).map((entry) => ({
+		params: { slug: entry.data.id },
+		props: {
+			department: entry,
+			staff: filterDepartmentStaff(staff, entry.data.id),
+		},
+	}));
+}
+
+const { department, staff } = Astro.props;
+const pathname = Astro.url.pathname;
+---
+
+<DepartmentStaffPage department={department} staff={staff} pathname={pathname} />

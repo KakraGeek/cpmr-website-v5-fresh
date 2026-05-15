@@ -1,0 +1,278 @@
+---
+/**
+ * E5-S04 — Department staff listing (04_architecture.md §6.2; staff collection E6-S03).
+ */
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../layout/SiteHeader.astro';
+import SiteFooter from '../layout/SiteFooter.astro';
+import Breadcrumbs from '../layout/Breadcrumbs.astro';
+import Card from '../ui/Card.astro';
+import DepartmentTabs from './DepartmentTabs.astro';
+import DepartmentSectionEmpty from './DepartmentSectionEmpty.astro';
+import { staffProfilePath } from '../content/staff-directory-helpers';
+import { departmentBasePath, resolveMiniSiteNav } from './department-home-helpers';
+import {
+	collectExpertiseFilterOptions,
+	departmentStaffPageCopy,
+} from './department-staff-helpers';
+import type { PublicStaffEntry } from '../content/staff-directory-helpers';
+
+interface Props {
+	department: CollectionEntry<'departments'> & { data: { entry_type: 'department' } };
+	staff: PublicStaffEntry[];
+	pathname: string;
+}
+
+const { department, staff, pathname } = Astro.props;
+const dept = department.data;
+const base = departmentBasePath(dept.id);
+const copy = departmentStaffPageCopy;
+const navItems = resolveMiniSiteNav(dept.id, dept.mini_site_nav);
+const expertiseOptions = collectExpertiseFilterOptions(staff);
+const showExpertiseFilter = expertiseOptions.length > 0;
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Departments', href: '/departments/' },
+	{ label: dept.name, href: base },
+	{ label: 'Staff' },
+];
+
+const pageTitle = `Staff — ${dept.name}`;
+const seoTitle = `${dept.name} — Staff | CPMR`;
+const seoDescription =
+	dept.seo_description ??
+	`Meet the team at ${dept.name} at the Centre for Plant Medicine Research.`;
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const cardLinkClass =
+	`group block h-full no-underline text-inherit transition-shadow ${focusRing}`;
+
+const filterInputClass =
+	'min-h-11 w-full rounded-md border border-border-subtle bg-surface-card px-3 py-2 font-sans text-base text-text-primary shadow-e1 focus-visible:shadow-ring-focus focus-visible:outline-none';
+
+const filterSelectClass = filterInputClass;
+---
+
+<BaseLayout title={seoTitle} description={seoDescription} seoCanonicalPath={pathname}>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<DepartmentTabs items={navItems} currentPath={pathname} />
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			<h1 class="font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+				{pageTitle}
+			</h1>
+			<p class="mt-4 max-w-prose font-sans text-lg leading-relaxed text-text-secondary">
+				{copy.lede}
+			</p>
+
+			<section
+				class="mt-10 border-t border-border-subtle pt-10"
+				aria-labelledby="dept-staff-list-heading"
+			>
+				<h2
+					id="dept-staff-list-heading"
+					class="font-serif text-xl font-bold tracking-tight text-text-primary md:text-2xl"
+				>
+					{copy.sectionTitle}
+				</h2>
+
+				{
+					staff.length === 0 ? (
+						<div class="mt-6">
+							<DepartmentSectionEmpty title={copy.emptyTitle} body={copy.emptyBody} />
+						</div>
+					) : (
+						<>
+							<form
+								id="dept-staff-filters"
+								class:list={[
+									'mt-6 grid gap-4',
+									showExpertiseFilter ? 'sm:grid-cols-2' : 'max-w-xl',
+								]}
+								aria-label={`Filter ${dept.name} staff`}
+							>
+								<div>
+									<label
+										for="dept-staff-filter-search"
+										class="block font-sans text-sm font-medium text-text-primary"
+									>
+										{copy.filterSearchLabel}
+									</label>
+									<input
+										type="search"
+										id="dept-staff-filter-search"
+										name="search"
+										class:list={['mt-2', filterInputClass]}
+										placeholder={copy.filterSearchPlaceholder}
+										autocomplete="off"
+									/>
+								</div>
+								{
+									showExpertiseFilter ? (
+										<div>
+											<label
+												for="dept-staff-filter-expertise"
+												class="block font-sans text-sm font-medium text-text-primary"
+											>
+												{copy.filterExpertiseLabel}
+											</label>
+											<select
+												id="dept-staff-filter-expertise"
+												name="expertise"
+												class:list={['mt-2', filterSelectClass]}
+											>
+												<option value="">{copy.filterExpertiseAll}</option>
+												{expertiseOptions.map((option) => (
+													<option value={option.id}>{option.label}</option>
+												))}
+											</select>
+										</div>
+									) : null
+								}
+							</form>
+
+							<p
+								id="dept-staff-results-status"
+								class="mt-4 font-sans text-sm text-text-secondary"
+								role="status"
+								aria-live="polite"
+								hidden
+							/>
+
+							<ul
+								id="dept-staff-list"
+								class="m-0 mt-6 grid list-none gap-6 p-0 md:grid-cols-2"
+								role="list"
+							>
+								{staff.map((entry) => {
+									const searchText = `${entry.data.full_name} ${entry.data.role_title}`
+										.toLowerCase()
+										.trim();
+									const expertiseAttr = entry.data.expertise_tags.join(' ');
+									return (
+										<li
+											data-staff-card
+											data-search-text={searchText}
+											data-expertise-tags={expertiseAttr}
+										>
+											<a href={staffProfilePath(entry.data.id)} class={cardLinkClass}>
+												<Card elevation="hover-lift" padding="5" class="h-full">
+													{
+														entry.data.photo ? (
+															<img
+																src={entry.data.photo.src}
+																alt={entry.data.photo.alt}
+																width={entry.data.photo.width}
+																height={entry.data.photo.height}
+																class="mb-4 h-auto w-full max-w-xs rounded-lg border border-border-subtle object-cover"
+																loading="lazy"
+																decoding="async"
+															/>
+														) : null
+													}
+													<h3 class="font-serif text-lg font-bold text-text-primary group-hover:text-brand-700">
+														{entry.data.full_name}
+													</h3>
+													<p class="mt-2 font-sans text-sm font-medium text-text-secondary">
+														{entry.data.role_title}
+													</p>
+													<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+														{entry.data.bio_summary}
+													</p>
+													{
+														entry.data.expertise_tags.length > 0 ? (
+															<ul
+																class="m-0 mt-4 flex list-none flex-wrap gap-2 p-0"
+																aria-label="Areas of expertise"
+															>
+																{entry.data.expertise_tags.map((tag) => (
+																	<li>
+																		<span class="inline-flex rounded-md bg-surface-sunken px-2 py-1 font-sans text-xs text-text-secondary">
+																			{tag}
+																		</span>
+																	</li>
+																))}
+															</ul>
+														) : null
+													}
+													<p class="mt-4 font-sans text-sm font-medium text-brand-700 group-hover:underline">
+														View profile
+													</p>
+												</Card>
+											</a>
+										</li>
+									);
+								})}
+							</ul>
+						</>
+					)
+				}
+			</section>
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>
+
+{
+	staff.length > 0 ? (
+		<script is:inline>
+			(function () {
+				const form = document.getElementById('dept-staff-filters');
+				const list = document.getElementById('dept-staff-list');
+				const status = document.getElementById('dept-staff-results-status');
+				if (!form || !list || !status) return;
+
+				const searchInput = document.getElementById('dept-staff-filter-search');
+				const expertiseSelect = document.getElementById('dept-staff-filter-expertise');
+				const cards = list.querySelectorAll('[data-staff-card]');
+				const total = cards.length;
+
+				function applyFilters() {
+					const searchValue =
+						searchInput instanceof HTMLInputElement
+							? searchInput.value.trim().toLowerCase()
+							: '';
+					const expertiseValue =
+						expertiseSelect instanceof HTMLSelectElement ? expertiseSelect.value : '';
+
+					let visible = 0;
+					cards.forEach((card) => {
+						const searchText = card.getAttribute('data-search-text') || '';
+						const tagTokens = (card.getAttribute('data-expertise-tags') || '')
+							.split(' ')
+							.filter(Boolean);
+						const matchesSearch = !searchValue || searchText.includes(searchValue);
+						const matchesExpertise =
+							!expertiseValue || tagTokens.includes(expertiseValue);
+						const show = matchesSearch && matchesExpertise;
+						card.hidden = !show;
+						if (show) visible += 1;
+					});
+
+					if (visible === total) {
+						status.hidden = true;
+						status.textContent = '';
+					} else {
+						status.hidden = false;
+						status.textContent =
+							visible === 0
+								? 'No team members match the current filters.'
+								: 'Showing ' + visible + ' of ' + total + ' team members.';
+					}
+				}
+
+				form.addEventListener('input', applyFilters);
+				form.addEventListener('change', applyFilters);
+			})();
+		</script>
+	) : null
+}

@@ -2,7 +2,8 @@ id: E5-S04
 epic: E5
 sprint_order: 504
 title: Department staff listing
-status: TODO
+status: DONE
+last_updated: '2026-05-15 16:27:09'
 architect_gate_required: Yes
 user_story: >
   As a visitor, I want to meet the department team.
@@ -14,6 +15,46 @@ tasks:
   - Implement the department staff route under src/pages/departments/[slug]/ per the story map (e.g. staff.astro or staff/index.astro) consistent with the project trailing-slash policy.
   - Query the staff collection from E6-S03 and filter by stable department relationship IDs agreed in frontmatter.
   - Render honest empty states when no staff entries match the department.
+
+dev_agent_record:
+  implementation_plan: >
+    Department staff listing mirrors E5-S05 projects pattern: getStaticPaths filters
+    public staff by department_ids at build time; DepartmentStaffPage renders cards with
+    photos/alt, canonical links to /research/researchers/[id]/, client-side name/role
+    search and expertise tag filter when tags exist.
+  completion_notes: >
+    npm run validate passes. Routes /departments/phytochemistry/staff/ (3 staff) and
+    /departments/scientific-technical-services/staff/ (1 staff) build for verified
+    departments. Empty state shown when no staff match. Filters keyboard-operable via
+    native form controls and focus-visible ring tokens.
+  file_list:
+    - src/components/departments/department-staff-helpers.ts
+    - src/components/departments/DepartmentStaffPage.astro
+    - src/pages/departments/[slug]/staff/index.astro
+
+file_list:
+  - src/components/departments/department-staff-helpers.ts
+  - src/components/departments/DepartmentStaffPage.astro
+  - src/pages/departments/[slug]/staff/index.astro
+
+change_log:
+  - '2026-05-15: E5-S04 — department staff listing route, filters, and empty states.'
+
+validation_notes: >
+  Acceptance validation PASS 2026-05-15 — All acceptance criteria satisfied.
+  Build-time filter via department_ids; profile links to /research/researchers/[id]/ (E6-S03).
+  Client-side name/role and expertise filters; empty-state branch wired. npm run validate passed.
+  Forbidden-file scope clean.
+
+architect_gate_notes: >
+  Architect gate PASS 2026-05-15 (Winston) — 04 §5–§6, 05 §4.4, 05 §5.3–§5.5, E6-S03
+  (/research/researchers/[id]/). Department listing filters staff by department_ids at build time
+  via isPublicDepartment + isPublicStaff + sortPublicStaff; no duplicate department profile URLs;
+  minimal inline client filter script on static HTML; no SSR or schema changes.
+  Conditions: wire department home head-of-department block to head_of_department_staff_id when
+  convenient; amend 05 §5.5 canonical path wording to /research/researchers/ to match E6-S03;
+  consider shared department-listing helper extraction when publications/news listings land.
+
 dependencies:
   - E5-S02
   - E6-S03
