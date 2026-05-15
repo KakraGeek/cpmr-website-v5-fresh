@@ -1,0 +1,48 @@
+{
+	"title": "Board Members",
+	"seoTitle": "Board Members | About CPMR",
+	"seoDescription": "Governing board membership and roles at the Centre for Plant Medicine Research — verified institutional governance listing.",
+	"editorialStatus": "approved",
+	"contentOwnerRole": "content_admin",
+	"eyebrow": "About CPMR",
+	"lede": "The governing board provides strategic oversight for CPMR. Member names and appointments are published here as verified by the Centre's governance office.",
+	"tables": [
+		{
+			"caption": "Governing board — membership and roles",
+			"captionVisible": true,
+			"responsive": "stack",
+			"lastUpdated": "2026-05-15",
+			"columns": [
+				{ "key": "role", "header": "Role" },
+				{ "key": "member", "header": "Member" },
+				{ "key": "notes", "header": "Notes" }
+			],
+			"rows": [
+				{
+					"role": "Chairperson",
+					"member": "To be published",
+					"notes": "Appointed representative — name pending governance verification"
+				},
+				{
+					"role": "Government representative",
+					"member": "To be published",
+					"notes": "Ministry of Health nominee"
+				},
+				{
+					"role": "Scientific representative",
+					"member": "To be published",
+					"notes": "Research and quality assurance oversight"
+				},
+				{
+					"role": "Ex-officio member",
+					"member": "Director-General",
+					"notes": "Centre executive leadership"
+				}
+			]
+		}
+	],
+	"relatedLink": {
+		"label": "View management team",
+		"href": "/about/management/"
+	}
+}

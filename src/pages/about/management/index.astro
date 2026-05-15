@@ -1,0 +1,12 @@
+---
+/**
+ * E4-S05 — Management Team at `/about/management/` (UX Blueprint §8.2; governed `src/content/pages/about/management.json`).
+ */
+import GovernanceTablesContentPage from '../../../components/content/GovernanceTablesContentPage.astro';
+import { getGovernanceTablePageData } from '../../../components/content/governance-table-page-data';
+
+const pathname = Astro.url.pathname;
+const page = getGovernanceTablePageData('about/management');
+---
+
+<GovernanceTablesContentPage page={page} pathname={pathname} seoCanonicalPath="/about/management/" />

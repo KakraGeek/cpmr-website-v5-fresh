@@ -1,0 +1,48 @@
+{
+	"title": "Management Team",
+	"seoTitle": "Management Team | About CPMR",
+	"seoDescription": "Senior management structure and accountability at the Centre for Plant Medicine Research — verified institutional listing.",
+	"editorialStatus": "approved",
+	"contentOwnerRole": "content_admin",
+	"eyebrow": "About CPMR",
+	"lede": "Senior management leads day-to-day operations across research, services, and administration. Roles and accountable officers are listed below as verified content.",
+	"tables": [
+		{
+			"caption": "Senior management — roles and accountability",
+			"captionVisible": true,
+			"responsive": "stack",
+			"lastUpdated": "2026-05-15",
+			"columns": [
+				{ "key": "role", "header": "Role" },
+				{ "key": "officer", "header": "Officer" },
+				{ "key": "portfolio", "header": "Portfolio" }
+			],
+			"rows": [
+				{
+					"role": "Director-General",
+					"officer": "To be published",
+					"portfolio": "Overall Centre leadership and institutional accountability"
+				},
+				{
+					"role": "Director, Research",
+					"officer": "To be published",
+					"portfolio": "Research programmes, laboratories, and scientific outputs"
+				},
+				{
+					"role": "Director, Services",
+					"officer": "To be published",
+					"portfolio": "Clinical services, drug analysis, and public-facing technical services"
+				},
+				{
+					"role": "Director, Administration",
+					"officer": "To be published",
+					"portfolio": "Finance, human resources, facilities, and corporate services"
+				}
+			]
+		}
+	],
+	"relatedLink": {
+		"label": "View board members",
+		"href": "/about/board/"
+	}
+}

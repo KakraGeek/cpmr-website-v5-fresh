@@ -1,0 +1,12 @@
+---
+/**
+ * E4-S05 — Board Members at `/about/board/` (UX Blueprint §8.2; governed `src/content/pages/about/board.json`).
+ */
+import GovernanceTablesContentPage from '../../../components/content/GovernanceTablesContentPage.astro';
+import { getGovernanceTablePageData } from '../../../components/content/governance-table-page-data';
+
+const pathname = Astro.url.pathname;
+const page = getGovernanceTablePageData('about/board');
+---
+
+<GovernanceTablesContentPage page={page} pathname={pathname} seoCanonicalPath="/about/board/" />

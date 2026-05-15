@@ -1,0 +1,106 @@
+---
+/**
+ * E4-S05 — Board / Management (`T_GENERIC_CONTENT` + DESIGN.md §13.26 `Table`).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../layout/SiteHeader.astro';
+import SiteFooter from '../layout/SiteFooter.astro';
+import Breadcrumbs from '../layout/Breadcrumbs.astro';
+import AboutHubSideNav from './about/AboutHubSideNav.astro';
+import AboutHubInThisSection from './about/AboutHubInThisSection.astro';
+import ButtonLink from '../ui/ButtonLink.astro';
+import Table from '../ui/Table.astro';
+import { getAboutHubData } from '../../data/about-hub';
+import type { GovernanceTablePageData } from './governance-table-page-data';
+
+interface Props {
+	page: GovernanceTablePageData;
+	pathname: string;
+	seoCanonicalPath: string;
+}
+
+const { page, pathname, seoCanonicalPath } = Astro.props;
+
+const hub = getAboutHubData();
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: hub.pageTitle, href: '/about/' },
+	{ label: page.title },
+];
+---
+
+<BaseLayout title={page.seoTitle} description={page.seoDescription} seoCanonicalPath={seoCanonicalPath}>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<AboutHubInThisSection
+		groups={hub.navGroups}
+		pathname={pathname}
+		label={hub.inThisSectionLabel}
+	/>
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			<div class="lg:grid lg:grid-cols-[minmax(12rem,16rem)_minmax(0,1fr)] lg:gap-10 xl:gap-12">
+				<AboutHubSideNav
+					groups={hub.navGroups}
+					pathname={pathname}
+					heading={hub.inThisSectionLabel}
+				/>
+				<div class="min-w-0">
+					{
+						page.eyebrow ? (
+							<p class="font-sans text-sm font-semibold uppercase tracking-wide text-text-secondary">
+								{page.eyebrow}
+							</p>
+						) : null
+					}
+					<h1
+						class:list={[
+							'font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl',
+							page.eyebrow ? 'mt-2' : '',
+						]}
+					>
+						{page.title}
+					</h1>
+					{
+						page.lede ? (
+							<p class="mt-4 max-w-prose font-sans text-lg leading-relaxed text-text-secondary">
+								{page.lede}
+							</p>
+						) : null
+					}
+					<div class="mt-8 space-y-10">
+						{
+							page.tables.map((table) => (
+								<Table
+									caption={table.caption}
+									captionVisible={table.captionVisible}
+									columns={table.columns}
+									rows={table.rows}
+									responsive={table.responsive ?? 'stack'}
+									lastUpdated={table.lastUpdated}
+								/>
+							))
+						}
+					</div>
+					{
+						page.relatedLink ? (
+							<p class="mt-8 max-w-prose">
+								<ButtonLink
+									href={page.relatedLink.href}
+									label={page.relatedLink.label}
+									variant="secondary"
+								/>
+							</p>
+						) : null
+					}
+				</div>
+			</div>
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>

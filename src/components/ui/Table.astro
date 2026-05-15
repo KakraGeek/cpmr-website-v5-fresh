@@ -1,0 +1,195 @@
+---
+/**
+ * DESIGN.md §13.26 — accessible tabular data with stack (default) or scroll responsive modes.
+ */
+import type { TableColumn, TableCellValue, TableRow } from './table-types';
+
+interface Props {
+	caption: string;
+	captionVisible?: boolean;
+	columns: TableColumn[];
+	rows: TableRow[];
+	responsive?: 'stack' | 'scroll';
+	lastUpdated?: string;
+	class?: string;
+}
+
+const {
+	caption,
+	captionVisible = true,
+	columns,
+	rows,
+	responsive = 'stack',
+	lastUpdated,
+	class: className = '',
+} = Astro.props;
+
+const tableId = `table-${Math.random().toString(36).slice(2, 9)}`;
+const isScroll = responsive === 'scroll';
+
+function alignClass(column: TableColumn): string {
+	if (column.numeric || column.align === 'end') {
+		return 'text-end tabular-nums';
+	}
+	if (column.align === 'center') {
+		return 'text-center';
+	}
+	return 'text-start';
+}
+
+function formatCell(value: TableCellValue | undefined): { text: string; href?: string } {
+	if (value === undefined || value === null) {
+		return { text: '—' };
+	}
+	if (typeof value === 'object' && value !== null && 'href' in value && 'label' in value) {
+		return { text: value.label, href: value.href };
+	}
+	return { text: String(value) };
+}
+---
+
+<div
+	class:list={[
+		isScroll ? 'overflow-x-auto' : '',
+		className,
+	]}
+>
+	<table
+		class:list={[
+			'cpmr-table w-full border-collapse text-sm text-text-primary',
+			isScroll ? 'cpmr-table--scroll min-w-[40rem]' : 'cpmr-table--stack',
+		]}
+		aria-labelledby={captionVisible ? undefined : tableId}
+	>
+		<caption
+			id={tableId}
+			class:list={[
+				'mb-3 text-start font-sans text-sm font-semibold text-text-secondary',
+				!captionVisible ? 'sr-only' : '',
+			]}
+		>
+			{caption}
+		</caption>
+		<thead class="border-b border-border-subtle bg-surface-sunken">
+			<tr>
+				{
+					columns.map((column) => (
+						<th
+							scope="col"
+							class:list={[
+								'px-4 py-3 font-sans text-sm font-semibold text-text-secondary',
+								alignClass(column),
+							]}
+						>
+							{column.header}
+						</th>
+					))
+				}
+			</tr>
+		</thead>
+		<tbody>
+			{
+				rows.map((row) => (
+					<tr class="border-b border-border-subtle">
+						{columns.map((column) => {
+							const cell = formatCell(row[column.key]);
+							return (
+								<td
+									data-label={column.header}
+									class:list={[
+										'px-4 py-3 font-sans text-sm text-text-primary',
+										alignClass(column),
+									]}
+								>
+									{cell.href ? (
+										<a
+											href={cell.href}
+											class="text-link underline-offset-2 hover:text-link-hover focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-border-focus-ring"
+										>
+											{cell.text}
+										</a>
+									) : (
+										cell.text
+									)}
+								</td>
+							);
+						})}
+					</tr>
+				))
+			}
+		</tbody>
+		{
+			lastUpdated ? (
+				<tfoot>
+					<tr>
+						<td
+							colspan={columns.length}
+							class="px-4 py-3 text-end font-sans text-xs text-text-muted"
+						>
+							Last updated: {lastUpdated}
+						</td>
+					</tr>
+				</tfoot>
+			) : null
+		}
+	</table>
+</div>
+
+<style>
+	@media (max-width: 767px) {
+		.cpmr-table--stack thead {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0, 0, 0, 0);
+			white-space: nowrap;
+			border: 0;
+		}
+
+		.cpmr-table--stack tbody tr {
+			display: block;
+			padding: 0.75rem 0;
+		}
+
+		.cpmr-table--stack tbody td {
+			display: grid;
+			grid-template-columns: minmax(6rem, 40%) minmax(0, 1fr);
+			gap: 0.75rem;
+			padding: 0.5rem 1rem;
+			border: 0;
+		}
+
+		.cpmr-table--stack tbody td::before {
+			content: attr(data-label);
+			font-weight: 600;
+			color: var(--color-text-secondary);
+		}
+
+		.cpmr-table--stack tfoot tr {
+			display: block;
+		}
+
+		.cpmr-table--stack tfoot td {
+			display: block;
+			text-align: start;
+			padding: 0.75rem 1rem 0;
+		}
+	}
+
+	@media (min-width: 768px) {
+		.cpmr-table--scroll thead th:first-child,
+		.cpmr-table--scroll tbody td:first-child {
+			position: sticky;
+			left: 0;
+			z-index: 1;
+			background: var(--color-surface-page);
+		}
+
+		.cpmr-table--scroll thead th:first-child {
+			background: var(--color-surface-sunken);
+		}
+	}
+</style>
