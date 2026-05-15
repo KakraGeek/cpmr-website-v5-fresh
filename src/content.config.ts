@@ -351,12 +351,67 @@ const projects = defineCollection({
   schema: z.discriminatedUnion('entry_type', [projectEntrySchema, projectsIndexShellSchema]),
 });
 
+const staffIdSchema = z
+  .string()
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'staff id must be kebab-case');
+
+const staffPhotoSchema = z.object({
+  src: z.string().min(1),
+  alt: z.string(),
+  width: z.number().int().positive(),
+  height: z.number().int().positive(),
+});
+
+/** E6-S03 — `staff` collection (05_content_architecture §4.4). */
+const staffEntrySchema = authoredEditorialEnvelopeSchema
+  .merge(authoredSeoEnvelopeSchema)
+  .merge(
+    z.object({
+      entry_type: z.literal('staff'),
+      id: staffIdSchema,
+      full_name: z.string().min(1),
+      role_title: z.string().min(1),
+      department_ids: z.array(departmentIdSchema).min(1),
+      bio_summary: z.string().min(1),
+      photo: staffPhotoSchema.optional(),
+      expertise_tags: z.array(z.string().min(1)).default([]),
+      orcid: z.string().url().optional(),
+      email_public: z.boolean().default(false),
+      email: z.string().email().optional(),
+      sort_order: z.number().int().optional(),
+    }),
+  );
+
+const staffIndexShellSchema = authoredEditorialEnvelopeSchema
+  .merge(authoredSeoEnvelopeSchema)
+  .merge(
+    z.object({
+      entry_type: z.literal('index_shell'),
+      page_title: z.string().min(1),
+      lede: z.string().min(1),
+      intro_paragraphs: z.array(z.string().min(1)).min(1),
+      listing_section_title: z.string().min(1).default('All researchers'),
+      empty_state_title: z.string().min(1),
+      empty_state_body: z.string().min(1),
+      filter_department_label: z.string().min(1).default('Department'),
+      filter_department_all: z.string().min(1).default('All departments'),
+      filter_search_label: z.string().min(1).default('Search by name'),
+      filter_search_placeholder: z.string().min(1).default('Type a name…'),
+    }),
+  );
+
+const staff = defineCollection({
+  loader: glob({ base: './src/content/staff', pattern: '**/*.{md,mdx}' }),
+  schema: z.discriminatedUnion('entry_type', [staffEntrySchema, staffIndexShellSchema]),
+});
+
 export const collections = {
   _bootstrap,
   home,
   settings,
   departments,
   projects,
+  staff,
 };
 
 function mergeRefIntegrityResults(results: readonly RefIntegrityResult[]): RefIntegrityResult {
@@ -511,3 +566,46 @@ assertDepartmentRelationshipIntegrity();
 
 /** E6-S02 — project cross-collection foreign keys (§5.4 scholarly warn). */
 assertProjectRelationshipIntegrity();
+
+/** E6-S03 — staff `department_ids` vs departments index (§5.4 scholarly warn). */
+function assertStaffRelationshipIntegrity(): void {
+  const staffDir = join(process.cwd(), 'src/content/staff');
+  if (!existsSync(staffDir)) return;
+
+  const departmentIndex = indexDepartmentIdsFromContentDir();
+  const parts: RefIntegrityResult[] = [];
+
+  for (const name of readdirSync(staffDir, { withFileTypes: true })) {
+    if (!name.isFile()) continue;
+    const ext = extname(name.name);
+    if (ext !== '.md' && ext !== '.mdx') continue;
+
+    const sourceFile = join('src/content/staff', name.name);
+    const fm = readFrontmatterBlock(join(staffDir, name.name));
+    if (readEntryType(fm) !== 'staff') continue;
+
+    const staffId = readScalarField(fm, 'id');
+    const stem = basename(name.name, ext);
+    if (staffId && stem !== staffId) {
+      throw new Error(
+        `[cpmr-staff-integrity] Staff id "${staffId}" must match file stem "${stem}" (${name.name})`,
+      );
+    }
+
+    const departmentIds = readInlineStringArray(fm, 'department_ids');
+    if (departmentIds.length > 0) {
+      parts.push(
+        validatePlainIdsExist({
+          ids: departmentIds,
+          index: departmentIndex,
+          relationship: `${sourceFile} department_ids → departments.id`,
+          surface: 'scholarly_general',
+        }),
+      );
+    }
+  }
+
+  applyRefIntegrityResult(mergeRefIntegrityResults(parts));
+}
+
+assertStaffRelationshipIntegrity();

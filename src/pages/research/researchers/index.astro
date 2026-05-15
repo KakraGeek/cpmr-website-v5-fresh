@@ -1,0 +1,269 @@
+---
+/**
+ * E6-S03 — Global staff directory at `/research/researchers/` (client-side filters, static output).
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SiteHeader from '../../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../../components/layout/SiteFooter.astro';
+import Breadcrumbs from '../../../components/layout/Breadcrumbs.astro';
+import Card from '../../../components/ui/Card.astro';
+import { isPublicDepartment } from '../../../components/departments/department-home-helpers';
+import {
+	isPublicStaff,
+	resolveDepartmentLinks,
+	sortPublicStaff,
+	staffProfilePath,
+} from '../../../components/content/staff-directory-helpers';
+
+const pathname = Astro.url.pathname;
+
+const allStaff = await getCollection('staff');
+const shell = allStaff.find((entry) => entry.data.entry_type === 'index_shell');
+if (!shell || shell.data.entry_type !== 'index_shell') {
+	throw new Error(
+		'E6-S03: expected staff index_shell entry (src/content/staff/index-shell.md)',
+	);
+}
+
+const departments = await getCollection('departments');
+const publicDepartments = departments
+	.filter(isPublicDepartment)
+	.sort((a, b) => (a.data.sort_order ?? 999) - (b.data.sort_order ?? 999));
+
+const publicStaff = sortPublicStaff(allStaff.filter(isPublicStaff));
+
+const departmentFilterOptions = publicDepartments.map((dept) => ({
+	id: dept.data.id,
+	name: dept.data.name,
+}));
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Research', href: '/research/' },
+	{ label: shell.data.page_title },
+];
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const cardLinkClass =
+	`group block h-full no-underline text-inherit transition-shadow ${focusRing}`;
+
+const filterInputClass =
+	'min-h-11 w-full rounded-md border border-border-subtle bg-surface-card px-3 py-2 font-sans text-base text-text-primary shadow-e1 focus-visible:shadow-ring-focus focus-visible:outline-none';
+
+const filterSelectClass = filterInputClass;
+---
+
+<BaseLayout
+	title={shell.data.seo_title}
+	description={shell.data.seo_description}
+	seoCanonicalPath={shell.data.seo_canonical_path ?? '/research/researchers/'}
+>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			<h1 class="font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+				{shell.data.page_title}
+			</h1>
+			<p class="mt-4 max-w-prose font-sans text-lg leading-relaxed text-text-secondary">
+				{shell.data.lede}
+			</p>
+			<div class="mt-6 max-w-prose font-sans text-base leading-relaxed text-text-secondary [&>p+p]:mt-4">
+				{shell.data.intro_paragraphs.map((paragraph) => (
+					<p>{paragraph}</p>
+				))}
+			</div>
+
+			<section
+				class="mt-10 border-t border-border-subtle pt-10"
+				aria-labelledby="researchers-list-heading"
+			>
+				<h2
+					id="researchers-list-heading"
+					class="font-serif text-xl font-bold tracking-tight text-text-primary md:text-2xl"
+				>
+					{shell.data.listing_section_title}
+				</h2>
+
+				{
+					publicStaff.length > 0 ? (
+						<form
+							id="staff-directory-filters"
+							class="mt-6 grid gap-4 sm:grid-cols-2"
+							aria-label="Filter researcher profiles"
+						>
+							<div>
+								<label
+									for="staff-filter-department"
+									class="block font-sans text-sm font-medium text-text-primary"
+								>
+									{shell.data.filter_department_label}
+								</label>
+								<select
+									id="staff-filter-department"
+									name="department"
+									class:list={['mt-2', filterSelectClass]}
+								>
+									<option value="">{shell.data.filter_department_all}</option>
+									{departmentFilterOptions.map((dept) => (
+										<option value={dept.id}>{dept.name}</option>
+									))}
+								</select>
+							</div>
+							<div>
+								<label
+									for="staff-filter-search"
+									class="block font-sans text-sm font-medium text-text-primary"
+								>
+									{shell.data.filter_search_label}
+								</label>
+								<input
+									type="search"
+									id="staff-filter-search"
+									name="search"
+									class:list={['mt-2', filterInputClass]}
+									placeholder={shell.data.filter_search_placeholder}
+									autocomplete="off"
+								/>
+							</div>
+						</form>
+					) : null
+				}
+
+				<p
+					id="staff-directory-results-status"
+					class="mt-4 font-sans text-sm text-text-secondary"
+					role="status"
+					aria-live="polite"
+					hidden
+				/>
+
+				{
+					publicStaff.length === 0 ? (
+						<div
+							class="mt-6 rounded-lg border border-border-subtle bg-surface-sunken p-6"
+							role="status"
+						>
+							<p class="font-sans text-base font-semibold text-text-primary">
+								{shell.data.empty_state_title}
+							</p>
+							<p class="mt-2 max-w-prose font-sans text-sm leading-relaxed text-text-secondary">
+								{shell.data.empty_state_body}
+							</p>
+						</div>
+					) : (
+						<ul
+							id="staff-directory-list"
+							class="m-0 mt-6 grid list-none gap-4 p-0 md:grid-cols-2"
+							role="list"
+						>
+							{publicStaff.map((entry) => {
+								const deptLinks = resolveDepartmentLinks(
+									entry.data.department_ids,
+									departments,
+								);
+								const departmentIdsAttr = entry.data.department_ids.join(' ');
+								const searchName = entry.data.full_name.toLowerCase();
+								return (
+									<li
+										data-staff-card
+										data-department-ids={departmentIdsAttr}
+										data-search-name={searchName}
+									>
+										<a href={staffProfilePath(entry.data.id)} class={cardLinkClass}>
+											<Card elevation="hover-lift" padding="5" class="h-full">
+												<h3 class="font-serif text-lg font-bold text-text-primary group-hover:text-brand-700">
+													{entry.data.full_name}
+												</h3>
+												<p class="mt-2 font-sans text-sm font-medium text-text-secondary">
+													{entry.data.role_title}
+												</p>
+												<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+													{entry.data.bio_summary}
+												</p>
+												{
+													deptLinks.length > 0 ? (
+														<p class="mt-4 font-sans text-xs text-text-secondary">
+															<span class="font-medium text-text-primary">Departments:</span>{' '}
+															{deptLinks.map((link, index) => (
+																<>
+																	{index > 0 ? ', ' : null}
+																	<span>{link.name}</span>
+																</>
+															))}
+														</p>
+													) : null
+												}
+											</Card>
+										</a>
+									</li>
+								);
+							})}
+						</ul>
+					)
+				}
+			</section>
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>
+
+{
+	publicStaff.length > 0 ? (
+		<script is:inline>
+			(function () {
+				const form = document.getElementById('staff-directory-filters');
+				const list = document.getElementById('staff-directory-list');
+				const status = document.getElementById('staff-directory-results-status');
+				if (!form || !list || !status) return;
+
+				const departmentSelect = document.getElementById('staff-filter-department');
+				const searchInput = document.getElementById('staff-filter-search');
+				const cards = list.querySelectorAll('[data-staff-card]');
+				const total = cards.length;
+
+				function applyFilters() {
+					const departmentValue =
+						departmentSelect instanceof HTMLSelectElement ? departmentSelect.value : '';
+					const searchValue =
+						searchInput instanceof HTMLInputElement
+							? searchInput.value.trim().toLowerCase()
+							: '';
+
+					let visible = 0;
+					cards.forEach((card) => {
+						const deptIds = (card.getAttribute('data-department-ids') || '').split(' ').filter(Boolean);
+						const name = card.getAttribute('data-search-name') || '';
+						const matchesDepartment =
+							!departmentValue || deptIds.includes(departmentValue);
+						const matchesSearch = !searchValue || name.includes(searchValue);
+						const show = matchesDepartment && matchesSearch;
+						card.hidden = !show;
+						if (show) visible += 1;
+					});
+
+					if (visible === total) {
+						status.hidden = true;
+						status.textContent = '';
+					} else {
+						status.hidden = false;
+						status.textContent =
+							visible === 0
+								? 'No profiles match the current filters.'
+								: 'Showing ' + visible + ' of ' + total + ' profiles.';
+					}
+				}
+
+				form.addEventListener('input', applyFilters);
+				form.addEventListener('change', applyFilters);
+			})();
+		</script>
+	) : null
+}
