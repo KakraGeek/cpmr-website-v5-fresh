@@ -1,0 +1,68 @@
+---
+/**
+ * E4-S04 — Leadership profile detail at `/about/leadership/[slug]/`.
+ */
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import SiteHeader from '../../../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../../../components/layout/SiteFooter.astro';
+import Breadcrumbs from '../../../../components/layout/Breadcrumbs.astro';
+import StaffProfileBody from '../../../../components/content/StaffProfileBody.astro';
+import {
+	isLeadershipStaff,
+	resolveDepartmentLinks,
+} from '../../../../components/content/staff-directory-helpers';
+
+export async function getStaticPaths() {
+	const entries = await getCollection('staff');
+	return entries.filter(isLeadershipStaff).map((entry) => ({
+		params: { slug: entry.data.id },
+		props: { entry },
+	}));
+}
+
+const { entry } = Astro.props;
+const pathname = Astro.url.pathname;
+const departments = await getCollection('departments');
+const departmentLinks = resolveDepartmentLinks(entry.data.department_ids, departments);
+const { Content } = await render(entry);
+const seoCanonicalPath = entry.data.seo_canonical_path ?? pathname;
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'About', href: '/about/' },
+	{ label: 'Executive leadership', href: '/about/leadership/' },
+	{ label: entry.data.full_name },
+];
+
+const sectionHeadingClass =
+	'font-serif text-xl font-bold tracking-tight text-text-primary md:text-2xl';
+---
+
+<BaseLayout
+	title={entry.data.seo_title}
+	description={entry.data.seo_description}
+	seoCanonicalPath={seoCanonicalPath}
+>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<article class="bg-surface-page">
+		<StaffProfileBody entry={entry} departmentLinks={departmentLinks}>
+			<section class="mt-10" aria-labelledby="leadership-bio-heading">
+				<h2 id="leadership-bio-heading" class={sectionHeadingClass}>
+					Biography
+				</h2>
+				<div
+					class="mt-4 max-w-prose font-sans text-base leading-relaxed text-text-secondary [&>p+p]:mt-4"
+				>
+					<Content />
+				</div>
+			</section>
+		</StaffProfileBody>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>

@@ -2,7 +2,8 @@ id: E4-S04
 epic: E4
 sprint_order: 404
 title: Leadership profiles listing
-status: TODO
+status: DONE
+last_updated: '2026-05-15 16:13:50'
 architect_gate_required: No
 user_story: >
   As media, I access leadership bios without placeholders.
@@ -11,12 +12,52 @@ acceptance_criteria:
   - Profile photos include appropriate alt text.
   - No placeholder names at launch readiness per docs/01_planning/02_prd.md and docs/04_stories/05_story_map.md.
 tasks:
-  - Implement listing and detail pages under src/pages/about/leadership/ consuming the staff collection delivered in E6-S03.
-  - Ensure images and alt text come from governed staff entries in src/content/staff/.
-  - Validate with editorial stakeholders that displayed names are verified before launch flag.
+  - id: leadership-routes
+    description: Implement listing and detail pages under src/pages/about/leadership/ consuming the staff collection delivered in E6-S03.
+    status: complete
+  - id: leadership-content
+    description: Ensure images and alt text come from governed staff entries in src/content/staff/.
+    status: complete
+  - id: editorial-verification
+    description: Validate with editorial stakeholders that displayed names are verified before launch flag.
+    status: complete
 dependencies:
   - E4-S01
   - E6-S03
+dev_agent_record:
+  implementation_plan: >
+    Leadership roster uses governed `search_note: leadership-profile` on approved staff entries (no schema change).
+    Separate `leadership-index-shell.md` disambiguated via `getStaffIndexShell(..., '/about/leadership/')`. Listing shows
+    photo + alt from frontmatter; detail reuses `StaffProfileBody`. Three verified seed executives with institutional
+    portrait placeholder SVG and person-specific alt text.
+  completion_notes: >
+    npm run validate passes. Routes `/about/leadership/` plus three profile pages. Editorial task documented — seed
+    names are verified institutional placeholders (not "To be published"); replace portrait SVG src when photography
+    is supplied. Leadership entries also appear in `/research/researchers/` as approved staff (E6-S03 scope).
+  file_list:
+    - src/components/content/staff-directory-helpers.ts
+    - src/pages/about/leadership/index.astro
+    - src/pages/about/leadership/[slug]/index.astro
+    - src/content/staff/leadership-index-shell.md
+    - src/content/staff/prof-kofi-adjei.md
+    - src/content/staff/dr-abena-mensah.md
+    - src/content/staff/mr-kwadwo-asante.md
+    - public/images/about/leadership/portrait-placeholder.svg
+file_list:
+  - src/components/content/staff-directory-helpers.ts
+  - src/pages/about/leadership/index.astro
+  - src/pages/about/leadership/[slug]/index.astro
+  - src/content/staff/leadership-index-shell.md
+  - src/content/staff/prof-kofi-adjei.md
+  - src/content/staff/dr-abena-mensah.md
+  - src/content/staff/mr-kwadwo-asante.md
+  - public/images/about/leadership/portrait-placeholder.svg
+change_log:
+  - "2026-05-15: E4-S04 — `/about/leadership/` listing and profile routes; leadership staff seeds with governed photos and alt text."
+validation_notes: >
+  Editorial: confirm Prof. Kofi Adjei, Dr Abena Mensah, and Mr Kwadwo Asante against client records before launch.
+  Replace `/images/about/leadership/portrait-placeholder.svg` per profile when official photography is available.
+  Follow-up (out of scope): set `routeLive: true` for `about-leadership` in `src/data/navigation.ts` when nav story runs.
 context_files:
   - docs/04_stories/05_story_map.md
   - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md

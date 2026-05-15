@@ -5,9 +5,21 @@ export type PublicStaffEntry = CollectionEntry<'staff'> & {
 	data: { entry_type: 'staff' };
 };
 
+export type StaffIndexShellEntry = CollectionEntry<'staff'> & {
+	data: { entry_type: 'index_shell' };
+};
+
 export function isPublicStaff(entry: CollectionEntry<'staff'>): entry is PublicStaffEntry {
 	if (entry.data.entry_type !== 'staff') return false;
 	return entry.data.editorial_status === 'approved';
+}
+
+/** Governed marker in `search_note` — surfaces profile on `/about/leadership/` (E4-S04). */
+export const LEADERSHIP_PROFILE_SEARCH_NOTE = 'leadership-profile';
+
+export function isLeadershipStaff(entry: CollectionEntry<'staff'>): entry is PublicStaffEntry {
+	if (!isPublicStaff(entry)) return false;
+	return entry.data.search_note === LEADERSHIP_PROFILE_SEARCH_NOTE;
 }
 
 export type DepartmentLink = {
@@ -40,6 +52,22 @@ export function resolveDepartmentLinks(
 /** Global staff directory canonical path (E6-S03 — `/research/researchers/` per story AC). */
 export function staffProfilePath(staffId: string): string {
 	return `/research/researchers/${staffId}/`;
+}
+
+/** Executive leadership profile path (E4-S04). */
+export function leadershipProfilePath(staffId: string): string {
+	return `/about/leadership/${staffId}/`;
+}
+
+export function getStaffIndexShell(
+	entries: CollectionEntry<'staff'>[],
+	canonicalPath: string,
+): StaffIndexShellEntry | undefined {
+	return entries.find(
+		(entry): entry is StaffIndexShellEntry =>
+			entry.data.entry_type === 'index_shell' &&
+			(entry.data.seo_canonical_path ?? '') === canonicalPath,
+	);
 }
 
 export function sortPublicStaff(entries: PublicStaffEntry[]): PublicStaffEntry[] {

@@ -1,0 +1,135 @@
+---
+/**
+ * E4-S04 — Executive leadership listing at `/about/leadership/` (staff collection, E6-S03).
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SiteHeader from '../../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../../components/layout/SiteFooter.astro';
+import Breadcrumbs from '../../../components/layout/Breadcrumbs.astro';
+import Card from '../../../components/ui/Card.astro';
+import {
+	getStaffIndexShell,
+	isLeadershipStaff,
+	leadershipProfilePath,
+	sortPublicStaff,
+} from '../../../components/content/staff-directory-helpers';
+
+const pathname = Astro.url.pathname;
+const leadershipCanonical = '/about/leadership/';
+
+const allStaff = await getCollection('staff');
+const shell = getStaffIndexShell(allStaff, leadershipCanonical);
+if (!shell) {
+	throw new Error(
+		'E4-S04: expected leadership index_shell with seo_canonical_path /about/leadership/ (src/content/staff/leadership-index-shell.md)',
+	);
+}
+
+const leadershipStaff = sortPublicStaff(allStaff.filter(isLeadershipStaff));
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'About', href: '/about/' },
+	{ label: shell.data.page_title },
+];
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const cardLinkClass =
+	`group block h-full no-underline text-inherit transition-shadow ${focusRing}`;
+---
+
+<BaseLayout
+	title={shell.data.seo_title}
+	description={shell.data.seo_description}
+	seoCanonicalPath={shell.data.seo_canonical_path ?? leadershipCanonical}
+>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			<h1 class="font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+				{shell.data.page_title}
+			</h1>
+			<p class="mt-4 max-w-prose font-sans text-lg leading-relaxed text-text-secondary">
+				{shell.data.lede}
+			</p>
+			<div class="mt-6 max-w-prose font-sans text-base leading-relaxed text-text-secondary [&>p+p]:mt-4">
+				{shell.data.intro_paragraphs.map((paragraph) => (
+					<p>{paragraph}</p>
+				))}
+			</div>
+
+			<section
+				class="mt-10 border-t border-border-subtle pt-10"
+				aria-labelledby="leadership-list-heading"
+			>
+				<h2
+					id="leadership-list-heading"
+					class="font-serif text-xl font-bold tracking-tight text-text-primary md:text-2xl"
+				>
+					{shell.data.listing_section_title}
+				</h2>
+
+				{
+					leadershipStaff.length === 0 ? (
+						<div
+							class="mt-6 rounded-lg border border-border-subtle bg-surface-sunken p-6"
+							role="status"
+						>
+							<p class="font-sans text-base font-semibold text-text-primary">
+								{shell.data.empty_state_title}
+							</p>
+							<p class="mt-2 max-w-prose font-sans text-sm leading-relaxed text-text-secondary">
+								{shell.data.empty_state_body}
+							</p>
+						</div>
+					) : (
+						<ul class="m-0 mt-6 grid list-none gap-6 p-0 md:grid-cols-2" role="list">
+							{leadershipStaff.map((entry) => (
+								<li>
+									<a
+										href={leadershipProfilePath(entry.data.id)}
+										class={cardLinkClass}
+									>
+										<Card elevation="hover-lift" padding="5" class="h-full">
+											{
+												entry.data.photo ? (
+													<img
+														src={entry.data.photo.src}
+														alt={entry.data.photo.alt}
+														width={entry.data.photo.width}
+														height={entry.data.photo.height}
+														class="mb-4 h-auto w-full max-w-xs rounded-lg border border-border-subtle object-cover"
+														loading="lazy"
+														decoding="async"
+													/>
+												) : null
+											}
+											<h3 class="font-serif text-lg font-bold text-text-primary group-hover:text-brand-700">
+												{entry.data.full_name}
+											</h3>
+											<p class="mt-2 font-sans text-sm font-medium text-text-secondary">
+												{entry.data.role_title}
+											</p>
+											<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+												{entry.data.bio_summary}
+											</p>
+										</Card>
+									</a>
+								</li>
+							))}
+						</ul>
+					)
+				}
+			</section>
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>
