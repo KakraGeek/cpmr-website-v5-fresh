@@ -1,0 +1,57 @@
+---
+/**
+ * E5-S02 — T_DEPARTMENT_HOME page shell (DESIGN.md §14.3).
+ */
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../layout/SiteHeader.astro';
+import SiteFooter from '../layout/SiteFooter.astro';
+import Breadcrumbs from '../layout/Breadcrumbs.astro';
+import DepartmentHero from './DepartmentHero.astro';
+import DepartmentTabs from './DepartmentTabs.astro';
+import DepartmentHomeMain from './DepartmentHomeMain.astro';
+import {
+	buildPrimaryActions,
+	departmentBasePath,
+	resolveMiniSiteNav,
+} from './department-home-helpers';
+
+interface Props {
+	entry: CollectionEntry<'departments'> & { data: { entry_type: 'department' } };
+	pathname: string;
+}
+
+const { entry, pathname } = Astro.props;
+const dept = entry.data;
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Departments', href: '/departments/' },
+	{ label: dept.name },
+];
+
+const navItems = resolveMiniSiteNav(dept.id, dept.mini_site_nav);
+const primaryActions = buildPrimaryActions(dept.id);
+const canonicalPath = dept.seo_canonical_path ?? departmentBasePath(dept.id);
+---
+
+<BaseLayout
+	title={dept.seo_title}
+	description={dept.seo_description}
+	seoCanonicalPath={canonicalPath}
+>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<DepartmentHero
+		departmentName={dept.hero.headline}
+		lede={dept.hero.lede}
+		primaryActions={primaryActions}
+	/>
+	<DepartmentTabs items={navItems} currentPath={pathname} />
+	<DepartmentHomeMain entry={entry} />
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>

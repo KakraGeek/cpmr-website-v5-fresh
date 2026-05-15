@@ -1,0 +1,55 @@
+---
+/**
+ * DESIGN.md §13.16 — local department navigation (links, not ARIA tabs).
+ */
+import type { DepartmentNavItem } from './department-home-helpers';
+
+interface Props {
+	items: DepartmentNavItem[];
+	currentPath: string;
+}
+
+const { items, currentPath } = Astro.props;
+
+function normalizePath(path: string): string {
+	if (!path || path === '/') return '/';
+	return path.endsWith('/') ? path : `${path}/`;
+}
+
+const current = normalizePath(currentPath);
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const linkBase =
+	`inline-flex min-h-11 shrink-0 items-center border-b-2 border-transparent px-1 py-3 font-sans text-sm font-medium text-text-secondary no-underline transition-colors hover:text-text-primary ${focusRing}`;
+
+const linkCurrent =
+	`inline-flex min-h-11 shrink-0 items-center border-b-2 border-border-brand px-1 py-3 font-sans text-sm font-medium text-text-primary no-underline ${focusRing}`;
+---
+
+<div class="border-b border-border-default bg-surface-page lg:sticky lg:top-0 lg:z-sticky">
+	<div class="mx-auto w-full max-w-content px-4">
+		<div
+			class="-mx-4 overflow-x-auto px-4 [scrollbar-width:thin] md:overflow-visible"
+			tabindex="0"
+		>
+			<nav aria-label="Department sections" class="flex min-w-max gap-4 md:min-w-0 md:flex-wrap">
+				{
+					items.map((item) => {
+						const isCurrent = normalizePath(item.href) === current;
+						return (
+							<a
+								href={item.href}
+								class={isCurrent ? linkCurrent : linkBase}
+								aria-current={isCurrent ? 'page' : undefined}
+							>
+								{item.label}
+							</a>
+						);
+					})
+				}
+			</nav>
+		</div>
+	</div>
+</div>

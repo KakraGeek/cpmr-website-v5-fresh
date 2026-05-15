@@ -1,0 +1,40 @@
+---
+/**
+ * DESIGN.md §13.24 — section heading block for T_DEPARTMENT_HOME modules.
+ */
+import ButtonLink from '../ui/ButtonLink.astro';
+
+interface Props {
+	title: string;
+	description?: string;
+	viewAll?: { label: string; href: string };
+	headingId: string;
+}
+
+const { title, description, viewAll, headingId } = Astro.props;
+---
+
+<header class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+	<div class="min-w-0">
+		<h2
+			id={headingId}
+			class="font-serif text-2xl font-semibold tracking-tight text-text-primary md:text-3xl"
+		>
+			{title}
+		</h2>
+		{
+			description ? (
+				<p class="mt-2 max-w-prose font-sans text-base leading-relaxed text-text-secondary">
+					{description}
+				</p>
+			) : null
+		}
+	</div>
+	{
+		viewAll ? (
+			<div class="shrink-0">
+				<ButtonLink href={viewAll.href} label={viewAll.label} variant="ghost" size="sm" />
+			</div>
+		) : null
+	}
+</header>

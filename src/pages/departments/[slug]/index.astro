@@ -1,0 +1,22 @@
+---
+/**
+ * E5-S02 — Department landing at `/departments/[slug]/` (T_DEPARTMENT_HOME).
+ * Paths generated only for approved, verified departments (E5-S01 public index policy).
+ */
+import { getCollection } from 'astro:content';
+import DepartmentHomePage from '../../../components/departments/DepartmentHomePage.astro';
+import { isPublicDepartment } from '../../../components/departments/department-home-helpers';
+
+export async function getStaticPaths() {
+	const entries = await getCollection('departments');
+	return entries.filter(isPublicDepartment).map((entry) => ({
+		params: { slug: entry.data.id },
+		props: { entry },
+	}));
+}
+
+const { entry } = Astro.props;
+const pathname = Astro.url.pathname;
+---
+
+<DepartmentHomePage entry={entry} pathname={pathname} />

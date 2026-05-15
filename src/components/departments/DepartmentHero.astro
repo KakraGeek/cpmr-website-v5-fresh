@@ -1,0 +1,83 @@
+---
+/**
+ * DESIGN.md §13.15 — DepartmentHero for T_DEPARTMENT_HOME.
+ */
+import ButtonLink from '../ui/ButtonLink.astro';
+import type { DepartmentPrimaryAction } from './department-home-helpers';
+import { departmentInitials } from './department-home-helpers';
+
+interface Props {
+	departmentName: string;
+	lede?: string;
+	primaryActions: DepartmentPrimaryAction[];
+}
+
+const { departmentName, lede, primaryActions } = Astro.props;
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const initials = departmentInitials(departmentName);
+---
+
+<section
+	class="border-b border-border-subtle bg-surface-page"
+	aria-labelledby="department-hero-heading"
+>
+	<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+		<div
+			class="rounded-xl border border-border-subtle bg-surface-card p-6 shadow-e0 md:p-8 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(14rem,18rem)] lg:gap-10"
+		>
+			<div class="min-w-0">
+				<p class="font-sans text-xs font-medium uppercase tracking-wide text-text-secondary">
+					Department
+				</p>
+				<h1
+					id="department-hero-heading"
+					class="mt-2 font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl"
+				>
+					{departmentName}
+				</h1>
+				{
+					lede ? (
+						<p class="mt-4 max-w-prose font-sans text-lg leading-relaxed text-text-secondary">
+							{lede}
+						</p>
+					) : null
+				}
+			</div>
+			<aside class="mt-8 border-t border-border-subtle pt-8 lg:mt-0 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-10">
+				<div class="flex items-center gap-4">
+					<div
+						class="flex size-14 shrink-0 items-center justify-center rounded-full border border-border-subtle bg-surface-sunken font-sans text-sm font-semibold text-brand-700"
+						aria-hidden="true"
+					>
+						{initials}
+					</div>
+					<div class="min-w-0">
+						<p class="font-sans text-sm font-semibold text-text-primary">Head of department</p>
+						<p class="mt-1 font-sans text-sm leading-relaxed text-text-secondary">
+							Profile will appear when staff records are linked to this department.
+						</p>
+					</div>
+				</div>
+				<ul class="m-0 mt-6 flex list-none flex-col gap-2 p-0" role="list">
+					{
+						primaryActions.map((action) => (
+							<li>
+								<ButtonLink
+									href={action.href}
+									label={action.label}
+									variant="ghost"
+									size="md"
+									fullWidth
+									class={focusRing}
+								/>
+							</li>
+						))
+					}
+				</ul>
+			</aside>
+		</div>
+	</div>
+</section>

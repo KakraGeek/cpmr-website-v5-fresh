@@ -1,0 +1,89 @@
+---
+/**
+ * T_DEPARTMENT_HOME body modules (DESIGN.md §14.3) — mandate prose + honest empty states.
+ */
+import type { CollectionEntry } from 'astro:content';
+import DepartmentSectionHeader from './DepartmentSectionHeader.astro';
+import DepartmentSectionEmpty from './DepartmentSectionEmpty.astro';
+import {
+	departmentBasePath,
+	departmentBodyParagraphs,
+	departmentHomeEmptyStates,
+} from './department-home-helpers';
+
+interface Props {
+	entry: CollectionEntry<'departments'> & { data: { entry_type: 'department' } };
+}
+
+const { entry } = Astro.props;
+
+const dept = entry.data;
+const base = departmentBasePath(dept.id);
+const empty = departmentHomeEmptyStates;
+const bodyParagraphs = departmentBodyParagraphs(entry.body ?? '');
+---
+
+<div class="bg-surface-page">
+	<div class="mx-auto w-full max-w-content px-4 py-10 md:py-12">
+		<section class="border-b border-border-subtle pb-10 md:pb-12" aria-labelledby="dept-mandate-heading">
+			<DepartmentSectionHeader
+				headingId="dept-mandate-heading"
+				title="Mandate & functions"
+			/>
+			<div class="grid gap-8 lg:grid-cols-2 lg:gap-10">
+				<div class="min-w-0">
+					<p class="max-w-prose font-sans text-base leading-relaxed text-text-secondary">
+						{dept.mandate_summary}
+					</p>
+				</div>
+				<div class="max-w-prose font-sans text-base leading-relaxed text-text-secondary [&>p+p]:mt-4">
+					{
+						bodyParagraphs.length > 0 ? (
+							bodyParagraphs.map((paragraph) => <p>{paragraph}</p>)
+						) : (
+							<p class="text-text-muted">
+								Additional mandate and function detail will be published when editorial review is
+								complete.
+							</p>
+						)
+					}
+				</div>
+			</div>
+		</section>
+
+		<section class="border-b border-border-subtle py-10 md:py-12" aria-labelledby="dept-projects-heading">
+			<DepartmentSectionHeader
+				headingId="dept-projects-heading"
+				title="Featured projects"
+				viewAll={{ label: 'All projects', href: `${base}projects/` }}
+			/>
+			<DepartmentSectionEmpty title={empty.projects.title} body={empty.projects.body} />
+		</section>
+
+		<section
+			class="border-b border-border-subtle py-10 md:py-12"
+			aria-labelledby="dept-publications-heading"
+		>
+			<DepartmentSectionHeader
+				headingId="dept-publications-heading"
+				title="Recent publications"
+				viewAll={{ label: 'View repository', href: '/research/publications/' }}
+			/>
+			<DepartmentSectionEmpty title={empty.publications.title} body={empty.publications.body} />
+		</section>
+
+		<section class="border-b border-border-subtle py-10 md:py-12" aria-labelledby="dept-services-heading">
+			<DepartmentSectionHeader headingId="dept-services-heading" title="Services offered" />
+			<DepartmentSectionEmpty title={empty.services.title} body={empty.services.body} />
+		</section>
+
+		<section class="py-10 md:py-12" aria-labelledby="dept-news-heading">
+			<DepartmentSectionHeader
+				headingId="dept-news-heading"
+				title="Department news"
+				viewAll={{ label: 'All news', href: `${base}news/` }}
+			/>
+			<DepartmentSectionEmpty title={empty.news.title} body={empty.news.body} />
+		</section>
+	</div>
+</div>

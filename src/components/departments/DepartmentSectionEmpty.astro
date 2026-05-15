@@ -1,0 +1,16 @@
+---
+interface Props {
+	title: string;
+	body: string;
+}
+
+const { title, body } = Astro.props;
+---
+
+<div
+	class="rounded-lg border border-border-subtle bg-surface-sunken p-6"
+	role="status"
+>
+	<p class="font-sans text-base font-semibold text-text-primary">{title}</p>
+	<p class="mt-2 max-w-prose font-sans text-sm leading-relaxed text-text-secondary">{body}</p>
+</div>
