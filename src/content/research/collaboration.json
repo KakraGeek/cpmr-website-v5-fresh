@@ -1,0 +1,55 @@
+{
+	"pageTitle": "Research collaboration",
+	"seoTitle": "Research collaboration | CPMR",
+	"seoDescription": "Partnership process and official contact pathway for research collaboration with the Centre for Plant Medicine Research.",
+	"eyebrow": "Research",
+	"lede": "International partners, universities, and research agencies can assess CPMR capacity and follow a clear pathway for formal collaboration enquiries.",
+	"introParagraphs": [
+		"Collaboration covers joint research, analytical services, capacity building, and access to specialist facilities where policies allow. Enquiries are reviewed against institutional priorities and regulatory obligations.",
+		"Use the process below before contacting the research partnerships desk. Operational contact details remain governed in this file for future CMS compatibility."
+	],
+	"processSectionTitle": "Partnership process",
+	"processSteps": [
+		{
+			"id": "scope",
+			"title": "Define scope and objectives",
+			"description": "Summarise the research question, expected outputs, timeline, and whether facility access or analytical services are required."
+		},
+		{
+			"id": "capacity",
+			"title": "Review facilities and departmental fit",
+			"description": "Consult the research facilities profiles and department mini-sites to confirm hosting units and technical feasibility."
+		},
+		{
+			"id": "submit",
+			"title": "Submit a formal enquiry",
+			"description": "Contact the research partnerships desk with institutional affiliation, principal investigator details, and any ethics or export-control considerations."
+		},
+		{
+			"id": "review",
+			"title": "Institutional review",
+			"description": "CPMR reviews the proposal against mandate, capacity, and partnership policy. Approved collaborations proceed to memoranda or service agreements as required."
+		}
+	],
+	"contactSectionTitle": "Official contact pathway",
+	"contactIntro": "For research collaboration and partnership enquiries, use the institutional email below. Do not send patient-specific or clinical triage requests to this pathway.",
+	"contact": {
+		"label": "Research partnerships desk",
+		"email": "research@cpmr.gov.gh",
+		"responseNote": "Allow up to ten working days for an initial response. Urgent operational matters should use official clinic or service contact routes when published."
+	},
+	"relatedLinks": [
+		{
+			"label": "View research facilities",
+			"href": "/research/facilities/"
+		},
+		{
+			"label": "Explore departments",
+			"href": "/departments/"
+		},
+		{
+			"label": "Partners and affiliations",
+			"href": "/about/partners/"
+		}
+	]
+}

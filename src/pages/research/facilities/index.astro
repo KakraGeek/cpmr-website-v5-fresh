@@ -1,0 +1,180 @@
+---
+/**
+ * E6-S05 — Research facilities at `/research/facilities/` (UX Blueprint §9.2).
+ * Governed copy and facility profiles: `src/content/research/facilities.json`.
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SiteHeader from '../../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../../components/layout/SiteFooter.astro';
+import Breadcrumbs from '../../../components/layout/Breadcrumbs.astro';
+import ButtonLink from '../../../components/ui/ButtonLink.astro';
+import Card from '../../../components/ui/Card.astro';
+import page from '../../../content/research/facilities.json';
+
+type FacilitySpec = { label: string; value: string };
+
+type Facility = {
+	id: string;
+	name: string;
+	summary: string;
+	imagePath?: string;
+	imageAlt?: string;
+	specs: FacilitySpec[];
+	publicNotes?: string;
+	departmentSlug?: string;
+	departmentLabel?: string;
+};
+
+const pathname = Astro.url.pathname;
+const facilities = page.facilities as Facility[];
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Research', href: '/research/' },
+	{ label: page.pageTitle },
+];
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const sectionHeadingClass =
+	'font-serif text-xl font-bold tracking-tight text-text-primary md:text-2xl';
+---
+
+<BaseLayout
+	title={page.seoTitle}
+	description={page.seoDescription}
+	seoCanonicalPath="/research/facilities/"
+>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			{
+				page.eyebrow ? (
+					<p class="font-sans text-sm font-semibold uppercase tracking-wide text-text-secondary">
+						{page.eyebrow}
+					</p>
+				) : null
+			}
+			<h1
+				class:list={[
+					'font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl',
+					page.eyebrow ? 'mt-2' : '',
+				]}
+			>
+				{page.pageTitle}
+			</h1>
+			<p class="mt-4 max-w-prose font-sans text-lg leading-relaxed text-text-secondary">
+				{page.lede}
+			</p>
+			<div class="mt-6 max-w-prose font-sans text-base leading-relaxed text-text-secondary [&>p+p]:mt-4">
+				{page.introParagraphs.map((paragraph) => (
+					<p>{paragraph}</p>
+				))}
+			</div>
+
+			{
+				page.safetyNote ? (
+					<section
+						class="mt-10 rounded-lg border border-border-subtle bg-surface-sunken p-6"
+						aria-labelledby="facilities-safety-heading"
+					>
+						<h2 id="facilities-safety-heading" class="font-serif text-lg font-bold text-text-primary">
+							{page.safetyHeading}
+						</h2>
+						<p class="mt-2 max-w-prose font-sans text-sm leading-relaxed text-text-secondary">
+							{page.safetyNote}
+						</p>
+					</section>
+				) : null
+			}
+
+			<section class="mt-10 border-t border-border-subtle pt-10" aria-labelledby="facilities-list-heading">
+				<h2 id="facilities-list-heading" class={sectionHeadingClass}>
+					{page.listingSectionTitle}
+				</h2>
+				<ul class="m-0 mt-6 grid list-none gap-6 p-0 lg:grid-cols-2" role="list">
+					{
+						facilities.map((facility) => (
+							<li>
+								<Card as="article" elevation="hover-lift" padding="6" radius="lg" class="h-full">
+									{
+										facility.imagePath ? (
+											<div class="overflow-hidden rounded-md border border-border-subtle bg-surface-sunken">
+												<img
+													src={facility.imagePath}
+													alt={facility.imageAlt ?? ''}
+													width="640"
+													height="360"
+													class="h-40 w-full object-cover"
+													loading="lazy"
+													decoding="async"
+												/>
+											</div>
+										) : null
+									}
+									<h3 class="mt-4 font-serif text-lg font-bold text-text-primary">{facility.name}</h3>
+									<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+										{facility.summary}
+									</p>
+									{
+										facility.specs.length > 0 ? (
+											<dl class="mt-4 grid gap-2 font-sans text-sm">
+												{facility.specs.map((spec) => (
+													<div class="grid gap-1 sm:grid-cols-[minmax(8rem,10rem)_1fr]">
+														<dt class="font-semibold text-text-primary">{spec.label}</dt>
+														<dd class="m-0 text-text-secondary">{spec.value}</dd>
+													</div>
+												))}
+											</dl>
+										) : null
+									}
+									{
+										facility.publicNotes ? (
+											<p class="mt-4 font-sans text-sm leading-relaxed text-text-secondary">
+												{facility.publicNotes}
+											</p>
+										) : null
+									}
+									{
+										facility.departmentSlug && facility.departmentLabel ? (
+											<p class="mt-4">
+												<a
+													href={`/departments/${facility.departmentSlug}/`}
+													class:list={[
+														'font-sans text-sm font-medium text-brand-700 no-underline hover:text-brand-800',
+														focusRing,
+													]}
+												>
+													{facility.departmentLabel}
+												</a>
+											</p>
+										) : null
+									}
+								</Card>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+
+			{
+				page.relatedLink ? (
+					<p class="mt-10 max-w-prose">
+						<ButtonLink
+							href={page.relatedLink.href}
+							label={page.relatedLink.label}
+							variant="secondary"
+						/>
+					</p>
+				) : null
+			}
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>

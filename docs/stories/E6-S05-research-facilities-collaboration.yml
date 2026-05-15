@@ -2,17 +2,42 @@ id: E6-S05
 epic: E6
 sprint_order: 605
 title: Research facilities and collaboration
-status: TODO
+status: DONE
+last_updated: '2026-05-15 17:13:50'
 architect_gate_required: No
 user_story: >
   As a partner, I assess infrastructure and contact pathways.
 acceptance_criteria:
   - A Research facilities surface and a collaboration contact pathway exist per docs/04_stories/05_story_map.md Epic E6 story E6-S05.
 tasks:
-  - Implement the facilities page and collaboration contact template under src/pages/research/ using governed content from src/content.
-  - Keep routing and content patterns static-compatible and aligned with docs/02_design/03_ux_blueprint.md §9.
+  - "[x] Implement the facilities page and collaboration contact template under src/pages/research/ using governed content from src/content."
+  - "[x] Keep routing and content patterns static-compatible and aligned with docs/02_design/03_ux_blueprint.md §9."
 dependencies:
   - E6-S01
+dev_agent_record:
+  implementation_plan: >
+    Governed JSON in src/content/research/facilities.json and collaboration.json.
+    Static pages at /research/facilities/ and /research/collaboration/ follow E6-S01
+    layout patterns (BaseLayout, Breadcrumbs, DESIGN tokens). Hub.json enables facilities
+    teaser and discovery links without editing forbidden research/index.astro.
+  completion_notes: >
+    E6-S05 complete. Facilities page lists three seed profiles with specs, safety note,
+    and department links. Collaboration page provides numbered partnership process and
+    mailto contact (research@cpmr.gov.gh). npm run validate passed (42 pages).
+  file_list:
+    - src/pages/research/facilities/index.astro
+    - src/pages/research/collaboration/index.astro
+    - src/content/research/facilities.json
+    - src/content/research/collaboration.json
+    - src/content/research/hub.json
+file_list:
+  - src/pages/research/facilities/index.astro
+  - src/pages/research/collaboration/index.astro
+  - src/content/research/facilities.json
+  - src/content/research/collaboration.json
+  - src/content/research/hub.json
+change_log:
+  - "2026-05-15: E6-S05 research facilities and collaboration routes with governed content."
 context_files:
   - docs/04_stories/05_story_map.md
   - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md

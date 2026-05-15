@@ -1,0 +1,157 @@
+---
+/**
+ * E6-S05 — Research collaboration at `/research/collaboration/` (UX Blueprint §9.2).
+ * Governed copy and contact pathway: `src/content/research/collaboration.json`.
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SiteHeader from '../../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../../components/layout/SiteFooter.astro';
+import Breadcrumbs from '../../../components/layout/Breadcrumbs.astro';
+import ButtonLink from '../../../components/ui/ButtonLink.astro';
+import page from '../../../content/research/collaboration.json';
+
+type ProcessStep = {
+	id: string;
+	title: string;
+	description: string;
+};
+
+type RelatedLink = {
+	label: string;
+	href: string;
+};
+
+const pathname = Astro.url.pathname;
+const processSteps = page.processSteps as ProcessStep[];
+const relatedLinks = page.relatedLinks as RelatedLink[];
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Research', href: '/research/' },
+	{ label: page.pageTitle },
+];
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const sectionHeadingClass =
+	'font-serif text-xl font-bold tracking-tight text-text-primary md:text-2xl';
+---
+
+<BaseLayout
+	title={page.seoTitle}
+	description={page.seoDescription}
+	seoCanonicalPath="/research/collaboration/"
+>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			{
+				page.eyebrow ? (
+					<p class="font-sans text-sm font-semibold uppercase tracking-wide text-text-secondary">
+						{page.eyebrow}
+					</p>
+				) : null
+			}
+			<h1
+				class:list={[
+					'font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl',
+					page.eyebrow ? 'mt-2' : '',
+				]}
+			>
+				{page.pageTitle}
+			</h1>
+			<p class="mt-4 max-w-prose font-sans text-lg leading-relaxed text-text-secondary">
+				{page.lede}
+			</p>
+			<div class="mt-6 max-w-prose font-sans text-base leading-relaxed text-text-secondary [&>p+p]:mt-4">
+				{page.introParagraphs.map((paragraph) => (
+					<p>{paragraph}</p>
+				))}
+			</div>
+
+			<section class="mt-10 border-t border-border-subtle pt-10" aria-labelledby="collaboration-process-heading">
+				<h2 id="collaboration-process-heading" class={sectionHeadingClass}>
+					{page.processSectionTitle}
+				</h2>
+				<ol class="m-0 mt-6 list-none space-y-6 p-0">
+					{
+						processSteps.map((step, index) => (
+							<li class="flex gap-4">
+								<span
+									class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border-subtle bg-surface-sunken font-sans text-sm font-semibold text-brand-700"
+									aria-hidden="true"
+								>
+									{index + 1}
+								</span>
+								<div class="min-w-0">
+									<h3 class="font-sans text-base font-semibold text-text-primary">{step.title}</h3>
+									<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+										{step.description}
+									</p>
+								</div>
+							</li>
+						))
+					}
+				</ol>
+			</section>
+
+			<section
+				class="mt-10 rounded-lg border border-border-subtle bg-surface-card p-6 shadow-e1"
+				aria-labelledby="collaboration-contact-heading"
+			>
+				<h2 id="collaboration-contact-heading" class={sectionHeadingClass}>
+					{page.contactSectionTitle}
+				</h2>
+				<p class="mt-4 max-w-prose font-sans text-base leading-relaxed text-text-secondary">
+					{page.contactIntro}
+				</p>
+				<div class="mt-6 max-w-prose font-sans text-base text-text-secondary">
+					{
+						page.contact.label ? (
+							<p class="font-medium text-text-primary">{page.contact.label}</p>
+						) : null
+					}
+					{
+						page.contact.email ? (
+							<p class="mt-2">
+								<a
+									href={`mailto:${page.contact.email}`}
+									class:list={[
+										'font-medium text-brand-700 no-underline hover:text-brand-800',
+										focusRing,
+									]}
+								>
+									{page.contact.email}
+								</a>
+							</p>
+						) : null
+					}
+					{
+						page.contact.responseNote ? (
+							<p class="mt-4 font-sans text-sm leading-relaxed text-text-secondary">
+								{page.contact.responseNote}
+							</p>
+						) : null
+					}
+				</div>
+			</section>
+
+			{
+				relatedLinks.length > 0 ? (
+					<nav class="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap" aria-label="Related research links">
+						{relatedLinks.map((link) => (
+							<ButtonLink href={link.href} label={link.label} variant="secondary" />
+						))}
+					</nav>
+				) : null
+			}
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>

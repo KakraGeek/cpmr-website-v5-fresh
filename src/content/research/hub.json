@@ -30,9 +30,9 @@
 	],
 	"facilitiesTeaser": {
 		"title": "Research facilities",
-		"body": "Laboratories, herbaria, and specialist units that underpin CPMR's scientific work will be profiled here as verified facility content is approved.",
+		"body": "Laboratories, herbaria, and specialist units that underpin CPMR's scientific work are profiled with capacity notes and public access guidance.",
 		"href": "/research/facilities/",
-		"routeLive": false
+		"routeLive": true
 	},
 	"discoverySectionTitle": "Research discovery",
 	"navGroups": [
@@ -60,6 +60,20 @@
 					"href": "/research/publications/",
 					"description": "Scholarly publications and reports from CPMR research programmes.",
 					"routeLive": false
+				},
+				{
+					"id": "research-facilities",
+					"label": "Research facilities",
+					"href": "/research/facilities/",
+					"description": "Laboratories, herbaria, and specialist units with capacity and access notes.",
+					"routeLive": true
+				},
+				{
+					"id": "research-collaboration",
+					"label": "Collaboration",
+					"href": "/research/collaboration/",
+					"description": "Partnership process and official contact pathway for research enquiries.",
+					"routeLive": true
 				}
 			]
 		},

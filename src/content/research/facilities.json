@@ -1,0 +1,61 @@
+{
+	"pageTitle": "Research facilities",
+	"seoTitle": "Research facilities | CPMR",
+	"seoDescription": "Laboratories, herbaria, and specialist units that underpin plant medicine research at the Centre for Plant Medicine Research.",
+	"eyebrow": "Research",
+	"lede": "CPMR maintains specialist laboratories and reference collections that support phytochemistry, quality assessment, and collaborative research programmes.",
+	"introParagraphs": [
+		"Facility profiles summarise capacity, equipment classes, and public access notes for partners assessing infrastructure. Department mini-sites provide additional programme context where units are hosted.",
+		"Profiles below are verified seed content for build-time routing; imagery and detailed specifications will expand as editorial sign-off completes."
+	],
+	"safetyHeading": "Public access and safety",
+	"safetyNote": "Laboratory and collection areas are not open for casual public tours. Visiting researchers and partners must coordinate access through the collaboration pathway and approved institutional contacts.",
+	"listingSectionTitle": "Facility profiles",
+	"facilities": [
+		{
+			"id": "phytochemistry-analytical-lab",
+			"name": "Phytochemistry analytical laboratory",
+			"summary": "Chromatography, extraction, and compound characterisation workflows supporting medicinal plant research and quality assessment.",
+			"imagePath": "/images/about/leadership/portrait-placeholder.svg",
+			"imageAlt": "Placeholder illustration for the phytochemistry analytical laboratory",
+			"specs": [
+				{ "label": "Primary focus", "value": "Phytochemical profiling and method development" },
+				{ "label": "Hosting department", "value": "Phytochemistry" },
+				{ "label": "Access", "value": "By appointment for approved collaborators" }
+			],
+			"publicNotes": "Analytical work follows departmental SOPs. Sample submission for external partners is coordinated through research collaboration enquiries.",
+			"departmentSlug": "phytochemistry",
+			"departmentLabel": "Phytochemistry department"
+		},
+		{
+			"id": "sts-quality-lab",
+			"name": "Scientific and technical services quality unit",
+			"summary": "Reference methods, calibration support, and quality frameworks for institutional laboratory operations.",
+			"imagePath": "/images/about/leadership/portrait-placeholder.svg",
+			"imageAlt": "Placeholder illustration for the scientific and technical services quality unit",
+			"specs": [
+				{ "label": "Primary focus", "value": "Laboratory quality systems and technical support" },
+				{ "label": "Hosting department", "value": "Scientific & Technical Services" },
+				{ "label": "Access", "value": "Internal programmes and approved external studies" }
+			],
+			"publicNotes": "Capacity upgrades and framework documentation are published through the research projects and publications pathways when approved.",
+			"departmentSlug": "scientific-technical-services",
+			"departmentLabel": "Scientific & Technical Services"
+		},
+		{
+			"id": "medicinal-plants-herbarium",
+			"name": "Medicinal plants reference collection",
+			"summary": "Curated herbarium and reference specimens supporting identification, conservation, and research traceability.",
+			"specs": [
+				{ "label": "Primary focus", "value": "Specimen curation and research reference" },
+				{ "label": "Hosting", "value": "Institutional research programmes" },
+				{ "label": "Access", "value": "Researchers by prior arrangement" }
+			],
+			"publicNotes": "Specimen handling follows conservation and biosafety policies. Public gallery content may surface selected materials when editorially approved."
+		}
+	],
+	"relatedLink": {
+		"label": "Research collaboration enquiries",
+		"href": "/research/collaboration/"
+	}
+}
