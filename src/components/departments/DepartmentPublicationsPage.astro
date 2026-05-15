@@ -1,0 +1,211 @@
+---
+/**
+ * E5-S06 — Department publications listing (04_architecture.md §6.2; DESIGN.md §13.18 PublicationItem).
+ */
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../layout/SiteHeader.astro';
+import SiteFooter from '../layout/SiteFooter.astro';
+import Breadcrumbs from '../layout/Breadcrumbs.astro';
+import PublicationItem from '../content/PublicationItem.astro';
+import DepartmentTabs from './DepartmentTabs.astro';
+import DepartmentSectionEmpty from './DepartmentSectionEmpty.astro';
+import { departmentBasePath, resolveMiniSiteNav } from './department-home-helpers';
+import { departmentPublicationsPageCopy } from './department-publications-helpers';
+import {
+	distinctYears,
+	formatAuthorList,
+	publicationDetailPath,
+	publicationDoiHref,
+	publicationPdfHref,
+	resolvePublicationAuthors,
+	type PublicPublicationEntry,
+} from '../content/publication-library-helpers';
+
+interface Props {
+	department: CollectionEntry<'departments'> & { data: { entry_type: 'department' } };
+	publications: PublicPublicationEntry[];
+	staff: CollectionEntry<'staff'>[];
+	pathname: string;
+}
+
+const { department, publications, staff, pathname } = Astro.props;
+const dept = department.data;
+const base = departmentBasePath(dept.id);
+const copy = departmentPublicationsPageCopy;
+const navItems = resolveMiniSiteNav(dept.id, dept.mini_site_nav);
+const yearOptions = distinctYears(publications);
+const showYearFilter = yearOptions.length > 1;
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Departments', href: '/departments/' },
+	{ label: dept.name, href: base },
+	{ label: 'Publications' },
+];
+
+const pageTitle = `Publications — ${dept.name}`;
+const seoTitle = `${dept.name} — Publications | CPMR`;
+const seoDescription =
+	dept.seo_description ??
+	`Research publications associated with ${dept.name} at the Centre for Plant Medicine Research.`;
+
+const filterInputClass =
+	'min-h-11 w-full max-w-xs rounded-md border border-border-subtle bg-surface-card px-3 py-2 font-sans text-base text-text-primary shadow-e1 focus-visible:shadow-ring-focus focus-visible:outline-none';
+---
+
+<BaseLayout title={seoTitle} description={seoDescription} seoCanonicalPath={pathname}>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<DepartmentTabs items={navItems} currentPath={pathname} />
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			<h1 class="font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+				{pageTitle}
+			</h1>
+			<p class="mt-4 max-w-prose font-sans text-lg leading-relaxed text-text-secondary">
+				{copy.lede}
+			</p>
+			<p class="mt-4 font-sans text-sm">
+				<a
+					href="/research/publications/"
+					class="font-medium text-brand-700 no-underline hover:text-brand-800 focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus"
+				>
+					{copy.repositoryLinkLabel}
+				</a>
+			</p>
+
+			<section
+				class="mt-10 border-t border-border-subtle pt-10"
+				aria-labelledby="dept-publications-list-heading"
+			>
+				<h2
+					id="dept-publications-list-heading"
+					class="font-serif text-xl font-bold tracking-tight text-text-primary md:text-2xl"
+				>
+					{copy.sectionTitle}
+				</h2>
+
+				{
+					publications.length === 0 ? (
+						<div class="mt-6">
+							<DepartmentSectionEmpty title={copy.emptyTitle} body={copy.emptyBody} />
+						</div>
+					) : (
+						<>
+							{
+								showYearFilter ? (
+									<form
+										id="dept-publications-filters"
+										class="mt-6 max-w-xs"
+										aria-label={`Filter ${dept.name} publications by year`}
+									>
+										<label
+											for="dept-publication-filter-year"
+											class="block font-sans text-sm font-medium text-text-primary"
+										>
+											{copy.filterYearLabel}
+										</label>
+										<select
+											id="dept-publication-filter-year"
+											name="year"
+											class:list={['mt-2', filterInputClass]}
+										>
+											<option value="">{copy.filterYearAll}</option>
+											{yearOptions.map((year) => (
+												<option value={String(year)}>{year}</option>
+											))}
+										</select>
+									</form>
+								) : null
+							}
+
+							<p
+								id="dept-publications-results-status"
+								class="mt-4 font-sans text-sm text-text-secondary"
+								role="status"
+								aria-live="polite"
+								hidden
+							/>
+
+							<ul
+								id="dept-publications-list"
+								class="m-0 mt-6 list-none p-0"
+								role="list"
+							>
+								{publications.map((entry) => {
+									const authors = resolvePublicationAuthors(entry, staff);
+									const authorText = formatAuthorList(authors);
+									const pdfHref = publicationPdfHref(entry);
+									const doiHref = publicationDoiHref(entry.data.doi_url);
+
+									return (
+										<li data-publication-card data-year={String(entry.data.year)}>
+											<PublicationItem
+												title={entry.data.title}
+												authors={authorText}
+												year={entry.data.year}
+												href={publicationDetailPath(entry.data.id)}
+												excerpt={entry.data.abstract}
+												doiHref={doiHref}
+												pdfHref={pdfHref}
+											/>
+										</li>
+									);
+								})}
+							</ul>
+						</>
+					)
+				}
+			</section>
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>
+
+{
+	publications.length > 0 && showYearFilter ? (
+		<script is:inline>
+			(function () {
+				const form = document.getElementById('dept-publications-filters');
+				const list = document.getElementById('dept-publications-list');
+				const status = document.getElementById('dept-publications-results-status');
+				if (!form || !list || !status) return;
+
+				const yearSelect = document.getElementById('dept-publication-filter-year');
+				const cards = list.querySelectorAll('[data-publication-card]');
+				const total = cards.length;
+
+				function applyFilters() {
+					const yearValue =
+						yearSelect instanceof HTMLSelectElement ? yearSelect.value : '';
+
+					let visible = 0;
+					cards.forEach((card) => {
+						const year = card.getAttribute('data-year') || '';
+						const show = !yearValue || year === yearValue;
+						card.hidden = !show;
+						if (show) visible += 1;
+					});
+
+					if (visible === total) {
+						status.hidden = true;
+						status.textContent = '';
+					} else {
+						status.hidden = false;
+						status.textContent =
+							visible === 0
+								? 'No publications match the selected year.'
+								: 'Showing ' + visible + ' of ' + total + ' publications.';
+					}
+				}
+
+				form.addEventListener('change', applyFilters);
+			})();
+		</script>
+	) : null
+}

@@ -2,21 +2,50 @@ id: E5-S06
 epic: E5
 sprint_order: 506
 title: Department publications listing
-status: TODO
-architect_gate_required: Yes
+status: DONE
+last_updated: '2026-05-15 16:58:23'
+architect_gate_required: true
+
 user_story: >
   As an academic, I want to filter publications by department.
+
 acceptance_criteria:
-  - The route /departments/[slug]/publications/ lists publications scoped to the department.
-  - List items reuse the publication list item pattern from DESIGN.md.
-  - Filtering respects static output constraints (client-side or build-time partitioning per PRD/architecture; no SSR).
+  - "The route /departments/[slug]/publications/ lists publications scoped to the department."
+  - "List items reuse the publication list item pattern from DESIGN.md."
+  - "Filtering respects static output constraints using client-side or build-time partitioning per PRD/architecture with no SSR."
+
 tasks:
-  - Implement src/pages/departments/[slug]/publications.astro (or equivalent path matching the agreed trailing-slash policy).
-  - Consume the publications collection from E6-S04 and filter by department relationship fields.
-  - Align markup and styling with the PublicationItem (or equivalent) pattern named in DESIGN.md.
+  - "Implement src/pages/departments/[slug]/publications.astro or equivalent path matching the agreed trailing-slash policy."
+  - "Consume the publications collection from E6-S04 and filter by department relationship fields."
+  - "Align markup and styling with the PublicationItem or equivalent pattern named in DESIGN.md."
+
+dev_agent_record:
+  implementation_plan: >
+    Build-time scope uses getStaticPaths and filterDepartmentPublications on
+    department_ids. DepartmentPublicationsPage renders PublicationItem rows and
+    optional client-side year filtering when more than one year exists.
+  completion_notes: >
+    E5-S06 complete. Routes /departments/[slug]/publications/ are available for
+    public departments. Phytochemistry lists 2 seed publications; STS lists 1.
+    npm run validate passed.
+  file_list:
+    - src/pages/departments/[slug]/publications/index.astro
+    - src/components/departments/DepartmentPublicationsPage.astro
+    - src/components/departments/department-publications-helpers.ts
+
+file_list:
+  - src/pages/departments/[slug]/publications/index.astro
+  - src/components/departments/DepartmentPublicationsPage.astro
+  - src/components/departments/department-publications-helpers.ts
+
+change_log:
+  - "2026-05-15: E5-S06 department publications listing - static paths, PublicationItem list, year filter."
+  - "2026-05-15 16:51:43: Architect gate PASS against architecture sections 5-6, content architecture sections 4.6, 5.5, and 6, E6-S04 canonical detail, and ADR-003."
+
 dependencies:
   - E5-S02
   - E6-S04
+
 context_files:
   - docs/04_stories/05_story_map.md
   - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
@@ -25,10 +54,13 @@ context_files:
   - docs/02_design/03_ux_blueprint.md
   - docs/02_design/DESIGN.md
   - docs/03_architecture/04_architecture.md
+  - docs/03_architecture/05_content_architecture_and_cms_strategy.md
   - docs/03_architecture/06_project_context.md
+
 execution:
   files_allowed:
     - src/pages/departments/[slug]/publications.astro
+    - src/pages/departments/[slug]/publications/index.astro
     - src/components/departments/**
     - src/components/content/**
   files_forbidden:
@@ -42,10 +74,12 @@ execution:
   verification_commands:
     - npm run build
     - npm run validate
+
 qa_checklist:
-  - Confirm every acceptance criterion is satisfied.
-  - Confirm implementation follows DESIGN.md for publication list items and accessibility.
-  - Confirm implementation follows docs/03_architecture/04_architecture.md static publication routing and PDF gating rules.
-  - Confirm static build passes (npm run build / npm run validate).
-  - Confirm no forbidden files were changed.
-  - Confirm publication metadata remains collection-driven for future CMS compatibility.
+  - "Confirm every acceptance criterion is satisfied."
+  - "Confirm implementation follows DESIGN.md for publication list items and accessibility."
+  - "Confirm implementation follows docs/03_architecture/04_architecture.md static publication routing and PDF gating rules."
+  - "Confirm implementation follows docs/03_architecture/05_content_architecture_and_cms_strategy.md publication relationship rules."
+  - "Confirm static build passes using npm run build and npm run validate."
+  - "Confirm no forbidden files were changed."
+  - "Confirm publication metadata remains collection-driven for future CMS compatibility."

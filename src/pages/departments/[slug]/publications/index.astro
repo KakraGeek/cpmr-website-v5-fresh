@@ -1,0 +1,34 @@
+---
+/**
+ * E5-S06 — Department publications listing at `/departments/[slug]/publications/` (04_architecture.md §6.2).
+ */
+import { getCollection } from 'astro:content';
+import DepartmentPublicationsPage from '../../../../components/departments/DepartmentPublicationsPage.astro';
+import { isPublicDepartment } from '../../../../components/departments/department-home-helpers';
+import { filterDepartmentPublications } from '../../../../components/departments/department-publications-helpers';
+
+export async function getStaticPaths() {
+	const departments = await getCollection('departments');
+	const publications = await getCollection('publications');
+	const staff = await getCollection('staff');
+
+	return departments.filter(isPublicDepartment).map((entry) => ({
+		params: { slug: entry.data.id },
+		props: {
+			department: entry,
+			publications: filterDepartmentPublications(publications, entry.data.id),
+			staff,
+		},
+	}));
+}
+
+const { department, publications, staff } = Astro.props;
+const pathname = Astro.url.pathname;
+---
+
+<DepartmentPublicationsPage
+	department={department}
+	publications={publications}
+	staff={staff}
+	pathname={pathname}
+/>
