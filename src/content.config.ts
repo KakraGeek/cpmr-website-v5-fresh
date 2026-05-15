@@ -183,10 +183,102 @@ const settings = defineCollection({
   ]),
 });
 
+/** 05 §4 — shared editorial + SEO envelopes for authored public collections. */
+const authoredEditorialEnvelopeSchema = z.object({
+  editorial_status: z.enum(['draft', 'in_review', 'approved', 'archived']),
+  content_owner_role: z.enum(['super_admin', 'content_admin']),
+  last_reviewed: z.string().optional(),
+  last_updated: z.string().optional(),
+});
+
+const authoredSeoEnvelopeSchema = z.object({
+  seo_title: z.string().min(1),
+  seo_description: z.string().min(1),
+  seo_canonical_path: z.string().optional(),
+  og_image: z.string().optional(),
+  index_behavior: z.enum(['full', 'metadata_only', 'exclude']),
+  search_note: z.string().optional(),
+});
+
+const departmentIdSchema = z
+  .string()
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'department id must be kebab-case');
+
+const departmentHeroSchema = z.object({
+  headline: z.string().min(1),
+  lede: z.string().optional(),
+  image: z
+    .object({
+      src: z.string().min(1),
+      alt: z.string(),
+      width: z.number().int().positive(),
+      height: z.number().int().positive(),
+    })
+    .optional(),
+});
+
+const departmentMiniSiteNavItemSchema = z.object({
+  label: z.string().min(1),
+  href: z.string().min(1),
+});
+
+/** E5-S01 — `departments` collection (04_architecture.md §5–§6; 05 §4.3). */
+const departmentEntrySchema = authoredEditorialEnvelopeSchema
+  .merge(authoredSeoEnvelopeSchema)
+  .merge(
+    z.object({
+      entry_type: z.literal('department'),
+      id: departmentIdSchema,
+      name: z.string().min(1),
+      category: z.enum(['research', 'service', 'administrative']),
+      /** UX Blueprint §10.4 — stakeholder-verified; omit from public index when false. */
+      verified: z.boolean(),
+      mandate_summary: z.string().min(1),
+      hero: departmentHeroSchema,
+      head_of_department_staff_id: z.string().optional(),
+      mini_site_nav: z.array(departmentMiniSiteNavItemSchema).default([]),
+      related_service_ids: z.array(z.string()).default([]),
+      sort_order: z.number().int().optional(),
+    }),
+  )
+  .superRefine((data, ctx) => {
+    for (const item of data.mini_site_nav) {
+      const expectedPrefix = `/departments/${data.id}/`;
+      if (!item.href.startsWith(expectedPrefix)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `mini_site_nav href must start with ${expectedPrefix}`,
+          path: ['mini_site_nav'],
+        });
+      }
+    }
+  });
+
+/** Governed shell copy for `/departments/` — not listed as a department card. */
+const departmentsIndexShellSchema = authoredEditorialEnvelopeSchema
+  .merge(authoredSeoEnvelopeSchema)
+  .merge(
+    z.object({
+      entry_type: z.literal('index_shell'),
+      page_title: z.string().min(1),
+      lede: z.string().min(1),
+      intro_paragraphs: z.array(z.string().min(1)).min(1),
+      listing_section_title: z.string().min(1).default('Our departments'),
+      empty_state_title: z.string().min(1),
+      empty_state_body: z.string().min(1),
+    }),
+  );
+
+const departments = defineCollection({
+  loader: glob({ base: './src/content/departments', pattern: '**/*.{md,mdx}' }),
+  schema: z.discriminatedUnion('entry_type', [departmentEntrySchema, departmentsIndexShellSchema]),
+});
+
 export const collections = {
   _bootstrap,
   home,
   settings,
+  departments,
 };
 
 /** REM-CARCH-006 — exercises fail/warn matrix whenever Astro loads content config (build + dev). */

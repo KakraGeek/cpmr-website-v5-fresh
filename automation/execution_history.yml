@@ -500,3 +500,9 @@ events:
 - timestamp: '2026-05-15 14:09:30'
   story_id: E4-S07
   event: status -> DONE
+- timestamp: '2026-05-15 14:11:32'
+  story_id: E5-S01
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-15 14:15:56'
+  story_id: E5-S01
+  event: status -> DEV_COMPLETE
