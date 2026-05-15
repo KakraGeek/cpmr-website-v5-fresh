@@ -1,0 +1,46 @@
+{
+	"title": "History",
+	"seoTitle": "History | About CPMR",
+	"seoDescription": "Key milestones in the evolution of the Centre for Plant Medicine Research and Ghana's institutional commitment to plant-based medicine.",
+	"editorialStatus": "approved",
+	"contentOwnerRole": "content_admin",
+	"template": "timeline",
+	"eyebrow": "About CPMR",
+	"lede": "Milestones that shaped the Centre's growth as a national institution for plant medicine research.",
+	"bodyParagraphs": [
+		"CPMR's history reflects decades of public investment in understanding medicinal plants — from early herbal medicine practice to contemporary research, regulation, and clinical services.",
+		"The timeline below highlights institutional milestones. Dates and descriptions are maintained as verified institutional content and updated when new milestones are formally recorded."
+	],
+	"milestones": [
+		{
+			"id": "milestone-origins",
+			"year": "1975",
+			"title": "Institutional foundations",
+			"description": "National commitment to formal research into medicinal plants establishes the organisational roots of today's Centre."
+		},
+		{
+			"id": "milestone-expansion",
+			"year": "1990",
+			"title": "Research capacity expansion",
+			"description": "Laboratory and field research programmes broaden to support quality assurance and collaboration with universities and health agencies."
+		},
+		{
+			"id": "milestone-clinical",
+			"year": "2005",
+			"title": "Clinical and public services",
+			"description": "Outpatient and specialist services integrate with research missions, linking community care to evidence-based plant medicine practice."
+		},
+		{
+			"id": "milestone-regulatory",
+			"year": "2015",
+			"title": "Regulatory and industry support",
+			"description": "Drug analysis and industry-facing services strengthen national safeguards for herbal product quality and manufacturer compliance."
+		},
+		{
+			"id": "milestone-present",
+			"year": "Today",
+			"title": "National research centre",
+			"description": "CPMR operates as Ghana's centre of excellence for plant medicine research, education, and responsible innovation."
+		}
+	]
+}

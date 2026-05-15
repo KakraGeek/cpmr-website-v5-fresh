@@ -1,0 +1,19 @@
+{
+	"title": "Overview",
+	"seoTitle": "Overview | About CPMR",
+	"seoDescription": "An introduction to the Centre for Plant Medicine Research — our role, reach, and how to explore our history and governance.",
+	"editorialStatus": "approved",
+	"contentOwnerRole": "content_admin",
+	"template": "generic",
+	"eyebrow": "About CPMR",
+	"lede": "How the Centre serves Ghana as a national institution for plant-based medicine research.",
+	"bodyParagraphs": [
+		"The Centre for Plant Medicine Research (CPMR) advances scientific understanding of medicinal plants through rigorous research, quality assurance, and responsible translation of traditional knowledge.",
+		"Our work spans laboratory science, clinical services, regulatory support for herbal products, and public education — always with attention to safety, evidence, and national health priorities.",
+		"Explore the sections in this area to learn about our history, mandate, leadership, and partnerships. Content is maintained as verified institutional material for government, research, and public audiences."
+	],
+	"relatedLink": {
+		"label": "Explore our history and milestones",
+		"href": "/about/history/"
+	}
+}

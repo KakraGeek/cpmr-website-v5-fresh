@@ -1,0 +1,67 @@
+---
+/**
+ * E4-S02 — Milestone timeline (UX Blueprint §8.2; keyboard-focusable entries).
+ */
+import type { GenericPageMilestone } from './generic-page-data';
+
+interface Props {
+	milestones: GenericPageMilestone[];
+	heading?: string;
+}
+
+const { milestones, heading = 'Milestones' } = Astro.props;
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+---
+
+{
+	milestones.length > 0 ? (
+		<section class="mt-10 border-t border-border-subtle pt-10" aria-labelledby="milestone-timeline-heading">
+			<h2
+				id="milestone-timeline-heading"
+				class="font-serif text-xl font-bold text-text-primary md:text-2xl"
+			>
+				{heading}
+			</h2>
+			<ol class="relative m-0 mt-8 list-none p-0" role="list">
+				{milestones.map((entry, index) => (
+					<li
+						class:list={[
+							'relative border-l-4 border-brand-200 pl-6 pb-10 last:pb-0',
+							index === 0 ? '' : 'mt-0',
+						]}
+					>
+						<span
+							class="absolute -left-[0.4375rem] top-1 size-3 rounded-full border-2 border-brand-600 bg-surface-page"
+							aria-hidden="true"
+						/>
+						<article
+							id={entry.id}
+							tabindex={0}
+							class:list={[
+								'rounded-md border border-border-subtle bg-surface-card p-4 shadow-e0',
+								'min-h-11',
+								focusRing,
+							]}
+							aria-labelledby={`${entry.id}-title`}
+						>
+							<p class="font-sans text-sm font-semibold uppercase tracking-wide text-text-secondary">
+								{entry.year}
+							</p>
+							<h3
+								id={`${entry.id}-title`}
+								class="mt-1 font-serif text-lg font-bold text-text-primary"
+							>
+								{entry.title}
+							</h3>
+							<p class="mt-2 font-sans text-base leading-relaxed text-text-secondary">
+								{entry.description}
+							</p>
+						</article>
+					</li>
+				))}
+			</ol>
+		</section>
+	) : null
+}

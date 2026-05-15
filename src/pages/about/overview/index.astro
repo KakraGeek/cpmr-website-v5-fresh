@@ -1,0 +1,12 @@
+---
+/**
+ * E4-S02 — Overview at `/about/overview/` (`T_GENERIC_CONTENT`; governed `src/content/pages/about/overview.json`).
+ */
+import GenericContentPage from '../../../components/content/GenericContentPage.astro';
+import { getGenericPageData } from '../../../components/content/generic-page-data';
+
+const pathname = Astro.url.pathname;
+const page = getGenericPageData('about/overview');
+---
+
+<GenericContentPage page={page} pathname={pathname} seoCanonicalPath="/about/overview/" />
