@@ -1,0 +1,84 @@
+---
+/**
+ * E4-S07 — Accessible partner logo grid (UX Blueprint §8.2; DESIGN.md §14.1 `home.partners` pattern).
+ */
+import type { PartnerEntry } from './partners-page-data';
+
+interface Props {
+	partners: PartnerEntry[];
+	outboundPolicyText?: string;
+	listId?: string;
+}
+
+const { partners, outboundPolicyText, listId = 'partners-logo-grid' } = Astro.props;
+
+function isExternalHttp(href: string): boolean {
+	const t = href.trim();
+	return t.startsWith('http://') || t.startsWith('https://');
+}
+
+const hasExternalPartner = partners.some((p) => {
+	const h = p.href?.trim();
+	return Boolean(h && isExternalHttp(h));
+});
+
+const policyRaw = outboundPolicyText?.trim() ?? '';
+const showOutboundPolicy = hasExternalPartner && policyRaw.length > 0;
+---
+
+{
+	partners.length > 0 ? (
+		<div class="text-text-secondary">
+			<ul
+				id={listId}
+				class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+				role="list"
+			>
+				{partners.map((partner) => {
+					const href = partner.href?.trim() ?? '';
+					const external = href.length > 0 && isExternalHttp(href);
+					const linkLabel = `Visit ${partner.name} (opens external site)`;
+					const nameAlt = partner.imageAlt.trim() || partner.name.trim();
+					const imgAlt = external && href.length > 0 ? '' : nameAlt;
+
+					const inner = (
+						<img
+							src={partner.logoPath}
+							alt={imgAlt}
+							width={200}
+							height={56}
+							loading="lazy"
+							decoding="async"
+							class="h-10 w-auto max-w-40 object-contain md:h-12"
+						/>
+					);
+
+					return (
+						<li class="flex min-h-11 flex-col justify-center rounded-lg border border-border-subtle bg-surface-card p-4">
+							{href.length > 0 ? (
+								<a
+									href={href}
+									class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md focus-visible:outline-none focus-visible:shadow-ring-focus"
+									rel={external ? 'noopener noreferrer' : undefined}
+									target={external ? '_blank' : undefined}
+									aria-label={external ? linkLabel : undefined}
+								>
+									{inner}
+								</a>
+							) : (
+								<span class="inline-flex min-h-11 min-w-11 items-center justify-center">{inner}</span>
+							)}
+							<p class="mt-3 font-sans text-sm font-semibold text-text-primary">{partner.name}</p>
+						</li>
+					);
+				})}
+			</ul>
+			{showOutboundPolicy ? (
+				<p class="mt-6 max-w-prose font-sans text-sm leading-relaxed text-text-secondary">
+					{policyRaw}
+				</p>
+			) : null}
+		</div>
+	) : null
+}
+

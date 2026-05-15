@@ -1,0 +1,12 @@
+---
+/**
+ * E4-S07 — Awards & Recognition at `/about/awards/` (UX Blueprint §8.2; governed `awards.json`).
+ */
+import AwardsContentPage from '../../../components/content/AwardsContentPage.astro';
+import { getAwardsPageData } from '../../../components/content/awards-page-data';
+
+const pathname = Astro.url.pathname;
+const page = getAwardsPageData();
+---
+
+<AwardsContentPage page={page} pathname={pathname} seoCanonicalPath="/about/awards/" />

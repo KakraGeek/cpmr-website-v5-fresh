@@ -1,0 +1,116 @@
+---
+/**
+ * E4-S07 — Partners & Affiliations (`T_GENERIC_CONTENT` + logo grid; UX Blueprint §8.2).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../layout/SiteHeader.astro';
+import SiteFooter from '../layout/SiteFooter.astro';
+import Breadcrumbs from '../layout/Breadcrumbs.astro';
+import AboutHubSideNav from './about/AboutHubSideNav.astro';
+import AboutHubInThisSection from './about/AboutHubInThisSection.astro';
+import ButtonLink from '../ui/ButtonLink.astro';
+import PartnersLogoGrid from './PartnersLogoGrid.astro';
+import { getAboutHubData } from '../../data/about-hub';
+import type { PartnersPageData } from './partners-page-data';
+
+interface Props {
+	page: PartnersPageData;
+	pathname: string;
+	seoCanonicalPath: string;
+}
+
+const { page, pathname, seoCanonicalPath } = Astro.props;
+
+const hub = getAboutHubData();
+const bodyParagraphs = page.bodyParagraphs ?? [];
+const partners = page.partners ?? [];
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: hub.pageTitle, href: '/about/' },
+	{ label: page.title },
+];
+---
+
+<BaseLayout title={page.seoTitle} description={page.seoDescription} seoCanonicalPath={seoCanonicalPath}>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<AboutHubInThisSection
+		groups={hub.navGroups}
+		pathname={pathname}
+		label={hub.inThisSectionLabel}
+	/>
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			<div class="lg:grid lg:grid-cols-[minmax(12rem,16rem)_minmax(0,1fr)] lg:gap-10 xl:gap-12">
+				<AboutHubSideNav
+					groups={hub.navGroups}
+					pathname={pathname}
+					heading={hub.inThisSectionLabel}
+				/>
+				<div class="min-w-0">
+					{
+						page.eyebrow ? (
+							<p class="font-sans text-sm font-semibold uppercase tracking-wide text-text-secondary">
+								{page.eyebrow}
+							</p>
+						) : null
+					}
+					<h1
+						class:list={[
+							'font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl',
+							page.eyebrow ? 'mt-2' : '',
+						]}
+					>
+						{page.title}
+					</h1>
+					{
+						page.lede ? (
+							<p class="mt-4 max-w-prose font-sans text-lg leading-relaxed text-text-secondary">
+								{page.lede}
+							</p>
+						) : null
+					}
+					{
+						bodyParagraphs.length > 0 ? (
+							<div
+								class:list={[
+									'max-w-prose font-sans text-base leading-relaxed text-text-secondary',
+									page.lede ? 'mt-6' : 'mt-6',
+									'[&>p+p]:mt-4',
+								]}
+							>
+								{bodyParagraphs.map((paragraph) => (
+									<p>{paragraph}</p>
+								))}
+							</div>
+						) : null
+					}
+					<div class="mt-8">
+						<h2 class="sr-only">Partner organisations</h2>
+						<PartnersLogoGrid
+							partners={partners}
+							outboundPolicyText={page.outboundPolicyText}
+						/>
+					</div>
+					{
+						page.relatedLink ? (
+							<p class="mt-8 max-w-prose">
+								<ButtonLink
+									href={page.relatedLink.href}
+									label={page.relatedLink.label}
+									variant="secondary"
+								/>
+							</p>
+						) : null
+					}
+				</div>
+			</div>
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>

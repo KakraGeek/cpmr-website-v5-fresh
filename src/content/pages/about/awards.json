@@ -1,0 +1,35 @@
+{
+	"title": "Awards & Recognition",
+	"seoTitle": "Awards & Recognition | About CPMR",
+	"seoDescription": "Honours and recognition received by the Centre for Plant Medicine Research and its people — verified institutional listing.",
+	"editorialStatus": "approved",
+	"contentOwnerRole": "content_admin",
+	"eyebrow": "About CPMR",
+	"lede": "CPMR recognises excellence in plant medicine research, service delivery, and public health impact. Awards listed here are published as verified by the Centre's communications office.",
+	"awards": [
+		{
+			"id": "award-research-excellence-2024",
+			"title": "National Research Excellence Award (example)",
+			"date": "2024-11-18",
+			"awardingBody": "Ministry of Environment, Science, Technology and Innovation (example)",
+			"summary": "Recognised for sustained contribution to ethnobotanical research and quality-assured herbal product development."
+		},
+		{
+			"id": "award-lab-accreditation-2023",
+			"title": "Laboratory quality systems commendation (example)",
+			"date": "2023-06-02",
+			"awardingBody": "Ghana Standards Authority (example)",
+			"summary": "Acknowledgement of documented quality management practices in analytical laboratories."
+		},
+		{
+			"id": "award-community-impact",
+			"title": "Community health outreach recognition",
+			"date": "2022",
+			"summary": "Honour received for public education and clinic outreach programmes — awarding body to be confirmed in full citation."
+		}
+	],
+	"relatedLink": {
+		"label": "View partners and affiliations",
+		"href": "/about/partners/"
+	}
+}

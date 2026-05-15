@@ -1,0 +1,12 @@
+---
+/**
+ * E4-S07 — Partners & Affiliations at `/about/partners/` (UX Blueprint §8.2; governed `partners.json`).
+ */
+import PartnersContentPage from '../../../components/content/PartnersContentPage.astro';
+import { getPartnersPageData } from '../../../components/content/partners-page-data';
+
+const pathname = Astro.url.pathname;
+const page = getPartnersPageData();
+---
+
+<PartnersContentPage page={page} pathname={pathname} seoCanonicalPath="/about/partners/" />
