@@ -14,7 +14,15 @@
 
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
-import { assertBuildTimeRefIntegritySmokeTest } from './lib/content/refs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { basename, extname, join } from 'node:path';
+import {
+  applyRefIntegrityResult,
+  assertBuildTimeRefIntegritySmokeTest,
+  indexCollectionIds,
+  validatePlainIdsExist,
+  type RefIntegrityResult,
+} from './lib/content/refs';
 import { assertDepartmentRelationshipIntegrity } from '../scripts/validate-department-relationships';
 
 // `_bootstrap` is an intentionally trivial collection that proves the content config
@@ -277,15 +285,229 @@ const departments = defineCollection({
   schema: z.discriminatedUnion('entry_type', [departmentEntrySchema, departmentsIndexShellSchema]),
 });
 
+const projectIdSchema = z
+  .string()
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'project id must be kebab-case');
+
+const projectStatusSchema = z.enum(['planned', 'active', 'completed']);
+
+const projectTeamMemberSchema = z.object({
+  name: z.string().min(1),
+  role: z.string().optional(),
+  staff_id: z.string().optional(),
+});
+
+/** E6-S02 — `projects` collection (02_prd.md §11 R2; 05 §4.5). */
+const projectEntrySchema = authoredEditorialEnvelopeSchema
+  .merge(authoredSeoEnvelopeSchema)
+  .merge(
+    z.object({
+      entry_type: z.literal('project'),
+      id: projectIdSchema,
+      title: z.string().min(1),
+      /** PRD §11 R2 — therapeutic / research area. */
+      research_area: z.string().min(1),
+      summary: z.string().min(1),
+      status: projectStatusSchema,
+      department_ids: z.array(departmentIdSchema).min(1),
+      background: z.string().min(1),
+      objectives: z.array(z.string().min(1)).min(1),
+      activities: z.array(z.string().min(1)).min(1),
+      team: z.array(projectTeamMemberSchema).min(1),
+      partners: z.array(z.string().min(1)).default([]),
+      outputs: z.array(z.string().min(1)).default([]),
+      publication_ids: z.array(z.string()).default([]),
+      staff_lead_ids: z.array(z.string()).default([]),
+      partner_orgs: z.array(z.string().min(1)).optional(),
+      start_date: z.string().optional(),
+      end_date: z.string().optional(),
+      funding_sources_markdown: z.string().optional(),
+      contact: z
+        .object({
+          label: z.string().optional(),
+          email: z.string().email().optional(),
+          href: z.string().min(1).optional(),
+        })
+        .optional(),
+    }),
+  );
+
+const projectsIndexShellSchema = authoredEditorialEnvelopeSchema
+  .merge(authoredSeoEnvelopeSchema)
+  .merge(
+    z.object({
+      entry_type: z.literal('index_shell'),
+      page_title: z.string().min(1),
+      lede: z.string().min(1),
+      intro_paragraphs: z.array(z.string().min(1)).min(1),
+      listing_section_title: z.string().min(1).default('All projects'),
+      empty_state_title: z.string().min(1),
+      empty_state_body: z.string().min(1),
+    }),
+  );
+
+const projects = defineCollection({
+  loader: glob({ base: './src/content/projects', pattern: '**/*.{md,mdx}' }),
+  schema: z.discriminatedUnion('entry_type', [projectEntrySchema, projectsIndexShellSchema]),
+});
+
 export const collections = {
   _bootstrap,
   home,
   settings,
   departments,
+  projects,
 };
+
+function mergeRefIntegrityResults(results: readonly RefIntegrityResult[]): RefIntegrityResult {
+  const issues = results.flatMap((r) => r.issues);
+  const shouldFailBuild = results.some((r) => r.shouldFailBuild);
+  return { issues, shouldFailBuild };
+}
+
+const KEBAB_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+function readFrontmatterBlock(filePath: string): string {
+  const raw = readFileSync(filePath, 'utf8');
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (!match) {
+    throw new Error(`[cpmr-project-integrity] Missing frontmatter in ${filePath}`);
+  }
+  return match[1];
+}
+
+function readScalarField(frontmatter: string, key: string): string | undefined {
+  const re = new RegExp(`^${key}:\\s*(.+?)\\s*$`, 'm');
+  const m = frontmatter.match(re);
+  if (!m) return undefined;
+  const value = m[1].trim();
+  if (value === '' || value === '~' || value === 'null') return undefined;
+  return value.replace(/^['"]|['"]$/g, '');
+}
+
+function readEntryType(frontmatter: string): string | undefined {
+  return readScalarField(frontmatter, 'entry_type');
+}
+
+function readInlineStringArray(frontmatter: string, key: string): string[] {
+  const re = new RegExp(`^${key}:\\s*(\\[[^\\]]*\\])\\s*$`, 'm');
+  const m = frontmatter.match(re);
+  if (!m) return [];
+  const inner = m[1].slice(1, -1).trim();
+  if (inner === '') return [];
+  return inner
+    .split(',')
+    .map((s) => s.trim().replace(/^['"]|['"]$/g, ''))
+    .filter((s) => s.length > 0);
+}
+
+function indexDepartmentIdsFromContentDir(): ReadonlySet<string> {
+  const dir = join(process.cwd(), 'src/content/departments');
+  if (!existsSync(dir)) return new Set();
+
+  const ids: string[] = [];
+  for (const name of readdirSync(dir, { withFileTypes: true })) {
+    if (!name.isFile()) continue;
+    const ext = extname(name.name);
+    if (ext !== '.md' && ext !== '.mdx') continue;
+    const fm = readFrontmatterBlock(join(dir, name.name));
+    if (readEntryType(fm) !== 'department') continue;
+    const id = readScalarField(fm, 'id');
+    if (id && KEBAB_ID.test(id)) ids.push(id);
+  }
+  return indexCollectionIds(ids.map((id) => ({ id })));
+}
+
+function indexIdsFromContentDir(dirRelativeToSrc: string, entryType: string): ReadonlySet<string> {
+  const dir = join(process.cwd(), 'src/content', dirRelativeToSrc);
+  if (!existsSync(dir)) return new Set();
+
+  const ids: string[] = [];
+  for (const name of readdirSync(dir, { withFileTypes: true })) {
+    if (!name.isFile()) continue;
+    const ext = extname(name.name);
+    if (ext !== '.md' && ext !== '.mdx') continue;
+    const fm = readFrontmatterBlock(join(dir, name.name));
+    if (readEntryType(fm) !== entryType) continue;
+    const id = readScalarField(fm, 'id');
+    if (id && KEBAB_ID.test(id)) ids.push(id);
+  }
+  return indexCollectionIds(ids.map((id) => ({ id })));
+}
+
+/** E6-S02 — project `department_ids`, `staff_lead_ids`, `publication_ids` vs indexes (§5.4 scholarly warn). */
+function assertProjectRelationshipIntegrity(): void {
+  const projectDir = join(process.cwd(), 'src/content/projects');
+  if (!existsSync(projectDir)) return;
+
+  const departmentIndex = indexDepartmentIdsFromContentDir();
+  const staffIndex = indexIdsFromContentDir('staff', 'staff');
+  const publicationIndex = indexIdsFromContentDir('publications', 'publication');
+
+  const parts: RefIntegrityResult[] = [];
+
+  for (const name of readdirSync(projectDir, { withFileTypes: true })) {
+    if (!name.isFile()) continue;
+    const ext = extname(name.name);
+    if (ext !== '.md' && ext !== '.mdx') continue;
+
+    const sourceFile = join('src/content/projects', name.name);
+    const fm = readFrontmatterBlock(join(projectDir, name.name));
+    if (readEntryType(fm) !== 'project') continue;
+
+    const projectId = readScalarField(fm, 'id');
+    const stem = basename(name.name, ext);
+    if (projectId && stem !== projectId) {
+      throw new Error(
+        `[cpmr-project-integrity] Project id "${projectId}" must match file stem "${stem}" (${name.name})`,
+      );
+    }
+
+    const departmentIds = readInlineStringArray(fm, 'department_ids');
+    if (departmentIds.length > 0) {
+      parts.push(
+        validatePlainIdsExist({
+          ids: departmentIds,
+          index: departmentIndex,
+          relationship: `${sourceFile} department_ids → departments.id`,
+          surface: 'scholarly_general',
+        }),
+      );
+    }
+
+    const staffLeadIds = readInlineStringArray(fm, 'staff_lead_ids');
+    if (staffLeadIds.length > 0) {
+      parts.push(
+        validatePlainIdsExist({
+          ids: staffLeadIds,
+          index: staffIndex,
+          relationship: `${sourceFile} staff_lead_ids → staff.id`,
+          surface: 'scholarly_general',
+        }),
+      );
+    }
+
+    const publicationIds = readInlineStringArray(fm, 'publication_ids');
+    if (publicationIds.length > 0) {
+      parts.push(
+        validatePlainIdsExist({
+          ids: publicationIds,
+          index: publicationIndex,
+          relationship: `${sourceFile} publication_ids → publications.id`,
+          surface: 'scholarly_general',
+        }),
+      );
+    }
+  }
+
+  applyRefIntegrityResult(mergeRefIntegrityResults(parts));
+}
 
 /** REM-CARCH-006 — exercises fail/warn matrix whenever Astro loads content config (build + dev). */
 assertBuildTimeRefIntegritySmokeTest();
 
 /** E5-S09 — department `head_of_department_staff_id` / `related_service_ids` vs target indexes (§5.4). */
 assertDepartmentRelationshipIntegrity();
+
+/** E6-S02 — project cross-collection foreign keys (§5.4 scholarly warn). */
+assertProjectRelationshipIntegrity();

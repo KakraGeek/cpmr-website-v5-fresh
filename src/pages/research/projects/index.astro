@@ -1,0 +1,139 @@
+---
+/**
+ * E6-S02 — Research projects index at `/research/projects/` (PRD §11 R1–R2).
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SiteHeader from '../../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../../components/layout/SiteFooter.astro';
+import Breadcrumbs from '../../../components/layout/Breadcrumbs.astro';
+import Card from '../../../components/ui/Card.astro';
+import {
+	isPublicProject,
+	projectDetailPath,
+	projectStatusLabels,
+	resolveDepartmentLinks,
+	sortPublicProjects,
+} from './_project-helpers';
+
+const pathname = Astro.url.pathname;
+
+const allEntries = await getCollection('projects');
+const shell = allEntries.find((entry) => entry.data.entry_type === 'index_shell');
+if (!shell || shell.data.entry_type !== 'index_shell') {
+	throw new Error(
+		'E6-S02: expected projects index_shell entry (src/content/projects/index-shell.md)',
+	);
+}
+
+const departments = await getCollection('departments');
+const publicProjects = sortPublicProjects(allEntries.filter(isPublicProject));
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Research', href: '/research/' },
+	{ label: shell.data.page_title },
+];
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const cardLinkClass =
+	`group block h-full no-underline text-inherit transition-shadow ${focusRing}`;
+---
+
+<BaseLayout
+	title={shell.data.seo_title}
+	description={shell.data.seo_description}
+	seoCanonicalPath={shell.data.seo_canonical_path ?? '/research/projects/'}
+>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			<h1 class="font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+				{shell.data.page_title}
+			</h1>
+			<p class="mt-4 max-w-prose font-sans text-lg leading-relaxed text-text-secondary">
+				{shell.data.lede}
+			</p>
+			<div class="mt-6 max-w-prose font-sans text-base leading-relaxed text-text-secondary [&>p+p]:mt-4">
+				{shell.data.intro_paragraphs.map((paragraph) => (
+					<p>{paragraph}</p>
+				))}
+			</div>
+
+			<section class="mt-10 border-t border-border-subtle pt-10" aria-labelledby="projects-list-heading">
+				<h2
+					id="projects-list-heading"
+					class="font-serif text-xl font-bold tracking-tight text-text-primary md:text-2xl"
+				>
+					{shell.data.listing_section_title}
+				</h2>
+
+				{
+					publicProjects.length === 0 ? (
+						<div
+							class="mt-6 rounded-lg border border-border-subtle bg-surface-sunken p-6"
+							role="status"
+						>
+							<p class="font-sans text-base font-semibold text-text-primary">
+								{shell.data.empty_state_title}
+							</p>
+							<p class="mt-2 max-w-prose font-sans text-sm leading-relaxed text-text-secondary">
+								{shell.data.empty_state_body}
+							</p>
+						</div>
+					) : (
+						<ul class="m-0 mt-6 grid list-none gap-4 p-0 md:grid-cols-2" role="list">
+							{publicProjects.map((entry) => {
+								const deptLinks = resolveDepartmentLinks(
+									entry.data.department_ids,
+									departments,
+								);
+								return (
+									<li>
+										<a href={projectDetailPath(entry.data.id)} class={cardLinkClass}>
+											<Card elevation="hover-lift" padding="5" class="h-full">
+												<p class="font-sans text-xs font-semibold uppercase tracking-wide text-text-secondary">
+													{entry.data.research_area}
+												</p>
+												<h3 class="mt-2 font-serif text-lg font-bold text-text-primary group-hover:text-brand-700">
+													{entry.data.title}
+												</h3>
+												<p class="mt-2 font-sans text-sm leading-relaxed text-text-secondary">
+													{entry.data.summary}
+												</p>
+												<p class="mt-4 font-sans text-xs font-medium text-text-muted">
+													Status: {projectStatusLabels[entry.data.status]}
+												</p>
+												{
+													deptLinks.length > 0 ? (
+														<p class="mt-2 font-sans text-xs text-text-secondary">
+															<span class="font-medium text-text-primary">Departments:</span>{' '}
+															{deptLinks.map((link, index) => (
+																<>
+																	{index > 0 ? ', ' : null}
+																	<span>{link.name}</span>
+																</>
+															))}
+														</p>
+													) : null
+												}
+											</Card>
+										</a>
+									</li>
+								);
+							})}
+						</ul>
+					)
+				}
+			</section>
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>

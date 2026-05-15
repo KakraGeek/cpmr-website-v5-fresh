@@ -2,20 +2,60 @@ id: E6-S02
 epic: E6
 sprint_order: 602
 title: Research projects index and detail
-status: TODO
-architect_gate_required: Yes
+status: DONE
+last_updated: '2026-05-15 15:38:38'
+architect_gate_required: true
+
 user_story: >
   As a scientist, I read structured project stories.
+
 acceptance_criteria:
-  - Research projects index and /research/projects/[slug]/ detail routes exist per docs/04_stories/05_story_map.md.
-  - Project fields align with docs/01_planning/02_prd.md §11 R2; relationships follow docs/03_architecture/04_architecture.md §5.
-  - Implementation preserves build-time collection patterns for future CMS compatibility.
+  - "Research projects index and /research/projects/[slug]/ detail routes exist per docs/04_stories/05_story_map.md."
+  - "Project fields align with docs/01_planning/02_prd.md section 11 R2; relationships follow docs/03_architecture/04_architecture.md section 5."
+  - "Implementation preserves build-time collection patterns for future CMS compatibility."
+
 tasks:
-  - Define the projects content collection and pages per docs/04_stories/05_story_map.md Epic E6 story E6-S02 after E6-S01 and E0-S04 prerequisites.
-  - Wire department and staff cross-links when frontmatter references exist.
+  - "Define the projects content collection and pages per docs/04_stories/05_story_map.md Epic E6 story E6-S02 after E6-S01 and E0-S04 prerequisites."
+  - "Wire department and staff cross-links when frontmatter references exist."
+
+dev_agent_record:
+  implementation_plan: >
+    Added projects collection aligned with PRD section 11 R2 and the content
+    architecture strategy. Added index shell, two seed projects, build-time foreign-key
+    validation in content.config.ts, /research/projects/ index route, and
+    /research/projects/[slug]/ detail route with department links for verified
+    departments.
+  completion_notes: >
+    npm run validate passes. Routes /research/projects/,
+    /research/projects/phytochemical-profiling-moringa/, and
+    /research/projects/sts-lab-capacity-upgrade/ are available. Department cross-links
+    resolve to public verified departments. Staff and publication IDs validate with
+    warn-only behavior when collections are empty.
+  file_list:
+    - src/content.config.ts
+    - src/content/projects/index-shell.md
+    - src/content/projects/phytochemical-profiling-moringa.md
+    - src/content/projects/sts-lab-capacity-upgrade.md
+    - src/pages/research/projects/index.astro
+    - src/pages/research/projects/[slug]/index.astro
+    - src/pages/research/projects/_project-helpers.ts
+
+file_list:
+  - src/content.config.ts
+  - src/content/projects/index-shell.md
+  - src/content/projects/phytochemical-profiling-moringa.md
+  - src/content/projects/sts-lab-capacity-upgrade.md
+  - src/pages/research/projects/index.astro
+  - src/pages/research/projects/[slug]/index.astro
+  - src/pages/research/projects/_project-helpers.ts
+
+change_log:
+  - "2026-05-15: E6-S02 - projects collection, index/detail routes, and department cross-links."
+
 dependencies:
   - E6-S01
   - E0-S04
+
 context_files:
   - docs/04_stories/05_story_map.md
   - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
@@ -25,6 +65,7 @@ context_files:
   - docs/02_design/DESIGN.md
   - docs/03_architecture/04_architecture.md
   - docs/03_architecture/06_project_context.md
+
 execution:
   files_allowed:
     - src/pages/research/projects/**
@@ -39,10 +80,11 @@ execution:
   verification_commands:
     - npm run build
     - npm run validate
+
 qa_checklist:
-  - Confirm every acceptance criterion is satisfied.
-  - Confirm no forbidden files were changed.
-  - Confirm implementation follows DESIGN.md.
-  - Confirm implementation follows architecture.
-  - Confirm static build passes.
-  - Confirm collection usage stays compatible with future CMS ingestion.
+  - "Confirm every acceptance criterion is satisfied."
+  - "Confirm no forbidden files were changed."
+  - "Confirm implementation follows DESIGN.md."
+  - "Confirm implementation follows architecture."
+  - "Confirm static build passes."
+  - "Confirm collection usage stays compatible with future CMS ingestion."

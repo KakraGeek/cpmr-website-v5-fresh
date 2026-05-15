@@ -1,0 +1,288 @@
+---
+/**
+ * E6-S02 — Research project detail at `/research/projects/[slug]/` (PRD §11 R2–R4).
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import SiteHeader from '../../../../components/layout/SiteHeader.astro';
+import SiteFooter from '../../../../components/layout/SiteFooter.astro';
+import Breadcrumbs from '../../../../components/layout/Breadcrumbs.astro';
+import {
+	isPublicProject,
+	projectStatusLabels,
+	resolveDepartmentLinks,
+} from '../_project-helpers';
+
+export async function getStaticPaths() {
+	const entries = await getCollection('projects');
+	return entries.filter(isPublicProject).map((entry) => ({
+		params: { slug: entry.data.id },
+		props: { entry },
+	}));
+}
+
+const { entry } = Astro.props;
+const pathname = Astro.url.pathname;
+const departments = await getCollection('departments');
+const departmentLinks = resolveDepartmentLinks(entry.data.department_ids, departments);
+const partnerOrgs = entry.data.partner_orgs ?? [];
+const showPartners = entry.data.partners.length > 0 || partnerOrgs.length > 0;
+const seoCanonicalPath = entry.data.seo_canonical_path ?? pathname;
+const contactHrefLabel = entry.data.contact?.label || 'Contact link';
+
+const breadcrumbItems = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Research', href: '/research/' },
+	{ label: 'Projects', href: '/research/projects/' },
+	{ label: entry.data.title },
+];
+
+const focusRing =
+	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
+
+const sectionHeadingClass =
+	'font-serif text-xl font-bold tracking-tight text-text-primary md:text-2xl';
+
+const listClass = 'm-0 list-disc space-y-2 pl-5 font-sans text-base leading-relaxed text-text-secondary';
+---
+
+<BaseLayout
+	title={entry.data.seo_title}
+	description={entry.data.seo_description}
+	seoCanonicalPath={seoCanonicalPath}
+>
+	<SiteHeader slot="header" currentPath={pathname} />
+	<div class="border-b border-border-subtle bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-6">
+			<Breadcrumbs items={breadcrumbItems} />
+		</div>
+	</div>
+	<article class="bg-surface-page">
+		<div class="mx-auto w-full max-w-content px-4 py-8 md:py-10">
+			<p class="font-sans text-sm font-semibold uppercase tracking-wide text-text-secondary">
+				{entry.data.research_area}
+			</p>
+			<h1 class="mt-2 font-serif text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+				{entry.data.title}
+			</h1>
+			<p class="mt-4 max-w-prose font-sans text-lg leading-relaxed text-text-secondary">
+				{entry.data.summary}
+			</p>
+			<dl class="mt-6 flex flex-wrap gap-x-8 gap-y-3 font-sans text-sm text-text-secondary">
+				<div>
+					<dt class="font-medium text-text-primary">Status</dt>
+					<dd class="mt-1">{projectStatusLabels[entry.data.status]}</dd>
+				</div>
+				{
+					entry.data.start_date ? (
+						<div>
+							<dt class="font-medium text-text-primary">Start</dt>
+							<dd class="mt-1">{entry.data.start_date}</dd>
+						</div>
+					) : null
+				}
+				{
+					entry.data.end_date ? (
+						<div>
+							<dt class="font-medium text-text-primary">End</dt>
+							<dd class="mt-1">{entry.data.end_date}</dd>
+						</div>
+					) : null
+				}
+			</dl>
+
+			<section class="mt-10 border-t border-border-subtle pt-10" aria-labelledby="project-background-heading">
+				<h2 id="project-background-heading" class={sectionHeadingClass}>
+					Background
+				</h2>
+				<p class="mt-4 max-w-prose font-sans text-base leading-relaxed text-text-secondary">
+					{entry.data.background}
+				</p>
+			</section>
+
+			<section class="mt-10" aria-labelledby="project-objectives-heading">
+				<h2 id="project-objectives-heading" class={sectionHeadingClass}>
+					Objectives
+				</h2>
+				<ul class:list={['mt-4', listClass]}>
+					{entry.data.objectives.map((item) => (
+						<li>{item}</li>
+					))}
+				</ul>
+			</section>
+
+			<section class="mt-10" aria-labelledby="project-activities-heading">
+				<h2 id="project-activities-heading" class={sectionHeadingClass}>
+					Activities
+				</h2>
+				<ul class:list={['mt-4', listClass]}>
+					{entry.data.activities.map((item) => (
+						<li>{item}</li>
+					))}
+				</ul>
+			</section>
+
+			<section class="mt-10" aria-labelledby="project-team-heading">
+				<h2 id="project-team-heading" class={sectionHeadingClass}>
+					Team
+				</h2>
+				<ul class="m-0 mt-4 list-none space-y-3 p-0" role="list">
+					{entry.data.team.map((member) => (
+						<li class="rounded-md border border-border-subtle bg-surface-card p-4">
+							<p class="font-sans text-base font-semibold text-text-primary">{member.name}</p>
+							{member.role ? (
+								<p class="mt-1 font-sans text-sm text-text-secondary">{member.role}</p>
+							) : null}
+							{
+								member.staff_id ? (
+									<p class="mt-2 font-sans text-xs text-text-muted">
+										Staff profile (
+										<span class="font-mono">{member.staff_id}</span>) will link when the staff
+										directory ships.
+									</p>
+								) : null
+							}
+						</li>
+					))}
+				</ul>
+			</section>
+
+			{
+				showPartners ? (
+					<section class="mt-10" aria-labelledby="project-partners-heading">
+						<h2 id="project-partners-heading" class={sectionHeadingClass}>
+							Partners
+						</h2>
+						<ul class:list={['mt-4', listClass]}>
+							{entry.data.partners.map((partner) => (
+								<li>{partner}</li>
+							))}
+							{partnerOrgs.map((org) => (
+								<li>{org}</li>
+							))}
+						</ul>
+					</section>
+				) : null
+			}
+
+			{
+				entry.data.outputs.length > 0 ? (
+					<section class="mt-10" aria-labelledby="project-outputs-heading">
+						<h2 id="project-outputs-heading" class={sectionHeadingClass}>
+							Outputs
+						</h2>
+						<ul class:list={['mt-4', listClass]}>
+							{entry.data.outputs.map((output) => (
+								<li>{output}</li>
+							))}
+						</ul>
+					</section>
+				) : null
+			}
+
+			{
+				entry.data.publication_ids.length > 0 ? (
+					<section class="mt-10" aria-labelledby="project-publications-heading">
+						<h2 id="project-publications-heading" class={sectionHeadingClass}>
+							Linked publications
+						</h2>
+						<ul class:list={['mt-4', listClass]}>
+							{entry.data.publication_ids.map((pubId) => (
+								<li>
+									<span class="font-mono text-sm">{pubId}</span> — publication detail routes ship in
+									a later epic.
+								</li>
+							))}
+						</ul>
+					</section>
+				) : null
+			}
+
+			{
+				departmentLinks.length > 0 ? (
+					<section class="mt-10" aria-labelledby="project-departments-heading">
+						<h2 id="project-departments-heading" class={sectionHeadingClass}>
+							Hosting departments
+						</h2>
+						<ul class="m-0 mt-4 flex flex-wrap gap-3 p-0 list-none" role="list">
+							{departmentLinks.map((link) => (
+								<li>
+									<a
+										href={link.href}
+										class:list={[
+											'inline-flex min-h-11 items-center rounded-md border border-border-subtle bg-surface-card px-4 py-2 font-sans text-sm font-semibold text-brand-700 no-underline transition-colors hover:border-brand-200 hover:bg-surface-sunken',
+											focusRing,
+										]}
+									>
+										{link.name}
+									</a>
+								</li>
+							))}
+						</ul>
+					</section>
+				) : null
+			}
+
+			{
+				entry.data.contact ? (
+					<section class="mt-10 border-t border-border-subtle pt-10" aria-labelledby="project-contact-heading">
+						<h2 id="project-contact-heading" class={sectionHeadingClass}>
+							Contact
+						</h2>
+						<div class="mt-4 max-w-prose font-sans text-base text-text-secondary">
+							{
+								entry.data.contact.label ? (
+									<p class="font-medium text-text-primary">{entry.data.contact.label}</p>
+								) : null
+							}
+							{
+								entry.data.contact.email ? (
+									<p class="mt-2">
+										<a
+											href={`mailto:${entry.data.contact.email}`}
+											class:list={[
+												'font-medium text-brand-700 no-underline hover:text-brand-800',
+												focusRing,
+											]}
+										>
+											{entry.data.contact.email}
+										</a>
+									</p>
+								) : null
+							}
+							{
+								entry.data.contact.href ? (
+									<p class="mt-2">
+										<a
+											href={entry.data.contact.href}
+											class:list={[
+												'font-medium text-brand-700 no-underline hover:text-brand-800',
+												focusRing,
+											]}
+										>
+											{contactHrefLabel}
+										</a>
+									</p>
+								) : null
+							}
+						</div>
+					</section>
+				) : null
+			}
+
+			{
+				entry.data.funding_sources_markdown ? (
+					<section class="mt-10" aria-labelledby="project-funding-heading">
+						<h2 id="project-funding-heading" class={sectionHeadingClass}>
+							Funding
+						</h2>
+						<p class="mt-4 max-w-prose font-sans text-base leading-relaxed text-text-secondary">
+							{entry.data.funding_sources_markdown}
+						</p>
+					</section>
+				) : null
+			}
+		</div>
+	</article>
+	<SiteFooter slot="footer" currentPath={pathname} />
+</BaseLayout>
