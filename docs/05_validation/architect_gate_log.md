@@ -5,3 +5,4 @@ Human- and agent-readable record of architect gate outcomes. Authoritative autom
 | Date | Story | Outcome | Doc refs | Notes |
 | --- | --- | --- | --- | --- |
 | 2026-05-15 | E5-S01 — Departments index | **PASS** | 04_architecture §5–§6, 05 §4.3, ADR-003, UX §10.4 | New `departments` collection; `index_shell` for `/departments/` copy; public listing requires `approved` + `verified`. Follow-ons: document extensions in 05 §4.3; E5-S02 landings before promoting card links in global nav. |
+| 2026-05-15 | E5-S09 — Department relationship QA | **PASS** | 04_architecture §5.4, 05 §2.5/§19, 06_project_context, REM-CARCH-006 | Fail/warn matrix in `refs.ts`; department FK walk at `content.config.ts` load; id↔stem hard-fail; scholarly FKs warn. Follow-ons: stage `scripts/`; fix or drop §5.4 optional Node CLI; migrate indexes to `getCollection` when `staff`/`services` collections land; tighten scholarly→fail after bulk import per remediation plan. |

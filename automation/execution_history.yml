@@ -551,3 +551,24 @@ events:
 - timestamp: '2026-05-15 14:58:29'
   story_id: E5-S03
   event: status -> DONE
+- timestamp: '2026-05-15 15:00:46'
+  story_id: E5-S09
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-15 15:05:32'
+  story_id: E5-S09
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-15 15:08:38'
+  story_id: E5-S09
+  event: architect gate PASS
+- timestamp: '2026-05-15 15:09:18'
+  story_id: E5-S09
+  event: architect gate PASS
+- timestamp: '2026-05-15 15:09:28'
+  story_id: E5-S09
+  event: status -> VERIFIED
+- timestamp: '2026-05-15 15:09:43'
+  story_id: E5-S09
+  event: status -> VERIFIED
+- timestamp: '2026-05-15 15:09:55'
+  story_id: E5-S09
+  event: status -> DONE

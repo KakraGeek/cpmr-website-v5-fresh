@@ -135,6 +135,26 @@ Use for:
 
 Enable MDX only if stories require rich embeds; keep **schema validation** on all MDX frontmatter. Long institutional prose may remain **Markdown** within collections for simplicity.
 
+### 5.4 Build-time relationship integrity (E5-S09 / REM-CARCH-006)
+
+Cross-collection foreign keys use **stable string IDs** (§5.1) and are checked **before static output ships**. Implementation lives in **`src/lib/content/refs.ts`** (shared utilities) and **`scripts/validate-department-relationships.ts`** (department consumer), invoked from **`src/content.config.ts`** whenever Astro loads the content config — so **`npm run build`** and **`npm run validate`** (currently `astro build`) exercise integrity on every merge gate.
+
+| Surface | Examples (MVP) | Invalid foreign key |
+| --- | --- | --- |
+| **`regulated_financial_legal`** | Service fees, statutory downloads, `legal_sensitive` entities (when collections land) | **Fail build** — `applyRefIntegrityResult` throws; CI stops. |
+| **`scholarly_general`** | `departments.head_of_department_staff_id` → `staff.id`, `departments.related_service_ids` → `services.id`, publication `staff:{id}` author tokens | **Warn** — `console.warn` with relationship path; build continues until programme tightens after bulk import. |
+
+**Department rules (E5-S02 fields):**
+
+1. **`entry_type: department`** entries must have frontmatter **`id`** matching the file stem (`phytochemistry.md` → `id: phytochemistry`).
+2. **`head_of_department_staff_id`** (optional) must resolve to an existing `staff` collection `id` when the `staff` content folder contains entries; if the folder is absent or empty, populated foreign keys still **warn** (scholarly) so editors cannot ship silent broken links once staff seeds exist.
+3. **`related_service_ids`** must resolve to existing `services` collection `id` values under the same index rules.
+4. **`mini_site_nav` href** prefix checks remain in the Zod schema (`src/content.config.ts`); relationship script does not duplicate them.
+
+**Verification path:** `npm run validate` (alias of `npm run build`). Optional standalone re-run: `node --experimental-strip-types scripts/validate-department-relationships.ts` (Node ≥ 22.12).
+
+**CMS readiness:** Validators read governed files under `src/content/` only; no runtime DB or SSR. When Phase 2 ingestion lands, the same ID contracts and surfaces apply to exported frontmatter.
+
 ---
 
 ## 6. Department mini-site architecture

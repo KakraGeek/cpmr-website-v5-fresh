@@ -6,6 +6,8 @@
 //   singletons (`site`, `footer`, `contact`, `seo_defaults`) and global editorial/search fields.
 // - docs/03_architecture/05_content_architecture_and_cms_strategy.md §19 — relationship
 //   resolvers live in `src/lib/content/refs.ts` (REM-CARCH-006); smoke test runs at config load.
+// - docs/03_architecture/04_architecture.md §5.4 — E5-S09 department FK walk via
+//   `scripts/validate-department-relationships.ts` at config load.
 //
 // Astro 6 convention: src/content.config.ts (top-level). Do not duplicate at src/content/config.ts.
 // Constitution: docs/03_architecture/06_project_context.md — static output, no SSR.
@@ -13,6 +15,7 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { assertBuildTimeRefIntegritySmokeTest } from './lib/content/refs';
+import { assertDepartmentRelationshipIntegrity } from '../scripts/validate-department-relationships';
 
 // `_bootstrap` is an intentionally trivial collection that proves the content config
 // pipeline compiles and that Zod validation runs at build time. It MUST be replaced or
@@ -283,3 +286,6 @@ export const collections = {
 
 /** REM-CARCH-006 — exercises fail/warn matrix whenever Astro loads content config (build + dev). */
 assertBuildTimeRefIntegritySmokeTest();
+
+/** E5-S09 — department `head_of_department_staff_id` / `related_service_ids` vs target indexes (§5.4). */
+assertDepartmentRelationshipIntegrity();
