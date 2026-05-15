@@ -506,3 +506,15 @@ events:
 - timestamp: '2026-05-15 14:15:56'
   story_id: E5-S01
   event: status -> DEV_COMPLETE
+- timestamp: '2026-05-15 14:24:46'
+  story_id: E5-S01
+  event: architect gate PASS
+- timestamp: '2026-05-15 14:24:46'
+  story_id: E5-S01
+  event: status -> VERIFIED
+- timestamp: '2026-05-15 14:25:27'
+  story_id: E5-S01
+  event: architect gate PASS
+- timestamp: '2026-05-15 14:25:38'
+  story_id: E5-S01
+  event: status -> DONE

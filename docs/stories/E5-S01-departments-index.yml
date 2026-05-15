@@ -2,7 +2,7 @@ id: E5-S01
 epic: E5
 sprint_order: 501
 title: Departments index
-status: DEV_COMPLETE
+status: DONE
 architect_gate_required: true
 user_story: 'As a user, I want to browse verified departments.
 
@@ -81,4 +81,4 @@ dev_agent_record:
   - src/content/departments/scientific-technical-services.md
   - src/content/departments/microbiology.md
   - src/pages/departments/index.astro
-last_updated: '2026-05-15 14:15:56'
+last_updated: '2026-05-15 14:25:38'
