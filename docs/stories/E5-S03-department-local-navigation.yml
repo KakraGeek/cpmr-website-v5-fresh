@@ -2,49 +2,74 @@ id: E5-S03
 epic: E5
 sprint_order: 503
 title: Department local navigation
-status: TODO
-architect_gate_required: No
-user_story: >
-  As a user, I want to move within a department without returning to the global home page.
+status: DONE
+architect_gate_required: false
+user_story: 'As a user, I want to move within a department without returning to the
+  global home page.
+
+  '
 acceptance_criteria:
-  - DepartmentTabs (or equivalent) provides sticky local navigation on desktop per DESIGN.md.
-  - Mobile behaviour follows the strategy documented in DESIGN.md for department local nav.
-  - Tab labels and order are driven from department frontmatter (or agreed data module), not hardcoded per department.
+- DepartmentTabs (or equivalent) provides sticky local navigation on desktop per DESIGN.md.
+- Mobile behaviour follows the strategy documented in DESIGN.md for department local
+  nav.
+- Tab labels and order are driven from department frontmatter (or agreed data module),
+  not hardcoded per department.
 tasks:
-  - Implement src/components/departments/DepartmentTabs.astro (or the agreed component name) with keyboard support and visible focus.
-  - Wire labels and href targets from the active department entry’s frontmatter fields.
-  - Apply token-only styling per DESIGN.md §0–§1.
+- Implement src/components/departments/DepartmentTabs.astro (or the agreed component
+  name) with keyboard support and visible focus.
+- Wire labels and href targets from the active department entry's frontmatter fields.
+- Apply token-only styling per DESIGN.md §0–§1.
 dependencies:
-  - E5-S02
+- E5-S02
 context_files:
-  - docs/04_stories/05_story_map.md
-  - docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
-  - docs/01_planning/01_analysis.md
-  - docs/01_planning/02_prd.md
-  - docs/02_design/03_ux_blueprint.md
-  - docs/02_design/DESIGN.md
-  - docs/03_architecture/04_architecture.md
-  - docs/03_architecture/06_project_context.md
+- docs/04_stories/05_story_map.md
+- docs/00_source/CPMR_Institutional_Website_Redesign_Brief.md
+- docs/01_planning/01_analysis.md
+- docs/01_planning/02_prd.md
+- docs/02_design/03_ux_blueprint.md
+- docs/02_design/DESIGN.md
+- docs/03_architecture/04_architecture.md
+- docs/03_architecture/06_project_context.md
 execution:
   files_allowed:
-    - src/components/departments/DepartmentTabs.astro
-    - src/pages/departments/[slug]/index.astro
+  - src/components/departments/DepartmentTabs.astro
+  - src/pages/departments/[slug]/index.astro
   files_forbidden:
-    - astro.config.mjs
-    - package.json
-    - docs/02_design/DESIGN.md
-    - src/pages/departments/index.astro
-    - src/pages/index.astro
-    - src/layouts/**
-    - src/components/layout/**
-    - public/documents/**
+  - astro.config.mjs
+  - package.json
+  - docs/02_design/DESIGN.md
+  - src/pages/departments/index.astro
+  - src/pages/index.astro
+  - src/layouts/**
+  - src/components/layout/**
+  - public/documents/**
   verification_commands:
-    - npm run build
-    - npm run validate
+  - npm run build
+  - npm run validate
 qa_checklist:
-  - Confirm every acceptance criterion is satisfied.
-  - Confirm implementation follows DESIGN.md (DepartmentTabs pattern, focus, touch targets where applicable).
-  - Confirm implementation follows docs/03_architecture/04_architecture.md §6.3 content-driven navigation rule.
-  - Confirm static build passes (npm run build / npm run validate).
-  - Confirm no forbidden files were changed.
-  - Confirm nav data remains CMS-compatible via frontmatter or governed data files.
+- Confirm every acceptance criterion is satisfied.
+- Confirm implementation follows DESIGN.md (DepartmentTabs pattern, focus, touch targets
+  where applicable).
+- Confirm implementation follows docs/03_architecture/04_architecture.md §6.3 content-driven
+  navigation rule.
+- Confirm static build passes (npm run build / npm run validate).
+- Confirm no forbidden files were changed.
+- Confirm nav data remains CMS-compatible via frontmatter or governed data files.
+dev_agent_record:
+  completion_notes: 'E5-S03 — DepartmentTabs per DESIGN.md §13.16: lg+ sticky rail,
+    mobile-scroll with edge fade, focus-visible rings, focusin scroll-into-view, nav
+    links (not ARIA tabs). Labels/hrefs from resolveMiniSiteNav(dept.mini_site_nav)
+    wired in E5-S02 DepartmentHomePage; this story only enhances DepartmentTabs.astro.
+    npm run validate passed 2026-05-15.
+
+    '
+  file_list:
+  - src/components/departments/DepartmentTabs.astro
+validation_notes: 'Acceptance validation PASS 2026-05-15 — DepartmentTabs §13.16 (lg
+  sticky, mobile-scroll + edge fade, focus-visible, focusin scroll-into-view, nav
+  links not ARIA tabs). Nav items from resolveMiniSiteNav(mini_site_nav) via E5-S02
+  DepartmentHomePage. npm run validate passed. Forbidden-file scope clean (implementation
+  diff only DepartmentTabs).
+
+  '
+last_updated: '2026-05-15 14:58:29'

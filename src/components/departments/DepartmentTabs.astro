@@ -1,10 +1,13 @@
 ---
 /**
  * DESIGN.md §13.16 — local department navigation (links, not ARIA tabs).
+ * E5-S03 — sticky desktop nav, mobile-scroll with edge fade, keyboard scroll-into-view.
  */
 import type { DepartmentNavItem } from './department-home-helpers';
 
 interface Props {
+	/** Optional traceability slug; labels/hrefs come from `items` (DESIGN.md §13.16). */
+	departmentSlug?: string;
 	items: DepartmentNavItem[];
 	currentPath: string;
 }
@@ -22,34 +25,61 @@ const focusRing =
 	'focus-visible:relative focus-visible:outline-none focus-visible:shadow-ring-focus';
 
 const linkBase =
-	`inline-flex min-h-11 shrink-0 items-center border-b-2 border-transparent px-1 py-3 font-sans text-sm font-medium text-text-secondary no-underline transition-colors hover:text-text-primary ${focusRing}`;
+	`inline-flex min-h-11 shrink-0 scroll-mx-4 items-center border-b-2 border-transparent px-1 py-3 font-sans text-sm font-medium text-text-secondary no-underline transition-colors hover:text-text-primary ${focusRing}`;
 
 const linkCurrent =
-	`inline-flex min-h-11 shrink-0 items-center border-b-2 border-border-brand px-1 py-3 font-sans text-sm font-medium text-text-primary no-underline ${focusRing}`;
+	`inline-flex min-h-11 shrink-0 scroll-mx-4 items-center border-b-2 border-border-brand px-1 py-3 font-sans text-sm font-medium text-text-primary no-underline ${focusRing}`;
 ---
 
 <div class="border-b border-border-default bg-surface-page lg:sticky lg:top-0 lg:z-sticky">
 	<div class="mx-auto w-full max-w-content px-4">
-		<div
-			class="-mx-4 overflow-x-auto px-4 [scrollbar-width:thin] md:overflow-visible"
-			tabindex="0"
-		>
-			<nav aria-label="Department sections" class="flex min-w-max gap-4 md:min-w-0 md:flex-wrap">
-				{
-					items.map((item) => {
-						const isCurrent = normalizePath(item.href) === current;
-						return (
-							<a
-								href={item.href}
-								class={isCurrent ? linkCurrent : linkBase}
-								aria-current={isCurrent ? 'page' : undefined}
-							>
-								{item.label}
-							</a>
-						);
-					})
-				}
-			</nav>
+		<div class="relative md:static">
+			<div
+				aria-hidden="true"
+				class="pointer-events-none absolute inset-y-0 left-0 z-raised w-6 bg-gradient-to-r from-surface-page to-transparent md:hidden"
+			/>
+			<div
+				aria-hidden="true"
+				class="pointer-events-none absolute inset-y-0 right-0 z-raised w-6 bg-gradient-to-l from-surface-page to-transparent md:hidden"
+			/>
+			<div
+				class="department-tabs-scroll -mx-4 overflow-x-auto px-4 [scrollbar-width:thin] md:mx-0 md:overflow-visible md:px-0"
+				data-department-tabs-scroll
+			>
+				<nav aria-label="Department sections" class="flex min-w-max gap-4 md:min-w-0 md:flex-wrap">
+					{
+						items.map((item) => {
+							const isCurrent = normalizePath(item.href) === current;
+							return (
+								<a
+									href={item.href}
+									class={isCurrent ? linkCurrent : linkBase}
+									aria-current={isCurrent ? 'page' : undefined}
+								>
+									{item.label}
+								</a>
+							);
+						})
+					}
+				</nav>
+			</div>
 		</div>
 	</div>
 </div>
+
+<script>
+	function bindDepartmentTabsScrollIntoView() {
+		document.querySelectorAll('[data-department-tabs-scroll]').forEach((root) => {
+			if (!(root instanceof HTMLElement)) return;
+			if (root.dataset.tabsScrollBound === 'true') return;
+			root.dataset.tabsScrollBound = 'true';
+			root.addEventListener('focusin', (event) => {
+				const target = event.target;
+				if (!(target instanceof HTMLAnchorElement) || !root.contains(target)) return;
+				target.scrollIntoView({ inline: 'nearest', block: 'nearest' });
+			});
+		});
+	}
+
+	bindDepartmentTabsScrollIntoView();
+</script>

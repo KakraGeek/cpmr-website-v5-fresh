@@ -536,3 +536,18 @@ events:
 - timestamp: '2026-05-15 14:38:57'
   story_id: E5-S02
   event: status -> DONE
+- timestamp: '2026-05-15 14:40:45'
+  story_id: E5-S03
+  event: status -> IN_PROGRESS
+- timestamp: '2026-05-15 14:49:51'
+  story_id: E5-S03
+  event: status -> DEV_COMPLETE
+- timestamp: '2026-05-15 14:58:02'
+  story_id: E5-S03
+  event: recovery regenerated prompts
+- timestamp: '2026-05-15 14:58:17'
+  story_id: E5-S03
+  event: status -> VERIFIED
+- timestamp: '2026-05-15 14:58:29'
+  story_id: E5-S03
+  event: status -> DONE
